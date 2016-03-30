@@ -116,59 +116,10 @@ public class ScanFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        // TODO: Remove dependency to the permission dispatcher library
-        ScanFragmentPermissionsDispatcher.ensureHasCourseLocationWithCheck(this);
-
         mSubscriptions = new CompositeSubscription();
 
-        // listen for wifi scan complete events
-        Subscription scanCompleteSubscription = WifiEvents
-                .getInstance()
-                .getEvents()
-                .ofType(WifiScanComplete.class)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<WifiScanComplete>() {
-                    @Override
-                    public void call(WifiScanComplete wifiScanComplete) {
-                        Log.d(TAG, "wifi scan complete");
-                        scanComplete();
-                    }
-                });
-        mSubscriptions.add(scanCompleteSubscription);
-
-        // if we can scan the wifi at any time...
-        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR2 &&
-                mWifiManager.isScanAlwaysAvailable()) {
-            mSubscriptions.add(startWifiScans());
-        } else {
-            Subscription startScanWhenEnabled = WifiEvents
-                    .getInstance()
-                    .getStateEvents()
-                    .ofType(WifiStateEvent.class)
-                    .startWith(mWifiManager.isWifiEnabled() ? WifiEnabled.getInstance() :
-                            WifiDisabled.getInstance()) // emit the first state
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Action1<WifiStateEvent>() {
-                        @Override
-                        public void call(WifiStateEvent wifiState) {
-                            if (wifiState instanceof WifiEnabled) {
-                                // if enabled, initiate scan
-                                if (mScanSubscription == null) {
-                                    mScanSubscription = startWifiScans();
-                                }
-                            } else {
-                                // stop any future scans
-                                if (mScanSubscription != null) {
-                                    mScanSubscription.unsubscribe();
-                                    mScanSubscription = null;
-                                }
-                                // turn wifi on
-                                mWifiManager.setWifiEnabled(true);
-                            }
-                        }
-                    });
-            mSubscriptions.add(startScanWhenEnabled);
-        }
+        // TODO: Remove dependency to the permission dispatcher library
+        ScanFragmentPermissionsDispatcher.initialiseWifiScansWithCheck(this);
     }
 
     @Override
@@ -264,8 +215,55 @@ public class ScanFragment extends Fragment {
     }
 
     @NeedsPermission(permission.ACCESS_COARSE_LOCATION)
-    void ensureHasCourseLocation() {
-        // Do nothing
+    void initialiseWifiScans() {
+        // listen for wifi scan complete events
+        Subscription scanCompleteSubscription = WifiEvents
+                .getInstance()
+                .getEvents()
+                .ofType(WifiScanComplete.class)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<WifiScanComplete>() {
+                    @Override
+                    public void call(WifiScanComplete wifiScanComplete) {
+                        Log.d(TAG, "wifi scan complete");
+                        scanComplete();
+                    }
+                });
+        mSubscriptions.add(scanCompleteSubscription);
+
+        // if we can scan the wifi at any time...
+        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR2 &&
+                mWifiManager.isScanAlwaysAvailable()) {
+            mSubscriptions.add(startWifiScans());
+        } else {
+            Subscription startScanWhenEnabled = WifiEvents
+                    .getInstance()
+                    .getStateEvents()
+                    .ofType(WifiStateEvent.class)
+                    .startWith(mWifiManager.isWifiEnabled() ? WifiEnabled.getInstance() :
+                            WifiDisabled.getInstance()) // emit the first state
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Action1<WifiStateEvent>() {
+                        @Override
+                        public void call(WifiStateEvent wifiState) {
+                            if (wifiState instanceof WifiEnabled) {
+                                // if enabled, initiate scan
+                                if (mScanSubscription == null) {
+                                    mScanSubscription = startWifiScans();
+                                }
+                            } else {
+                                // stop any future scans
+                                if (mScanSubscription != null) {
+                                    mScanSubscription.unsubscribe();
+                                    mScanSubscription = null;
+                                }
+                                // turn wifi on
+                                mWifiManager.setWifiEnabled(true);
+                            }
+                        }
+                    });
+            mSubscriptions.add(startScanWhenEnabled);
+        }
     }
 
     @OnShowRationale(permission.ACCESS_COARSE_LOCATION)
