@@ -4,9 +4,6 @@ import android.Manifest.permission;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Build.VERSION;
@@ -78,7 +75,6 @@ public class ScanFragment extends Fragment {
     private AccessPointArrayAdapter mApAdapter;
     private WifiManager mWifiManager;
     private CompositeSubscription mSubscriptions;
-    private ConnectivityManager mConnectivityManager;
     private Subscription mScanSubscription;
     private ViewGroup mScanningLayout;
     private ViewGroup mNoResultsLayout;
@@ -111,8 +107,6 @@ public class ScanFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mWifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
-        mConnectivityManager = (ConnectivityManager) getActivity().getSystemService(
-                Context.CONNECTIVITY_SERVICE);
         if (savedInstanceState != null) {
             mLastScanRequestTimestamp = savedInstanceState.getLong(KEY_LAST_SCAN_REQUEST, -1);
             mLastScanResultsTimestamp = savedInstanceState.getLong(KEY_LAST_SCAN_RESULTS, -1);
@@ -320,32 +314,6 @@ public class ScanFragment extends Fragment {
     private void onAccessPointClicked(ScannedAccessPoint accessPoint) {
         Intent intent = ConfigurerActivity.newIntent(getContext(), accessPoint.getSsid());
         startActivity(intent);
-    }
-
-    private void onConnectivityChanged() {
-        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-            for (Network network : mConnectivityManager.getAllNetworks()) {
-                NetworkInfo networkInfo = mConnectivityManager.getNetworkInfo(network);
-                if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-                    if (networkInfo.isConnected()) {
-                        String ssid = mWifiManager.getConnectionInfo().getSSID();
-                        Log.d(TAG, "Connected to " + ssid);
-                    } else {
-                        Log.d(TAG, "WIFI not connected");
-                    }
-                    break;
-                }
-            }
-        } else {
-            NetworkInfo networkInfo = mConnectivityManager.getActiveNetworkInfo();
-            if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI &&
-                    networkInfo.isConnected()) {
-                String ssid = mWifiManager.getConnectionInfo().getSSID();
-                Log.d(TAG, "Connected to " + ssid);
-            } else {
-                Log.d(TAG, "WIFI not connected");
-            }
-        }
     }
 
     private class AccessPointViewHolder extends ViewHolder implements OnClickListener {
