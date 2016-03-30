@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi;
+package au.com.umranium.nodemcuwifi.wifistatereceiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

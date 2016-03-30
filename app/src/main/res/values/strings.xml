@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">NodeMCU WiFi Manager</string>
     <string name="action_settings">Settings</string>
-    <string name="dialog_course_location_rationale_message">The app requires access to course location so as to access accurate WiFi scan results. Proceed?</string>
+    <string name="dialog_course_location_rationale_message">Accessing WiFi scan results can allow an app to determine your location, however, this app requires to access the WiFi scan results to automatically find the NodeMCU. Proceed to permission dialog box?</string>
     <string name="dialog_course_location_rationale_title">Permission to course location required</string>
     <string name="message_no_course_location_permission">App has not been granted course location permission. It can\'t continue.</string>
+    <string name="scan_activity_title">Find NodeMCU</string>
 </resources>

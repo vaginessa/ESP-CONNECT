@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi;
+package au.com.umranium.nodemcuwifi.scanner;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog.Builder;
 
+import au.com.umranium.nodemcuwifi.R;
 import permissions.dispatcher.PermissionRequest;
 
 /**

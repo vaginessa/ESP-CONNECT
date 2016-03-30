@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi;
+package au.com.umranium.nodemcuwifi.scanner;
 
 import android.Manifest.permission;
 import android.content.Context;
@@ -28,6 +28,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import au.com.umranium.nodemcuwifi.R;
+import au.com.umranium.nodemcuwifi.utils.BootTimeUtils;
 import au.com.umranium.nodemcuwifi.wifievents.WifiDisabled;
 import au.com.umranium.nodemcuwifi.wifievents.WifiEnabled;
 import au.com.umranium.nodemcuwifi.wifievents.WifiEvents;

@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi;
+package au.com.umranium.nodemcuwifi.utils;
 
 import android.annotation.TargetApi;
 import android.os.Build.VERSION_CODES;
