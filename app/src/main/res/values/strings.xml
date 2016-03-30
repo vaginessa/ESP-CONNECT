@@ -5,4 +5,5 @@
     <string name="dialog_course_location_rationale_title">Permission to course location required</string>
     <string name="message_no_course_location_permission">App has not been granted course location permission. It can\'t continue.</string>
     <string name="title_activity_scan">Find NodeMCU</string>
+    <string name="title_activity_configurer">Configure NodeMCU</string>
 </resources>
