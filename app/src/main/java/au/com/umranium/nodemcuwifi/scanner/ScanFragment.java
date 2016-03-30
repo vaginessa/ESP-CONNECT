@@ -1,7 +1,9 @@
 package au.com.umranium.nodemcuwifi.scanner;
 
 import android.Manifest.permission;
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
@@ -18,6 +20,7 @@ import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +32,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import au.com.umranium.nodemcuwifi.R;
+import au.com.umranium.nodemcuwifi.configurer.ConfigurerActivity;
 import au.com.umranium.nodemcuwifi.utils.BootTimeUtils;
 import au.com.umranium.nodemcuwifi.wifievents.WifiDisabled;
 import au.com.umranium.nodemcuwifi.wifievents.WifiEnabled;
@@ -50,6 +54,7 @@ import rx.subscriptions.CompositeSubscription;
  * Fragment that shows a list of NodeMCU access points.
  */
 @RuntimePermissions
+@SuppressLint("CustomError")
 public class ScanFragment extends Fragment {
 
     private static final String TAG = ScanFragment.class.getSimpleName();
@@ -312,6 +317,11 @@ public class ScanFragment extends Fragment {
         mResultsListLayout.setVisibility(View.VISIBLE);
     }
 
+    private void onAccessPointClicked(ScannedAccessPoint accessPoint) {
+        Intent intent = ConfigurerActivity.newIntent(getContext(), accessPoint.getSsid());
+        startActivity(intent);
+    }
+
     private void onConnectivityChanged() {
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
             for (Network network : mConnectivityManager.getAllNetworks()) {
@@ -338,22 +348,31 @@ public class ScanFragment extends Fragment {
         }
     }
 
-    private class AccessPointViewHolder extends ViewHolder {
+    private class AccessPointViewHolder extends ViewHolder implements OnClickListener {
 
         private final TextView mName;
         private final TextView mSigStrength;
+        private ScannedAccessPoint mBoundAccessPoint;
 
         public AccessPointViewHolder(View itemView) {
             super(itemView);
 
             mName = (TextView) itemView.findViewById(R.id.txt_name);
             mSigStrength = (TextView) itemView.findViewById(R.id.txt_sig_strength);
+
+            itemView.setOnClickListener(this);
         }
 
         public void bindTo(ScannedAccessPoint accessPoint) {
             mName.setText(accessPoint.getSsid());
             mSigStrength.setText(String.format("%d%%", accessPoint.getSignalStrength()));
             itemView.setSelected(true);
+            this.mBoundAccessPoint = accessPoint;
+        }
+
+        @Override
+        public void onClick(View v) {
+            onAccessPointClicked(mBoundAccessPoint);
         }
     }
 
