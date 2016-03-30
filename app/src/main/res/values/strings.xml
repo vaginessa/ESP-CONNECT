@@ -4,5 +4,5 @@
     <string name="dialog_course_location_rationale_message">Accessing WiFi scan results can allow an app to determine your location, however, this app requires to access the WiFi scan results to automatically find the NodeMCU. Proceed to permission dialog box?</string>
     <string name="dialog_course_location_rationale_title">Permission to course location required</string>
     <string name="message_no_course_location_permission">App has not been granted course location permission. It can\'t continue.</string>
-    <string name="scan_activity_title">Find NodeMCU</string>
+    <string name="title_activity_scan">Find NodeMCU</string>
 </resources>
