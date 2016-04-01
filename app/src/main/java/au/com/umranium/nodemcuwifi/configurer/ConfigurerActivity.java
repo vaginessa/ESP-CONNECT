@@ -7,8 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import au.com.umranium.nodemcuwifi.R;
+import au.com.umranium.nodemcuwifi.configurer.ConfigurerFragment.SsidProvider;
 
-public class ConfigurerActivity extends AppCompatActivity {
+public class ConfigurerActivity extends AppCompatActivity implements SsidProvider {
 
     private static final String KEY_HOTSPOT_SSID = "hotspot_ssid";
 
@@ -26,4 +27,8 @@ public class ConfigurerActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
+    @Override
+    public String getSsid() {
+        return getIntent().getStringExtra(KEY_HOTSPOT_SSID);
+    }
 }
