@@ -161,7 +161,7 @@ public class ScanFragment extends Fragment {
                     @Override
                     public void call(WifiScanComplete wifiScanComplete) {
                         startScan();
-                        Log.d(TAG, "wifi scan started");
+                        //Log.d(TAG, "wifi scan started");
                     }
                 });
     }
@@ -188,7 +188,7 @@ public class ScanFragment extends Fragment {
         List<ScannedAccessPoint> accessPoints = new ArrayList<>();
 
         for (ScanResult scanResult : mWifiManager.getScanResults()) {
-            Log.d(TAG, "  scan-result: " + scanResult.SSID);
+//            Log.d(TAG, "  scan-result: " + scanResult.SSID);
 
             if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
                 if (scanResult.timestamp >= scanRequestBootTimeMicros) {
@@ -225,7 +225,7 @@ public class ScanFragment extends Fragment {
                 .subscribe(new Action1<WifiScanComplete>() {
                     @Override
                     public void call(WifiScanComplete wifiScanComplete) {
-                        Log.d(TAG, "wifi scan complete");
+                        //Log.d(TAG, "wifi scan complete");
                         scanComplete();
                     }
                 });
