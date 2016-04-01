@@ -3,6 +3,7 @@ package au.com.umranium.nodemcuwifi.configurer;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -112,6 +113,7 @@ public class ConfigurerFragment extends Fragment {
                         WifiEvents
                                 .getInstance()
                                 .getConnected()
+                                .filter(new ValidNetworkInfo())
                                 .map(new IsNotConnectedToNetwork(mQuotedSsid))
                 )
                 .debounce(DURATION_BEFORE_RECONNECT_MS, TimeUnit.MILLISECONDS)
@@ -197,6 +199,15 @@ public class ConfigurerFragment extends Fragment {
 
     interface SsidProvider {
         String getSsid();
+    }
+
+    private static class ValidNetworkInfo implements Func1<WifiConnected, Boolean> {
+        @Override
+        public Boolean call(WifiConnected connected) {
+            return connected.getWifiInfo() != null &&
+                    connected.getWifiInfo().getNetworkId() > 0 &&
+                    SupplicantState.COMPLETED.equals(connected.getWifiInfo().getSupplicantState());
+        }
     }
 
     private static class IsNotConnectedToNetwork implements Func1<WifiConnected, Boolean> {
