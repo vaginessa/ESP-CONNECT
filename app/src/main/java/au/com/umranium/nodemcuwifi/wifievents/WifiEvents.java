@@ -34,6 +34,22 @@ public final class WifiEvents {
                       .distinctUntilChanged();
     }
 
+    public Observable<WifiEnabled> getEnabled() {
+        return mEvents.ofType(WifiEnabled.class);
+    }
+
+    public Observable<WifiDisabled> getDisabled() {
+        return mEvents.ofType(WifiDisabled.class);
+    }
+
+    public Observable<WifiConnected> getConnected() {
+        return mEvents.ofType(WifiConnected.class);
+    }
+
+    public Observable<WifiDisconnected> getDisconnected() {
+        return mEvents.ofType(WifiDisconnected.class);
+    }
+
     public Observable<WifiStateEvent> getStateEvents() {
         return mEvents.ofType(WifiStateEvent.class);
     }

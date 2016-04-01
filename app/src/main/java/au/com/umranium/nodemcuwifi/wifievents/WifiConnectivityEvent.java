@@ -7,18 +7,4 @@ package au.com.umranium.nodemcuwifi.wifievents;
  */
 public class WifiConnectivityEvent extends WifiEvent {
 
-
-    private static WifiConnectivityEvent sInstance;
-
-    public static synchronized WifiConnectivityEvent getInstance() {
-        if (sInstance == null) {
-            sInstance = new WifiConnectivityEvent();
-        }
-        return sInstance;
-    }
-
-    private WifiConnectivityEvent() {
-        // Do nothing
-    }
-
 }
