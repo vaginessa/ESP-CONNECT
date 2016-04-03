@@ -3,29 +3,39 @@ package au.com.umranium.nodemcuwifi.configurer;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.net.wifi.SupplicantState;
-import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiInfo;
+import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.wifi.WifiManager;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.support.annotation.StringRes;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import java.util.concurrent.TimeUnit;
 
 import au.com.umranium.nodemcuwifi.R;
+import au.com.umranium.nodemcuwifi.api.NodeMcuService;
+import au.com.umranium.nodemcuwifi.api.NodeMcuService.Builder;
+import au.com.umranium.nodemcuwifi.api.State;
+import au.com.umranium.nodemcuwifi.configurer.utils.rx.IsConnectedToNetwork;
+import au.com.umranium.nodemcuwifi.configurer.utils.rx.ValidNetworkInfo;
+import au.com.umranium.nodemcuwifi.utils.rx.ObservableValue;
 import au.com.umranium.nodemcuwifi.utils.rx.ToInstance;
-import au.com.umranium.nodemcuwifi.wifievents.WifiConnected;
-import au.com.umranium.nodemcuwifi.wifievents.WifiConnectivityEvent;
-import au.com.umranium.nodemcuwifi.wifievents.WifiDisconnected;
+import au.com.umranium.nodemcuwifi.utils.rx.ToVoid;
 import au.com.umranium.nodemcuwifi.wifievents.WifiEvents;
 import rx.Observable;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -37,10 +47,12 @@ public class ConfigurerFragment extends Fragment {
 
     private static final long DURATION_BEFORE_RECONNECT_MS = TimeUnit.SECONDS.toMillis(10);
 
-    private WifiManager mWifiManager;
-    private Subscription mConnectToWifi;
-    private Subscription mReconnectToWifi;
+    private final ObservableValue<NodeMcuService> mNodeMcuService = new ObservableValue<>(true);
     private String mQuotedSsid;
+    private WifiController mWifiController;
+    private Subscription mReconnectToWifi;
+    private Subscription mInitialiseNodeMCUService;
+    private Subscription mLoadStateData;
 
     public ConfigurerFragment() {
     }
@@ -54,7 +66,10 @@ public class ConfigurerFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mWifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
         Activity activity = getActivity();
         String ssid;
         if (activity instanceof SsidProvider) {
@@ -70,59 +85,94 @@ public class ConfigurerFragment extends Fragment {
 
         mQuotedSsid = "\"" + ssid + "\"";
 
-        mConnectToWifi = WifiEvents
-                .getInstance()
-                .getConnectivityEvents()
-                .subscribe(new Action1<WifiConnectivityEvent>() {
-                    @Override
-                    public void call(WifiConnectivityEvent event) {
-                        if (event instanceof WifiConnected) {
-                            WifiConnected connected = (WifiConnected) event;
-                            WifiInfo wifiInfo = connected.getWifiInfo();
-                            showMsg("Connected to " + wifiInfo.getSSID() + "(" + wifiInfo
-                                    .getNetworkId() + ") " + wifiInfo.getBSSID() + " " +
-                                    wifiInfo.getSupplicantState());
-                        } else if (event instanceof WifiDisconnected) {
-                            showMsg("Wifi disconnected");
-                        }
-                    }
-                });
+        mWifiController = new WifiController(wifiManager, connectivityManager, mQuotedSsid);
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
-        if (!isAlreadyConnected()) {
-            connectToNetwork();
-        } else {
-            showMsg("Already connected to " + mQuotedSsid);
-        }
+        boolean connected = mWifiController.isAlreadyConnected();
 
         if (mReconnectToWifi != null) {
             mReconnectToWifi.unsubscribe();
         }
-        // Reconnects to network if DURATION_BEFORE_RECONNECT_MS ms go by after a disconnect
-        //  or connecting to another network
+
+        // Reconnects to the node MCU access point if DURATION_BEFORE_RECONNECT_MS ms go by after a
+        // disconnect or connecting to another network
         mReconnectToWifi = Observable
                 .merge(
+                        // emit a true (reconnect) if disconnected
                         WifiEvents
                                 .getInstance()
                                 .getDisconnected()
                                 .map(ToInstance.getInstance(true)),
+                        // emit a false (no reconnect) if connected to the NodeMCU
+                        //  (to cancel any recent true) or true (reconnect) if connected to
+                        //  another network.
                         WifiEvents
                                 .getInstance()
                                 .getConnected()
                                 .filter(new ValidNetworkInfo())
-                                .map(new IsNotConnectedToNetwork(mQuotedSsid))
+                                .map(new IsConnectedToNetwork(mQuotedSsid).negate())
                 )
+                        // ensure that only true (reconnect) values that last at least
+                        //  DURATION_BEFORE_RECONNECT_MS milliseconds get acted upon
                 .debounce(DURATION_BEFORE_RECONNECT_MS, TimeUnit.MILLISECONDS)
+                        // inject a reconnect event if initially not connected
+                .startWith(!connected ? Observable.just(true) : Observable.<Boolean>empty())
+                        // act on events
                 .subscribe(new Action1<Boolean>() {
                     @Override
                     public void call(Boolean reconnect) {
                         if (reconnect) {
-                            connectToNetwork();
+                            try {
+                                mWifiController.connectToNetwork();
+                            } catch (WifiConnectionException e) {
+                                showError(e.getMessageId());
+                                Log.e(TAG, getString(e.getMessageId()), e);
+                            }
                         }
+                    }
+                });
+
+        // Initialises the NodeMCU service after connecting to the NodeMCU access point
+        mInitialiseNodeMCUService = WifiEvents
+                .getInstance()
+                .getConnected()
+                .filter(new ValidNetworkInfo())
+                .filter(new IsConnectedToNetwork(mQuotedSsid))
+                .map(ToVoid.getInstance())
+                        // inject an initial event if already connected
+                .startWith(connected ? Observable.<Void>just(null) : Observable.<Void>empty())
+                .subscribe(new Action1<Void>() {
+                    @Override
+                    public void call(Void aVoid) {
+                        initNodeMcuService();
+                    }
+                });
+
+        // Queries the NodeMCU state information as soon as the NodeMCU service is established
+        mLoadStateData = mNodeMcuService
+                .getNonNullObservable()
+                .observeOn(Schedulers.io())
+                .flatMap(new Func1<NodeMcuService, Observable<State>>() {
+                    @Override
+                    public Observable<State> call(NodeMcuService nodeMcuService) {
+                        return nodeMcuService.getState();
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<State>() {
+                    @Override
+                    public void call(State state) {
+                        Log.d(TAG, state.toString());
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable error) {
+                        Log.e(TAG, error.getMessage(), error);
+                        showError(error.getMessage());
                     }
                 });
     }
@@ -134,67 +184,48 @@ public class ConfigurerFragment extends Fragment {
             mReconnectToWifi.unsubscribe();
             mReconnectToWifi = null;
         }
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (mConnectToWifi != null) {
-            mConnectToWifi.unsubscribe();
-            mConnectToWifi = null;
+        if (mInitialiseNodeMCUService != null) {
+            mInitialiseNodeMCUService.unsubscribe();
+            mInitialiseNodeMCUService = null;
         }
+        if (mLoadStateData != null) {
+            mLoadStateData.unsubscribe();
+            mLoadStateData = null;
+        }
+        //TODO: Reconnect back to original network
     }
 
-    private WifiConfiguration getConfiguredNetwork() {
-        for (WifiConfiguration conf : mWifiManager.getConfiguredNetworks()) {
-            if (conf.SSID != null && mQuotedSsid.equals(conf.SSID)) {
-                return conf;
+    private void initNodeMcuService() {
+        Builder builder = new Builder(mWifiController.getGateway());
+        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+            Network network = mWifiController.getWifiNetwork();
+            builder.setSocketFactory(network.getSocketFactory());
+        }
+        mNodeMcuService.setValue(builder.build());
+    }
+
+    private void showError(@StringRes int msg) {
+        //noinspection ConstantConditions
+        final Snackbar snackbar = Snackbar.make(getView(), msg, Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction(android.R.string.ok, new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                snackbar.dismiss();
             }
-        }
-        return null;
+        });
+        snackbar.show();
     }
 
-    private boolean isAlreadyConnected() {
-        WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
-        return wifiInfo != null && mQuotedSsid.equals(wifiInfo.getSSID());
-    }
-
-    private void connectToNetwork() {
-        WifiConfiguration wifiConf = getConfiguredNetwork();
-
-        int netId;
-        if (wifiConf != null) {
-            showMsg("Network already added");
-            netId = wifiConf.networkId;
-        } else {
-            netId = addNetwork();
-            if (netId < 0) {
-                // add network failed
-                showMsg("Unable to add the wifi network");
-            } else {
-                showMsg("Added and enabled network");
+    private void showError(String msg) {
+        //noinspection ConstantConditions
+        final Snackbar snackbar = Snackbar.make(getView(), msg, Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction(android.R.string.ok, new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                snackbar.dismiss();
             }
-        }
-
-        showMsg(" Connect to network: " + netId);
-
-        if (!mWifiManager.disconnect()) {
-            throw new RuntimeException("Unable to disconnect");
-        }
-        if (!mWifiManager.enableNetwork(netId, true)) {
-            throw new RuntimeException("Unable to enable network");
-        }
-    }
-
-    private int addNetwork() {
-        WifiConfiguration wifiConf = new WifiConfiguration();
-        wifiConf.SSID = mQuotedSsid;
-        wifiConf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
-        return mWifiManager.addNetwork(wifiConf);
-    }
-
-    private static void showMsg(String msg) {
-        Log.d(TAG, msg);
+        });
+        snackbar.show();
     }
 
     interface SsidProvider {
