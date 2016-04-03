@@ -1,6 +1,5 @@
 package au.com.umranium.nodemcuwifi.configurer;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -40,7 +39,6 @@ import rx.schedulers.Schedulers;
 /**
  * A placeholder fragment containing a simple view.
  */
-@SuppressLint("CustomError")
 public class ConfigurerFragment extends Fragment {
 
     private static final String TAG = ConfigurerFragment.class.getSimpleName();
