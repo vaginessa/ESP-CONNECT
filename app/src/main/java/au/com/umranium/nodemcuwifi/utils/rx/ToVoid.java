@@ -3,17 +3,19 @@ package au.com.umranium.nodemcuwifi.utils.rx;
 import rx.functions.Func1;
 
 /**
+ * Maps any value given to a {@link Void} value (effectively throwing away the value given).
+ *
  * @author umran
  */
 public final class ToVoid<T> implements Func1<T, Void> {
 
-    private static ToVoid sToVoid;
+    private static ToVoid sInstance;
 
     public synchronized static <T> ToVoid<T> getInstance() {
-        if (sToVoid == null) {
-            sToVoid = new ToVoid();
+        if (sInstance == null) {
+            sInstance = new ToVoid();
         }
-        return sToVoid;
+        return sInstance;
     }
 
     private ToVoid() {
