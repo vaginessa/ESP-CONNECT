@@ -201,25 +201,4 @@ public class ConfigurerFragment extends Fragment {
         String getSsid();
     }
 
-    private static class ValidNetworkInfo implements Func1<WifiConnected, Boolean> {
-        @Override
-        public Boolean call(WifiConnected connected) {
-            return connected.getWifiInfo() != null &&
-                    connected.getWifiInfo().getNetworkId() > 0 &&
-                    SupplicantState.COMPLETED.equals(connected.getWifiInfo().getSupplicantState());
-        }
-    }
-
-    private static class IsNotConnectedToNetwork implements Func1<WifiConnected, Boolean> {
-        private final String mQuotedSsid;
-
-        public IsNotConnectedToNetwork(String quotedSsid) {
-            mQuotedSsid = quotedSsid;
-        }
-
-        @Override
-        public Boolean call(WifiConnected connected) {
-            return !mQuotedSsid.equals(connected.getWifiInfo().getSSID());
-        }
-    }
 }
