@@ -10,14 +10,14 @@ import au.com.umranium.nodemcuwifi.wifievents.WifiConnected;
  * @author umran
  */
 public class IsConnectedToNetwork extends Pred<WifiConnected> {
-    private final String mQuotedSsid;
+  private final String mQuotedSsid;
 
-    public IsConnectedToNetwork(String quotedSsid) {
-        mQuotedSsid = quotedSsid;
-    }
+  public IsConnectedToNetwork(String quotedSsid) {
+    mQuotedSsid = quotedSsid;
+  }
 
-    @Override
-    public Boolean call(WifiConnected connected) {
-        return mQuotedSsid.equals(connected.getWifiInfo().getSSID());
-    }
+  @Override
+  public Boolean call(WifiConnected connected) {
+    return mQuotedSsid.equals(connected.getWifiInfo().getSSID());
+  }
 }

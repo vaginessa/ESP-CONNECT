@@ -4,7 +4,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 import au.com.umranium.nodemcuwifi.R;
-import com.jakewharton.rxbinding.view.RxView;
 import rx.Observer;
 
 import java.util.Locale;

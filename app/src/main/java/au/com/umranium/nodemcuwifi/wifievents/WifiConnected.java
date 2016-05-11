@@ -10,16 +10,16 @@ import android.support.annotation.NonNull;
  */
 public class WifiConnected extends WifiConnectivityEvent {
 
-    @NonNull
-    private final WifiInfo mWifiInfo;
+  @NonNull
+  private final WifiInfo mWifiInfo;
 
-    public WifiConnected(@NonNull WifiInfo wifiInfo) {
-        mWifiInfo = wifiInfo;
-    }
+  public WifiConnected(@NonNull WifiInfo wifiInfo) {
+    mWifiInfo = wifiInfo;
+  }
 
-    @NonNull
-    public WifiInfo getWifiInfo() {
-        return mWifiInfo;
-    }
+  @NonNull
+  public WifiInfo getWifiInfo() {
+    return mWifiInfo;
+  }
 
 }

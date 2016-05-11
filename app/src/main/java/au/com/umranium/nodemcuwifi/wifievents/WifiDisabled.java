@@ -7,16 +7,16 @@ package au.com.umranium.nodemcuwifi.wifievents;
  */
 public final class WifiDisabled extends WifiStateEvent {
 
-    private static WifiDisabled sInstance;
+  private static WifiDisabled sInstance;
 
-    public static synchronized WifiDisabled getInstance() {
-        if (sInstance == null) {
-            sInstance = new WifiDisabled();
-        }
-        return sInstance;
+  public static synchronized WifiDisabled getInstance() {
+    if (sInstance == null) {
+      sInstance = new WifiDisabled();
     }
+    return sInstance;
+  }
 
-    private WifiDisabled() {
-        // Do nothing
-    }
+  private WifiDisabled() {
+    // Do nothing
+  }
 }

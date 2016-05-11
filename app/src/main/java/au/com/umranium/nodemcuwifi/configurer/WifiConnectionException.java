@@ -9,16 +9,16 @@ import android.support.annotation.StringRes;
  */
 public class WifiConnectionException extends Exception {
 
-    @StringRes
-    private int mMessageId;
+  @StringRes
+  private int mMessageId;
 
-    public WifiConnectionException(@StringRes int messageId) {
-        mMessageId = messageId;
-    }
+  public WifiConnectionException(@StringRes int messageId) {
+    mMessageId = messageId;
+  }
 
-    @StringRes
-    public int getMessageId() {
-        return mMessageId;
-    }
+  @StringRes
+  public int getMessageId() {
+    return mMessageId;
+  }
 
 }

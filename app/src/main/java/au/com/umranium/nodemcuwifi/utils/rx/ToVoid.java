@@ -9,21 +9,21 @@ import rx.functions.Func1;
  */
 public final class ToVoid<T> implements Func1<T, Void> {
 
-    private static ToVoid sInstance;
+  private static ToVoid sInstance;
 
-    public synchronized static <T> ToVoid<T> getInstance() {
-        if (sInstance == null) {
-            sInstance = new ToVoid();
-        }
-        return sInstance;
+  public synchronized static <T> ToVoid<T> getInstance() {
+    if (sInstance == null) {
+      sInstance = new ToVoid();
     }
+    return sInstance;
+  }
 
-    private ToVoid() {
-        // Do nothing
-    }
+  private ToVoid() {
+    // Do nothing
+  }
 
-    @Override
-    public Void call(T t) {
-        return null;
-    }
+  @Override
+  public Void call(T t) {
+    return null;
+  }
 }

@@ -7,17 +7,17 @@ package au.com.umranium.nodemcuwifi.wifievents;
  */
 public class WifiDisconnected extends WifiConnectivityEvent {
 
-    private static WifiDisconnected sInstance;
+  private static WifiDisconnected sInstance;
 
-    public static synchronized WifiDisconnected getInstance() {
-        if (sInstance == null) {
-            sInstance = new WifiDisconnected();
-        }
-        return sInstance;
+  public static synchronized WifiDisconnected getInstance() {
+    if (sInstance == null) {
+      sInstance = new WifiDisconnected();
     }
+    return sInstance;
+  }
 
-    private WifiDisconnected() {
-        // Do nothing
-    }
+  private WifiDisconnected() {
+    // Do nothing
+  }
 
 }

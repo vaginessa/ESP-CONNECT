@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog.Builder;
-
 import au.com.umranium.nodemcuwifi.R;
 import permissions.dispatcher.PermissionRequest;
 
@@ -18,34 +17,34 @@ import permissions.dispatcher.PermissionRequest;
  */
 public class CourseLocationRationaleDialogFragment extends DialogFragment {
 
-    private PermissionRequest mRequest;
+  private PermissionRequest mRequest;
 
-    public CourseLocationRationaleDialogFragment() {
-        setRetainInstance(true);
-    }
+  public CourseLocationRationaleDialogFragment() {
+    setRetainInstance(true);
+  }
 
-    public void setRequest(PermissionRequest request) {
-        mRequest = request;
-    }
+  public void setRequest(PermissionRequest request) {
+    mRequest = request;
+  }
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new Builder(getContext())
-                .setTitle(R.string.dialog_course_location_rationale_title)
-                .setMessage(R.string.dialog_course_location_rationale_message)
-                .setPositiveButton(android.R.string.yes, new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mRequest.proceed();
-                    }
-                })
-                .setNegativeButton(android.R.string.no, new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mRequest.cancel();
-                    }
-                })
-                .create();
-    }
+  @NonNull
+  @Override
+  public Dialog onCreateDialog(Bundle savedInstanceState) {
+    return new Builder(getContext())
+        .setTitle(R.string.dialog_course_location_rationale_title)
+        .setMessage(R.string.dialog_course_location_rationale_message)
+        .setPositiveButton(android.R.string.yes, new OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            mRequest.proceed();
+          }
+        })
+        .setNegativeButton(android.R.string.no, new OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            mRequest.cancel();
+          }
+        })
+        .create();
+  }
 }

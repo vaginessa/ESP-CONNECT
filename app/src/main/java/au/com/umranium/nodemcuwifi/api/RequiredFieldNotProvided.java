@@ -9,25 +9,25 @@ import java.io.IOException;
  */
 public class RequiredFieldNotProvided extends IOException {
 
-    private final String mFieldName;
-    private final String mMessageName;
+  private final String mFieldName;
+  private final String mMessageName;
 
-    public RequiredFieldNotProvided(String fieldName, String messageName) {
-        mFieldName = fieldName;
-        mMessageName = messageName;
-    }
+  public RequiredFieldNotProvided(String fieldName, String messageName) {
+    mFieldName = fieldName;
+    mMessageName = messageName;
+  }
 
-    public RequiredFieldNotProvided(Throwable cause, String fieldName, String messageName) {
-        super(cause);
-        mFieldName = fieldName;
-        mMessageName = messageName;
-    }
+  public RequiredFieldNotProvided(Throwable cause, String fieldName, String messageName) {
+    super(cause);
+    mFieldName = fieldName;
+    mMessageName = messageName;
+  }
 
-    public String getFieldName() {
-        return mFieldName;
-    }
+  public String getFieldName() {
+    return mFieldName;
+  }
 
-    public String getMessageName() {
-        return mMessageName;
-    }
+  public String getMessageName() {
+    return mMessageName;
+  }
 }

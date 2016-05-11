@@ -2,7 +2,6 @@ package au.com.umranium.nodemcuwifi.configurer.utils.rx;
 
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;
-
 import au.com.umranium.nodemcuwifi.utils.rx.Pred;
 import au.com.umranium.nodemcuwifi.wifievents.WifiConnected;
 
@@ -15,10 +14,10 @@ import au.com.umranium.nodemcuwifi.wifievents.WifiConnected;
  * @author umran
  */
 public class ValidNetworkInfo extends Pred<WifiConnected> {
-    @Override
-    public Boolean call(WifiConnected connected) {
-        WifiInfo wifiInfo = connected.getWifiInfo();
-        return wifiInfo.getNetworkId() > 0 &&
-                SupplicantState.COMPLETED.equals(wifiInfo.getSupplicantState());
-    }
+  @Override
+  public Boolean call(WifiConnected connected) {
+    WifiInfo wifiInfo = connected.getWifiInfo();
+    return wifiInfo.getNetworkId() > 0 &&
+        SupplicantState.COMPLETED.equals(wifiInfo.getSupplicantState());
+  }
 }
