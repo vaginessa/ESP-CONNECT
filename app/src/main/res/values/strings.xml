@@ -15,5 +15,4 @@
   <string name="wificonn_error_msg_unable_to_enable">Unable to enable network</string>
   <string name="wificonn_error_msg_unable_to_disconnect">Unable to disconnect</string>
   <string name="wificonn_error_msg_unable_to_add_network">Unable to add the wifi network</string>
-  <string name="error_title">Oops!</string>
 </resources>
