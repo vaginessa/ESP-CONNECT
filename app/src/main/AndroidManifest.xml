@@ -39,7 +39,8 @@
               android:theme="@style/AppTheme.NoActionBar">
     </activity>
 
-    <activity android:name=".busy.BusyActivity"
+    <activity android:name=".task.scanning.ScanningActivity"
+              android:label="@string/title_activity_scan"
               android:theme="@style/AppTheme.NoActionBar">
     </activity>
 

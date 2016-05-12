@@ -16,8 +16,9 @@
   <string name="welcome_txt_description">Please turn on your ESP8266.\nWhen it is on, press the configure button.
   </string>
 
-  <string name="busy_scanning_title">Searching for ESP8266</string>
-  <string name="busy_scanning_description">Please hold on as we search for your ESP8266</string>
+  <string name="title_activity_scanning">Find ESP8266</string>
+  <string name="scanning_title">Searching for ESP8266</string>
+  <string name="scanning_description">Please hold on as we search for your ESP8266</string>
 
   <string name="title_activity_scan">Find NodeMCU</string>
   <string name="title_activity_configurer">Configure NodeMCU</string>

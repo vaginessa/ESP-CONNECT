@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import au.com.umranium.nodemcuwifi.R;
-import au.com.umranium.nodemcuwifi.busy.BusyActivity;
+import au.com.umranium.nodemcuwifi.task.scanning.ScanningActivity;
 
 /**
  * The activity that displays the welcoming message.
@@ -31,10 +31,7 @@ public class WelcomeActivity extends AppCompatActivity {
   }
 
   private void showBusyActivity() {
-    Intent intent = BusyActivity.createIntent(
-        this,
-        R.string.busy_scanning_title,
-        R.string.busy_scanning_description);
+    Intent intent = ScanningActivity.createIntent(this);
     startActivity(intent);
   }
 
