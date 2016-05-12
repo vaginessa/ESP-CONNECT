@@ -1,17 +1,19 @@
 <resources>
-    <string name="app_name">NodeMCU WiFi Manager</string>
-    <string name="action_settings">Settings</string>
-    <string name="dialog_course_location_rationale_message">Accessing WiFi scan results can allow an app to determine
-        your location, however, this app requires to access the WiFi scan results to automatically find the NodeMCU.
-        Proceed to permission dialog box?
-    </string>
-    <string name="dialog_course_location_rationale_title">Permission to course location required</string>
-    <string name="message_no_course_location_permission">App has not been granted course location permission. It can\'t
-        continue.
-    </string>
-    <string name="title_activity_scan">Find NodeMCU</string>
-    <string name="title_activity_configurer">Configure NodeMCU</string>
-    <string name="wificonn_error_msg_unable_to_enable">Unable to enable network</string>
-    <string name="wificonn_error_msg_unable_to_disconnect">Unable to disconnect</string>
-    <string name="wificonn_error_msg_unable_to_add_network">Unable to add the wifi network</string>
+  <string name="app_name">NodeMCU WiFi Manager</string>
+  <string name="action_settings">Settings</string>
+  <string name="dialog_course_location_rationale_message">Accessing WiFi scan results can allow an app to determine
+    your location, however, this app requires to access the WiFi scan results to automatically find the NodeMCU.
+    Proceed to permission dialog box?
+  </string>
+  <string name="dialog_course_location_rationale_title">Permission to course location required</string>
+  <string name="message_no_course_location_permission">App has not been granted course location permission. It can\'t
+    continue.
+  </string>
+  <string name="title_activity_scan">Find NodeMCU</string>
+  <string name="title_activity_configurer">Configure NodeMCU</string>
+  <string name="title_activity_error">Oops!</string>
+  <string name="wificonn_error_msg_unable_to_enable">Unable to enable network</string>
+  <string name="wificonn_error_msg_unable_to_disconnect">Unable to disconnect</string>
+  <string name="wificonn_error_msg_unable_to_add_network">Unable to add the wifi network</string>
+  <string name="error_title">Oops!</string>
 </resources>
