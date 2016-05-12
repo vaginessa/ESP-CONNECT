@@ -11,7 +11,7 @@ import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.utils.IntentExtras;
 
 /**
- * An activity that displays a generic error.
+ * An generic activity that displays errors.
  */
 public class ErrorActivity extends AppCompatActivity {
 
