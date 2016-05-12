@@ -20,6 +20,10 @@
   <string name="scanning_title">Searching for ESP8266</string>
   <string name="scanning_description">Please hold on as we search for your ESP8266</string>
 
+  <string name="title_activity_connecting">Connect to ESP8266</string>
+  <string name="connecting_title">Connecting to your ESP8266</string>
+  <string name="connecting_description">Please hold on as we connect to your ESP8266</string>
+
   <string name="title_activity_scan">Find NodeMCU</string>
   <string name="title_activity_configurer">Configure NodeMCU</string>
   <string name="title_activity_error">Oops!</string>
