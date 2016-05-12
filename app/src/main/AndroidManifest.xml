@@ -14,7 +14,7 @@
                android:supportsRtl="true"
                android:theme="@style/AppTheme">
 
-    <activity android:name=".welcome.WelcomeActivity"
+    <activity android:name=".presentation.welcome.WelcomeActivity"
               android:label="@string/title_activity_welcome"
               android:theme="@style/AppTheme.NoActionBar">
       <intent-filter>
@@ -34,12 +34,12 @@
               android:theme="@style/AppTheme.NoActionBar">
     </activity>
 
-    <activity android:name=".error.ErrorActivity"
+    <activity android:name=".presentation.error.ErrorActivity"
               android:label="@string/title_activity_error"
               android:theme="@style/AppTheme.NoActionBar">
     </activity>
 
-    <activity android:name=".task.scanning.ScanningActivity"
+    <activity android:name=".presentation.task.scanning.ScanningActivity"
               android:label="@string/title_activity_scan"
               android:theme="@style/AppTheme.NoActionBar">
     </activity>

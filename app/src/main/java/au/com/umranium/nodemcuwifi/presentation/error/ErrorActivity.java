@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi.error;
+package au.com.umranium.nodemcuwifi.presentation.error;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import au.com.umranium.nodemcuwifi.R;
-import au.com.umranium.nodemcuwifi.utils.IntentExtras;
+import au.com.umranium.nodemcuwifi.presentation.utils.IntentExtras;
 
 /**
  * An generic activity that displays errors.
