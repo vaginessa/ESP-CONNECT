@@ -3,6 +3,7 @@ package au.com.umranium.nodemcuwifi.presentation.task.scanning;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
 import au.com.umranium.nodemcuwifi.utils.BootTimeUtils;
 
 import java.util.ArrayList;

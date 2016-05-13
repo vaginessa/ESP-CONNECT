@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi.presentation.task.scanning;
+package au.com.umranium.nodemcuwifi.presentation.common;
 
 import android.os.Parcel;
 import android.os.Parcelable;

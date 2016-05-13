@@ -62,6 +62,7 @@ public abstract class BaseTaskController {
 
     void setMessage(@StringRes int message);
 
+    // TODO: Eventually remove this
     void proceedToNextTask();
 
     void finishTaskSuccessfully();

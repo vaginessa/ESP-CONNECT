@@ -20,6 +20,9 @@
   <string name="scanning_title">Searching for ESP8266</string>
   <string name="scanning_description">Please hold on as we search for your ESP8266</string>
 
+  <string name="scanning_error_noap_title">Unable to find any ESP8266 nodes</string>
+  <string name="scanning_error_noap_description">We were unable to find any ESP8266 nodes.\nAre you sure your ESP8266 is turned on and in the configuration mode?</string>
+
   <string name="title_activity_connecting">Connecting to ESP8266</string>
   <string name="connecting_title">Connecting to your ESP8266</string>
   <string name="connecting_description">Please hold on as we connect to your ESP8266</string>

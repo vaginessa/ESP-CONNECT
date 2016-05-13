@@ -82,10 +82,15 @@ abstract public class BaseTaskActivity extends AppCompatActivity {
     txtDescription.setText(message);
   }
 
+  // TODO: Eventually remove this
   abstract protected Intent createIntentForNextTask();
 
+  // TODO: Eventually remove this
   public void proceedToNextTask() {
-    Intent intent = createIntentForNextTask();
+    startNextActivity(createIntentForNextTask());
+  }
+
+  protected void startNextActivity(Intent intent) {
     startActivityForResult(intent, NEXT_TASK_REQUEST_CODE);
   }
 

@@ -4,10 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
 import android.support.annotation.NonNull;
+import au.com.umranium.nodemcuwifi.R;
+import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
+import au.com.umranium.nodemcuwifi.presentation.error.ErrorActivity;
 import au.com.umranium.nodemcuwifi.presentation.task.common.BaseTaskActivity;
 import au.com.umranium.nodemcuwifi.presentation.task.common.BaseTaskController;
-import au.com.umranium.nodemcuwifi.presentation.task.connecting.ConnectingActivity;
 import au.com.umranium.nodemcuwifi.wifievents.WifiEvents;
+
+import java.util.List;
 
 /**
  * An activity that scans for ESP8266 nodes.
@@ -29,6 +33,22 @@ public class ScanningActivity extends BaseTaskActivity implements ScanningContro
 
   @Override
   protected Intent createIntentForNextTask() {
-    return ConnectingActivity.createIntent(this);
+    throw new RuntimeException();
+  }
+
+  @Override
+  public void proceedWithAccessPoints(List<ScannedAccessPoint> accessPoints) {
+    Intent intent = ErrorActivity.createIntent(this,
+        R.string.scanning_error_noap_title,
+        R.string.scanning_error_noap_description);
+    startNextActivity(intent);
+  }
+
+  @Override
+  public void proceedWithNoAccessPoints() {
+    Intent intent = ErrorActivity.createIntent(this,
+        R.string.scanning_error_noap_title,
+        R.string.scanning_error_noap_description);
+    startNextActivity(intent);
   }
 }

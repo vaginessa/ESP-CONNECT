@@ -3,6 +3,7 @@ package au.com.umranium.nodemcuwifi.presentation.task.scanning;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 import au.com.umranium.nodemcuwifi.R;
+import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
 import au.com.umranium.nodemcuwifi.presentation.task.common.BaseTaskController;
 import au.com.umranium.nodemcuwifi.wifievents.WifiEvents;
 import au.com.umranium.nodemcuwifi.wifievents.WifiScanComplete;
@@ -80,6 +81,8 @@ public class ScanningController extends BaseTaskController {
   }
 
   public interface Surface extends BaseTaskController.Surface {
+    void proceedWithAccessPoints(List<ScannedAccessPoint> accessPoints);
 
+    void proceedWithNoAccessPoints();
   }
 }
