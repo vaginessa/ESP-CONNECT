@@ -24,8 +24,8 @@ public class ConfiguringActivity extends BaseTaskActivity implements Configuring
   }
 
   @Override
-  public void proceedToNextScreen() {
-    startActivity(EndActivity.createIntent(this));
+  protected Intent createIntentForNextTask() {
+    return EndActivity.createIntent(this);
   }
 
 }

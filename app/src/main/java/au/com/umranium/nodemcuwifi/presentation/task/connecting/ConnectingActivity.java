@@ -24,7 +24,7 @@ public class ConnectingActivity extends BaseTaskActivity implements ConnectingCo
   }
 
   @Override
-  public void proceedToNextScreen() {
-    startActivity(ConfiguringActivity.createIntent(this));
+  protected Intent createIntentForNextTask() {
+    return ConfiguringActivity.createIntent(this);
   }
 }

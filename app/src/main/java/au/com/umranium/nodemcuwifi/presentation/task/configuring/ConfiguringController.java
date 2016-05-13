@@ -19,21 +19,6 @@ public class ConfiguringController extends BaseTaskController {
     surface.setMessage(R.string.configuring_description);
   }
 
-  @Override
-  public void onStart() {
-
-  }
-
-  @Override
-  public void onStop() {
-
-  }
-
-  @Override
-  public void onDestroy() {
-
-  }
-
   public interface Surface extends BaseTaskController.Surface {
 
   }

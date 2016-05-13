@@ -24,7 +24,7 @@ public class ScanningActivity extends BaseTaskActivity implements ScanningContro
   }
 
   @Override
-  public void proceedToNextScreen() {
-    startActivity(ConnectingActivity.createIntent(this));
+  protected Intent createIntentForNextTask() {
+    return ConnectingActivity.createIntent(this);
   }
 }

@@ -19,21 +19,6 @@ public class ConnectingController extends BaseTaskController {
     surface.setMessage(R.string.connecting_description);
   }
 
-  @Override
-  public void onStart() {
-
-  }
-
-  @Override
-  public void onStop() {
-
-  }
-
-  @Override
-  public void onDestroy() {
-
-  }
-
   public interface Surface extends BaseTaskController.Surface {
 
   }
