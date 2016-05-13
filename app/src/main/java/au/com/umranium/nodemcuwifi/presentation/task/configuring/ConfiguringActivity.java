@@ -27,5 +27,6 @@ public class ConfiguringActivity extends BaseTaskActivity {
   @Override
   protected void proceed() {
     startActivity(EndActivity.createIntent(this));
+    finish();
   }
 }

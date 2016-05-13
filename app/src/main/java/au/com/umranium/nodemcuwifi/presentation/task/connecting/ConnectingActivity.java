@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.presentation.task.BaseTaskActivity;
+import au.com.umranium.nodemcuwifi.presentation.task.configuring.ConfiguringActivity;
 
 /**
  * An activity that connects to a ESP8266 node.
@@ -25,6 +26,7 @@ public class ConnectingActivity extends BaseTaskActivity {
 
   @Override
   protected void proceed() {
-
+    startActivity(ConfiguringActivity.createIntent(this));
+    finish();
   }
 }

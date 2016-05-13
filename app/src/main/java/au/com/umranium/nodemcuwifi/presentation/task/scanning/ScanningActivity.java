@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.presentation.task.BaseTaskActivity;
+import au.com.umranium.nodemcuwifi.presentation.task.connecting.ConnectingActivity;
 
 /**
  * An activity that scans for ESP8266 nodes.
@@ -25,6 +26,7 @@ public class ScanningActivity extends BaseTaskActivity {
 
   @Override
   protected void proceed() {
-
+    startActivity(ConnectingActivity.createIntent(this));
+    finish();
   }
 }
