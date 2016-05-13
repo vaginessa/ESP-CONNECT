@@ -12,15 +12,15 @@ import au.com.umranium.nodemcuwifi.presentation.task.connecting.ConnectingActivi
  */
 public class ScanningActivity extends BaseTaskActivity implements ScanningController.Surface {
 
+  @NonNull
+  public static Intent createIntent(@NonNull Context context) {
+    return new Intent(context, ScanningActivity.class);
+  }
+
   @Override
   @NonNull
   protected BaseTaskController createController() {
     return new ScanningController(this);
-  }
-
-  @NonNull
-  public static Intent createIntent(@NonNull Context context) {
-    return new Intent(context, ScanningActivity.class);
   }
 
   @Override

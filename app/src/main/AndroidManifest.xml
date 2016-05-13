@@ -49,6 +49,16 @@
               android:theme="@style/AppTheme.NoActionBar">
     </activity>
 
+    <activity android:name=".presentation.task.configuring.ConfiguringActivity"
+              android:label="@string/title_activity_configuring"
+              android:theme="@style/AppTheme.NoActionBar">
+    </activity>
+
+    <activity android:name=".presentation.end.EndActivity"
+              android:label="@string/title_activity_end"
+              android:theme="@style/AppTheme.NoActionBar">
+    </activity>
+
     <receiver android:name=".wifistatereceiver.WifiStateChangeReceiver">
       <intent-filter>
         <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
