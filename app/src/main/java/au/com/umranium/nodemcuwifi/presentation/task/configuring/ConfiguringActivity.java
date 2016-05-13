@@ -23,4 +23,8 @@ public class ConfiguringActivity extends BaseTaskActivity {
     initUi(R.string.configuring_title, R.string.configuring_description);
   }
 
+  @Override
+  protected void proceed() {
+
+  }
 }

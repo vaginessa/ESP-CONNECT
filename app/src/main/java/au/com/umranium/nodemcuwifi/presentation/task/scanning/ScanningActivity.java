@@ -23,4 +23,8 @@ public class ScanningActivity extends BaseTaskActivity {
     initUi(R.string.scanning_title, R.string.scanning_description);
   }
 
+  @Override
+  protected void proceed() {
+
+  }
 }

@@ -23,4 +23,8 @@ public class ConnectingActivity extends BaseTaskActivity {
     initUi(R.string.connecting_title, R.string.connecting_description);
   }
 
+  @Override
+  protected void proceed() {
+
+  }
 }
