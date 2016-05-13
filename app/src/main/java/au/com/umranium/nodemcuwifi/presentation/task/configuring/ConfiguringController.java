@@ -1,0 +1,32 @@
+package au.com.umranium.nodemcuwifi.presentation.task.configuring;
+
+import au.com.umranium.nodemcuwifi.presentation.task.common.BaseTaskController;
+
+/**
+ * Controller for the configuring task screen.
+ */
+public class ConfiguringController extends BaseTaskController {
+
+  public ConfiguringController(Surface surface) {
+    super(surface);
+  }
+
+  @Override
+  public void onStart() {
+
+  }
+
+  @Override
+  public void onStop() {
+
+  }
+
+  @Override
+  public void onDestroy() {
+
+  }
+
+  public interface Surface extends BaseTaskController.Surface {
+
+  }
+}

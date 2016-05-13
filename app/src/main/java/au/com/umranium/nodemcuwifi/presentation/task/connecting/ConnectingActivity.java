@@ -2,31 +2,29 @@ package au.com.umranium.nodemcuwifi.presentation.task.connecting;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import au.com.umranium.nodemcuwifi.R;
-import au.com.umranium.nodemcuwifi.presentation.task.BaseTaskActivity;
+import au.com.umranium.nodemcuwifi.presentation.task.common.BaseTaskActivity;
+import au.com.umranium.nodemcuwifi.presentation.task.common.BaseTaskController;
 import au.com.umranium.nodemcuwifi.presentation.task.configuring.ConfiguringActivity;
 
 /**
  * An activity that connects to a ESP8266 node.
  */
-public class ConnectingActivity extends BaseTaskActivity {
+public class ConnectingActivity extends BaseTaskActivity implements ConnectingController.Surface {
 
   @NonNull
   public static Intent createIntent(@NonNull Context context) {
     return new Intent(context, ConnectingActivity.class);
   }
 
+  @NonNull
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    initUi(R.string.connecting_title, R.string.connecting_description);
+  protected BaseTaskController createController() {
+    return new ConnectingController(this);
   }
 
   @Override
-  protected void proceed() {
+  public void proceedToNextScreen() {
     startActivity(ConfiguringActivity.createIntent(this));
-    finish();
   }
 }

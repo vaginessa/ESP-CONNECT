@@ -1,0 +1,51 @@
+package au.com.umranium.nodemcuwifi.presentation.task.common;
+
+import android.support.annotation.StringRes;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+
+import java.util.concurrent.TimeUnit;
+
+/**
+ * A controller (containing the logic) for the task activities.
+ */
+public abstract class BaseTaskController {
+
+  protected final Surface surface;
+
+  public BaseTaskController(Surface surface) {
+    this.surface = surface;
+  }
+
+  public void onCreate() {
+    // TODO: Remove this
+    Observable
+        .timer(2, TimeUnit.SECONDS)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Action1<Long>() {
+          @Override
+          public void call(Long aLong) {
+            surface.proceedToNextScreen();
+            surface.finishActivity();
+          }
+        });
+  }
+
+  public abstract void onStart();
+
+  public abstract void onStop();
+
+  public abstract void onDestroy();
+
+  public interface Surface {
+
+    void setTitle(@StringRes int title);
+
+    void setMessage(@StringRes int message);
+
+    void proceedToNextScreen();
+
+    void finishActivity();
+  }
+}
