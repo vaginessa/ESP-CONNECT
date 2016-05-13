@@ -19,7 +19,8 @@ import java.util.List;
  */
 public class ScanningController extends BaseTaskController {
 
-  private static final String NODE_MCU_AP_FMT = "ESP.*";
+  // TODO: Change this to ESP.*
+  private static final String NODE_MCU_AP_FMT = ".*";
 
   private final Surface surface;
   private final WifiEvents wifiEvents;
@@ -72,7 +73,11 @@ public class ScanningController extends BaseTaskController {
         .subscribe(new Action1<List<ScannedAccessPoint>>() {
           @Override
           public void call(List<ScannedAccessPoint> accessPoints) {
-            Log.d("Scanning", "found " + accessPoints.size() + " access points.");
+            if (accessPoints.isEmpty()) {
+              surface.proceedWithNoAccessPoints();
+            } else {
+              surface.proceedWithAccessPoints(accessPoints);
+            }
           }
         });
   }

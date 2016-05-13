@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.wifi.WifiManager;
 import android.support.annotation.NonNull;
 import au.com.umranium.nodemcuwifi.R;
+import au.com.umranium.nodemcuwifi.presentation.aplist.AccessPointListActivity;
 import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
 import au.com.umranium.nodemcuwifi.presentation.error.ErrorActivity;
 import au.com.umranium.nodemcuwifi.presentation.task.common.BaseTaskActivity;
@@ -38,9 +39,7 @@ public class ScanningActivity extends BaseTaskActivity implements ScanningContro
 
   @Override
   public void proceedWithAccessPoints(List<ScannedAccessPoint> accessPoints) {
-    Intent intent = ErrorActivity.createIntent(this,
-        R.string.scanning_error_noap_title,
-        R.string.scanning_error_noap_description);
+    Intent intent = AccessPointListActivity.createIntent(this, accessPoints);
     startNextActivity(intent);
   }
 
