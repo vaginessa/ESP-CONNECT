@@ -27,6 +27,7 @@
     android:layout_height="wrap_content"
     android:layout_centerHorizontal="true"
     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+    android:gravity="center"
     tools:text="It looks like the shit hit the fan"/>
 
   <Button
