@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi.configurer.utils.rx;
+package au.com.umranium.nodemcuwifi.old.configurer.utils.rx;
 
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;

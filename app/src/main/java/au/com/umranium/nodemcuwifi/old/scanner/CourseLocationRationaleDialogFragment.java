@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi.scanner;
+package au.com.umranium.nodemcuwifi.old.scanner;
 
 import android.app.Dialog;
 import android.content.DialogInterface;

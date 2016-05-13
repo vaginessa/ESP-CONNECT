@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi.configurer;
+package au.com.umranium.nodemcuwifi.old.configurer;
 
 import android.app.Activity;
 import android.content.Context;
@@ -20,8 +20,8 @@ import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.api.NodeMcuService;
 import au.com.umranium.nodemcuwifi.api.NodeMcuService.Builder;
 import au.com.umranium.nodemcuwifi.api.State;
-import au.com.umranium.nodemcuwifi.configurer.utils.rx.IsConnectedToNetwork;
-import au.com.umranium.nodemcuwifi.configurer.utils.rx.ValidNetworkInfo;
+import au.com.umranium.nodemcuwifi.old.configurer.utils.rx.IsConnectedToNetwork;
+import au.com.umranium.nodemcuwifi.old.configurer.utils.rx.ValidNetworkInfo;
 import au.com.umranium.nodemcuwifi.utils.rx.ObservableValue;
 import au.com.umranium.nodemcuwifi.utils.rx.ToInstance;
 import au.com.umranium.nodemcuwifi.utils.rx.ToVoid;

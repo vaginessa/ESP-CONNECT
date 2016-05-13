@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi.configurer.utils.rx;
+package au.com.umranium.nodemcuwifi.old.configurer.utils.rx;
 
 import au.com.umranium.nodemcuwifi.utils.rx.Pred;
 import au.com.umranium.nodemcuwifi.wifievents.WifiConnected;

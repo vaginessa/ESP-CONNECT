@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi.scanner;
+package au.com.umranium.nodemcuwifi.old.scanner;
 
 import android.Manifest.permission;
 import android.annotation.SuppressLint;
@@ -18,7 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import au.com.umranium.nodemcuwifi.R;
-import au.com.umranium.nodemcuwifi.configurer.ConfigurerActivity;
+import au.com.umranium.nodemcuwifi.old.configurer.ConfigurerActivity;
 import au.com.umranium.nodemcuwifi.utils.BootTimeUtils;
 import au.com.umranium.nodemcuwifi.wifievents.*;
 import permissions.dispatcher.*;

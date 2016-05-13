@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi.configurer;
+package au.com.umranium.nodemcuwifi.old.configurer;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import au.com.umranium.nodemcuwifi.R;
-import au.com.umranium.nodemcuwifi.configurer.ConfigurerFragment.SsidProvider;
+import au.com.umranium.nodemcuwifi.old.configurer.ConfigurerFragment.SsidProvider;
 
 public class ConfigurerActivity extends AppCompatActivity implements SsidProvider {
 

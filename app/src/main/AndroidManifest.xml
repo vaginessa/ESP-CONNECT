@@ -24,12 +24,12 @@
       </intent-filter>
     </activity>
 
-    <activity android:name=".scanner.ScanActivity"
+    <activity android:name=".old.scanner.ScanActivity"
               android:label="@string/title_activity_scan"
               android:theme="@style/AppTheme.NoActionBar">
     </activity>
 
-    <activity android:name=".configurer.ConfigurerActivity"
+    <activity android:name=".old.configurer.ConfigurerActivity"
               android:label="@string/title_activity_configurer"
               android:theme="@style/AppTheme.NoActionBar">
     </activity>
