@@ -32,6 +32,10 @@
   <string name="title_activity_configurer">Configure NodeMCU</string>
   <string name="title_activity_error">Oops!</string>
 
+  <string name="title_activity_end">ESP8266 Configured</string>
+  <string name="end_txt_title">All done!</string>
+  <string name="end_txt_description">Your ESP8266 has been successfully configured.</string>
+
   <string name="wificonn_error_msg_unable_to_enable">Unable to enable network</string>
   <string name="wificonn_error_msg_unable_to_disconnect">Unable to disconnect</string>
   <string name="wificonn_error_msg_unable_to_add_network">Unable to add the wifi network</string>
