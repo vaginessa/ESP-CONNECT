@@ -8,7 +8,6 @@ import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 import au.com.umranium.nodemcuwifi.R;
-import au.com.umranium.nodemcuwifi.presentation.task.connecting.ConnectingActivity;
 
 /**
  * A generic activity that performs a long running task.
@@ -17,8 +16,7 @@ abstract public class BaseTaskActivity extends AppCompatActivity {
 
   private static final int NEXT_TASK_REQUEST_CODE = 1;
 
-  private final BaseTaskController controller = createController();
-
+  private BaseTaskController controller;
   private TextView txtTitle;
   private TextView txtDescription;
 
@@ -28,6 +26,7 @@ abstract public class BaseTaskActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    controller = createController();
     setContentView(R.layout.activity_base_task);
     txtTitle = (TextView) findViewById(R.id.txt_title);
     assert txtTitle != null;
