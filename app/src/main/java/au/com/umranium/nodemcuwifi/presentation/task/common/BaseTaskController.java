@@ -1,6 +1,7 @@
 package au.com.umranium.nodemcuwifi.presentation.task.common;
 
 import android.support.annotation.StringRes;
+import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -11,16 +12,14 @@ import java.util.concurrent.TimeUnit;
 /**
  * A controller (containing the logic) for the task activities.
  */
-public abstract class BaseTaskController {
+public abstract class BaseTaskController extends BaseController {
 
-  protected final Surface surface;
+  private final Surface surface;
   private Subscription subscription;
 
   public BaseTaskController(Surface surface) {
+    super(surface);
     this.surface = surface;
-  }
-
-  public void onCreate() {
   }
 
   public void onStart() {
@@ -40,23 +39,7 @@ public abstract class BaseTaskController {
     subscription.unsubscribe();
   }
 
-  public void onDestroy() {
-
-  }
-
-  public void backPressed() {
-    surface.cancelTask();
-  }
-
-  public void nextTaskWasCancelled() {
-
-  }
-
-  public void nextTaskCompleted() {
-    surface.finishTaskSuccessfully();
-  }
-
-  public interface Surface {
+  public interface Surface extends BaseController.Surface {
 
     void setTitle(@StringRes int title);
 
@@ -64,9 +47,5 @@ public abstract class BaseTaskController {
 
     // TODO: Eventually remove this
     void proceedToNextTask();
-
-    void finishTaskSuccessfully();
-
-    void cancelTask();
   }
 }

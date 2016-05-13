@@ -1,6 +1,7 @@
 package au.com.umranium.nodemcuwifi.presentation.task.configuring;
 
 import au.com.umranium.nodemcuwifi.R;
+import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
 import au.com.umranium.nodemcuwifi.presentation.task.common.BaseTaskController;
 
 /**
@@ -8,8 +9,11 @@ import au.com.umranium.nodemcuwifi.presentation.task.common.BaseTaskController;
  */
 public class ConfiguringController extends BaseTaskController {
 
+  private final Surface surface;
+
   public ConfiguringController(Surface surface) {
     super(surface);
+    this.surface = surface;
   }
 
   @Override

@@ -8,8 +8,11 @@ import au.com.umranium.nodemcuwifi.presentation.task.common.BaseTaskController;
  */
 public class ConnectingController extends BaseTaskController {
 
+  private final Surface surface;
+
   public ConnectingController(Surface surface) {
     super(surface);
+    this.surface = surface;
   }
 
   @Override
