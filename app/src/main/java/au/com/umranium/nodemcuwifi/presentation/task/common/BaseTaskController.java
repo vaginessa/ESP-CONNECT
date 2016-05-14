@@ -35,6 +35,14 @@ public abstract class BaseTaskController extends BaseController {
         });
   }
 
+  @Override
+  public void backPressed() {
+    super.backPressed();
+    if (subscription != null) {
+      subscription.unsubscribe();
+    }
+  }
+
   public void onStop() {
     subscription.unsubscribe();
   }
@@ -42,9 +50,11 @@ public abstract class BaseTaskController extends BaseController {
   public interface Surface extends BaseController.Surface {
 
     void setTitle(@StringRes int title);
+
     void setTitle(String title);
 
     void setMessage(@StringRes int message);
+
     void setMessage(String message);
 
     // TODO: Eventually remove this
