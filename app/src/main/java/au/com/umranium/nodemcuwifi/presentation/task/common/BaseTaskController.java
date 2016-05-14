@@ -42,8 +42,10 @@ public abstract class BaseTaskController extends BaseController {
   public interface Surface extends BaseController.Surface {
 
     void setTitle(@StringRes int title);
+    void setTitle(String title);
 
     void setMessage(@StringRes int message);
+    void setMessage(String message);
 
     // TODO: Eventually remove this
     void proceedToNextTask();

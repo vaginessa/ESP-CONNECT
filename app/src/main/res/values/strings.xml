@@ -26,8 +26,8 @@
   <string name="title_activity_access_point_list">Found ESP8266 Nodes</string>
 
   <string name="title_activity_connecting">Connecting to ESP8266</string>
-  <string name="connecting_title">Connecting to your ESP8266</string>
-  <string name="connecting_description">Please hold on as we connect to your ESP8266</string>
+  <string name="connecting_title">Connecting to %s</string>
+  <string name="connecting_description">Please hold on as we connect to %s</string>
 
   <string name="title_activity_configuring">Configuring ESP8266</string>
   <string name="configuring_title">Configuring your ESP8266</string>

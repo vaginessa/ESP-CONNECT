@@ -27,7 +27,15 @@ abstract public class BaseTaskActivity extends BaseActivity {
     txtTitle.setText(title);
   }
 
+  public void setTitle(String title) {
+    txtTitle.setText(title);
+  }
+
   public void setMessage(@StringRes int message) {
+    txtDescription.setText(message);
+  }
+
+  public void setMessage(String message) {
     txtDescription.setText(message);
   }
 

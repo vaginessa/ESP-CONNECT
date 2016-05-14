@@ -2,17 +2,17 @@ package au.com.umranium.nodemcuwifi.presentation.aplist;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import au.com.umranium.nodemcuwifi.R;
+import au.com.umranium.nodemcuwifi.presentation.common.BaseActivity;
+import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
 import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
+import au.com.umranium.nodemcuwifi.presentation.task.connecting.ConnectingActivity;
 import au.com.umranium.nodemcuwifi.presentation.utils.IntentExtras;
-import rx.functions.Action1;
-import rx.subjects.PublishSubject;
+import rx.Observer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +20,11 @@ import java.util.List;
 /**
  * The activity that displays a list of ESP8266 access points for the user to pick one.
  */
-public class AccessPointListActivity extends AppCompatActivity {
+public class AccessPointListActivity extends BaseActivity implements AccessPointListController.Surface {
 
   private static final String PARAM_ACCESS_POINTS = "access_points";
+  private RecyclerView list;
+  private AccessPointArrayAdapter adapter;
 
   @NonNull
   public static Intent createIntent(@NonNull Context context,
@@ -31,31 +33,6 @@ public class AccessPointListActivity extends AppCompatActivity {
     ScannedAccessPoint[] accessPointsArr = accessPoints.toArray(new ScannedAccessPoint[accessPoints.size()]);
     intent.putExtra(PARAM_ACCESS_POINTS, accessPointsArr);
     return intent;
-  }
-
-  private final PublishSubject<ScannedAccessPoint> mAccessPointClickEvents = PublishSubject.create();
-
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_access_point_list);
-
-
-    RecyclerView list = (RecyclerView) findViewById(R.id.ap_list);
-    assert list != null;
-    list.setLayoutManager(new LinearLayoutManager(this));
-
-    AccessPointArrayAdapter adapter = new AccessPointArrayAdapter(this, mAccessPointClickEvents);
-    list.setAdapter(adapter);
-
-    adapter.populate(getAccessPointsFromIntent());
-
-    mAccessPointClickEvents.subscribe(new Action1<ScannedAccessPoint>() {
-      @Override
-      public void call(@NonNull ScannedAccessPoint accessPoint) {
-        onAccessPointClicked(accessPoint);
-      }
-    });
   }
 
   private List<ScannedAccessPoint> getAccessPointsFromIntent() {
@@ -67,8 +44,34 @@ public class AccessPointListActivity extends AppCompatActivity {
     return accessPoints;
   }
 
-  private void onAccessPointClicked(@NonNull ScannedAccessPoint accessPoint) {
-
+  @NonNull
+  @Override
+  protected BaseController createController() {
+    return new AccessPointListController(this, getAccessPointsFromIntent());
   }
 
+  @Override
+  protected void initUi() {
+    setContentView(R.layout.activity_access_point_list);
+
+    list = (RecyclerView) findViewById(R.id.ap_list);
+    assert list != null;
+    list.setLayoutManager(new LinearLayoutManager(this));
+  }
+
+  @Override
+  public void initListAdapter(Observer<ScannedAccessPoint> accessPointClickObserver) {
+    adapter = new AccessPointArrayAdapter(this, accessPointClickObserver);
+    list.setAdapter(adapter);
+  }
+
+  @Override
+  public void showAccessPoints(List<ScannedAccessPoint> accessPoints) {
+    adapter.populate(accessPoints);
+  }
+
+  @Override
+  public void proceedToNextTask(ScannedAccessPoint accessPoint) {
+    startNextActivity(ConnectingActivity.createIntent(this, accessPoint));
+  }
 }
