@@ -1,12 +1,12 @@
 package au.com.umranium.nodemcuwifi.presentation.task.scanning;
 
 import android.net.wifi.WifiManager;
-import android.util.Log;
 import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
 import au.com.umranium.nodemcuwifi.presentation.task.common.BaseTaskController;
 import au.com.umranium.nodemcuwifi.wifievents.WifiEvents;
 import au.com.umranium.nodemcuwifi.wifievents.WifiScanComplete;
+import rx.Observable;
 import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Action1;
@@ -55,6 +55,20 @@ public class ScanningController extends BaseTaskController {
   }
 
   private Subscription startWifiScans() {
+    return getAccessPoints()
+        .subscribe(new Action1<List<ScannedAccessPoint>>() {
+          @Override
+          public void call(List<ScannedAccessPoint> accessPoints) {
+            if (accessPoints.isEmpty()) {
+              surface.proceedWithNoAccessPoints();
+            } else {
+              surface.proceedWithAccessPoints(accessPoints);
+            }
+          }
+        });
+  }
+
+  private Observable<List<ScannedAccessPoint>> getAccessPoints() {
     return wifiEvents
         .getEvents()
         .ofType(WifiScanComplete.class)
@@ -68,16 +82,6 @@ public class ScanningController extends BaseTaskController {
           @Override
           public List<ScannedAccessPoint> call(WifiScanComplete wifiScanComplete) {
             return accessPointExtractor.extract(lastScanRequestTimestamp);
-          }
-        })
-        .subscribe(new Action1<List<ScannedAccessPoint>>() {
-          @Override
-          public void call(List<ScannedAccessPoint> accessPoints) {
-            if (accessPoints.isEmpty()) {
-              surface.proceedWithNoAccessPoints();
-            } else {
-              surface.proceedWithAccessPoints(accessPoints);
-            }
           }
         });
   }
