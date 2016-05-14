@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import au.com.umranium.nodemcuwifi.R;
 
 /**
  * A generic activity from which other activities inherit from.
@@ -71,6 +72,7 @@ abstract public class BaseActivity extends AppCompatActivity {
 
   protected void startNextActivity(Intent intent) {
     startActivityForResult(intent, NEXT_TASK_REQUEST_CODE);
+    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
   }
 
   @SuppressWarnings("unused")
@@ -85,4 +87,9 @@ abstract public class BaseActivity extends AppCompatActivity {
     finish();
   }
 
+  @Override
+  public void finish() {
+    super.finish();
+    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+  }
 }
