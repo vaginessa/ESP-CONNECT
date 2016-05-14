@@ -14,7 +14,7 @@ abstract public class BaseActivity extends AppCompatActivity {
 
   private static final int NEXT_TASK_REQUEST_CODE = 1;
 
-  private BaseController controller;
+  protected BaseController controller;
 
   @NonNull
   protected abstract BaseController createController();

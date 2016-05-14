@@ -2,20 +2,21 @@ package au.com.umranium.nodemcuwifi.presentation.error;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import au.com.umranium.nodemcuwifi.R;
+import au.com.umranium.nodemcuwifi.presentation.common.BaseActivity;
+import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
+import au.com.umranium.nodemcuwifi.presentation.end.EndController;
 import au.com.umranium.nodemcuwifi.presentation.utils.IntentExtras;
 
 /**
  * An generic activity that displays errors.
  */
-public class ErrorActivity extends AppCompatActivity {
+public class ErrorActivity extends BaseActivity implements ErrorController.Surface {
 
   private static final String PARAM_TITLE = "title";
   private static final String PARAM_DESCRIPTION = "description";
@@ -30,9 +31,14 @@ public class ErrorActivity extends AppCompatActivity {
     return intent;
   }
 
+  @NonNull
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  protected BaseController createController() {
+    return new EndController(this);
+  }
+
+  @Override
+  protected void initUi() {
     setContentView(R.layout.activity_error);
 
     int title = IntentExtras.getIntExtra(this, PARAM_TITLE);
@@ -51,8 +57,13 @@ public class ErrorActivity extends AppCompatActivity {
     btnOk.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        ErrorActivity.this.finish();
+        ((ErrorController) controller).onOkBtnClicked();
       }
     });
+  }
+
+  @Override
+  public void proceedToPrevScreen() {
+    ErrorActivity.this.finish();
   }
 }

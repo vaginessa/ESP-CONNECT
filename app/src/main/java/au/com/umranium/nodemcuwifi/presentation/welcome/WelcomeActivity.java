@@ -1,21 +1,27 @@
 package au.com.umranium.nodemcuwifi.presentation.welcome;
 
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
 import au.com.umranium.nodemcuwifi.R;
+import au.com.umranium.nodemcuwifi.presentation.common.BaseActivity;
+import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
 import au.com.umranium.nodemcuwifi.presentation.task.scanning.ScanningActivity;
 
 /**
  * The activity that displays the welcoming message.
  */
-public class WelcomeActivity extends AppCompatActivity {
+public class WelcomeActivity extends BaseActivity implements WelcomeController.Surface {
+
+  @NonNull
+  @Override
+  protected BaseController createController() {
+    return new WelcomeController(this);
+  }
 
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  protected void initUi() {
     setContentView(R.layout.activity_welcome);
 
     Button btnStart = (Button) findViewById(R.id.btn_start);
@@ -25,14 +31,14 @@ public class WelcomeActivity extends AppCompatActivity {
     btnStart.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        showBusyActivity();
+        ((WelcomeController) controller).onStartBtnClicked();
       }
     });
   }
 
-  private void showBusyActivity() {
+  @Override
+  public void proceedToNextScreen() {
     Intent intent = ScanningActivity.createIntent(this);
-    startActivity(intent);
+    startNextActivity(intent);
   }
-
 }
