@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseActivity;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
@@ -53,6 +54,8 @@ public class AccessPointListActivity extends BaseActivity implements AccessPoint
   @Override
   protected void initUi() {
     setContentView(R.layout.activity_access_point_list);
+    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
 
     list = (RecyclerView) findViewById(R.id.ap_list);
     assert list != null;
