@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi.presentation.display.aplist;
+package au.com.umranium.nodemcuwifi.presentation.common;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import au.com.umranium.nodemcuwifi.R;
-import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
 import rx.Observer;
 
 import java.util.ArrayList;
@@ -17,7 +16,7 @@ import java.util.List;
 /**
  * Recycler view list adapter for access point views.
  */
-class AccessPointArrayAdapter extends RecyclerView.Adapter<AccessPointViewHolder> {
+public class AccessPointArrayAdapter extends RecyclerView.Adapter<AccessPointViewHolder> {
 
   private static Comparator<ScannedAccessPoint> ACCESS_POINT_SORT_ORDER =
       new Comparator<ScannedAccessPoint>() {

@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import au.com.umranium.nodemcuwifi.R;
+import au.com.umranium.nodemcuwifi.presentation.common.AccessPointArrayAdapter;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseActivity;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
 import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
