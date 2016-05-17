@@ -12,14 +12,12 @@ import java.util.concurrent.TimeUnit;
 /**
  * A controller (containing the logic) for the task activities.
  */
-public abstract class BaseTaskController extends BaseController {
+public abstract class BaseTaskController<SurfaceType extends BaseTaskController.Surface> extends BaseController<SurfaceType> {
 
-  private final Surface surface;
   private Subscription subscription;
 
-  public BaseTaskController(Surface surface) {
+  public BaseTaskController(SurfaceType surface) {
     super(surface);
-    this.surface = surface;
   }
 
   public void onStart() {

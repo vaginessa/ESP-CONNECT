@@ -6,13 +6,10 @@ import au.com.umranium.nodemcuwifi.presentation.tasks.common.BaseTaskController;
 /**
  * Controller for the configuring task screen.
  */
-public class ConfiguringController extends BaseTaskController {
-
-  private final Surface surface;
+public class ConfiguringController extends BaseTaskController<ConfiguringController.Surface> {
 
   public ConfiguringController(Surface surface) {
     super(surface);
-    this.surface = surface;
   }
 
   @Override

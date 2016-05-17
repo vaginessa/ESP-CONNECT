@@ -18,12 +18,11 @@ import java.util.concurrent.TimeUnit;
 /**
  * Controller for the scanning task screen.
  */
-public class ScanningController extends BaseTaskController {
+public class ScanningController extends BaseTaskController<ScanningController.Surface> {
 
   // TODO: Change this to ESP.*
   private static final String NODE_MCU_AP_FMT = ".*";
 
-  private final Surface surface;
   private final WifiEvents wifiEvents;
   private final WifiManager wifiManager;
   private final ScannedAccessPointExtractor accessPointExtractor;
@@ -32,7 +31,6 @@ public class ScanningController extends BaseTaskController {
 
   public ScanningController(Surface surface, WifiEvents wifiEvents, WifiManager wifiManager) {
     super(surface);
-    this.surface = surface;
     this.wifiEvents = wifiEvents;
     this.wifiManager = wifiManager;
     this.accessPointExtractor = new ScannedAccessPointExtractor(wifiManager, NODE_MCU_AP_FMT);

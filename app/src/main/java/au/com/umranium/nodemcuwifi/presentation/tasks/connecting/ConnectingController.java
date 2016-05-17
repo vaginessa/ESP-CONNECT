@@ -8,9 +8,8 @@ import au.com.umranium.nodemcuwifi.presentation.tasks.utils.WifiConnectionUtil;
 /**
  * Controller for the connecting task screen.
  */
-public class ConnectingController extends BaseTaskController {
+public class ConnectingController extends BaseTaskController<ConnectingController.Surface> {
 
-  private final Surface surface;
   private final ScannedAccessPoint accessPoint;
   private final WifiConnectionUtil wifiConnectionUtil;
 
@@ -18,7 +17,6 @@ public class ConnectingController extends BaseTaskController {
                               ScannedAccessPoint accessPoint,
                               WifiConnectionUtil wifiConnectionUtil) {
     super(surface);
-    this.surface = surface;
     this.accessPoint = accessPoint;
     this.wifiConnectionUtil = wifiConnectionUtil;
   }
