@@ -65,4 +65,21 @@ public final class IntentExtras {
     return intent.getParcelableExtra(key);
   }
 
+
+  /**
+   * Gets and returns the intent extra identified by the key given from the activity given
+   * or throws an exception.
+   *
+   * @param activity Activity from which to extract the intent extra from
+   * @param key      Key of the extra to extract
+   * @return extra value from the activity's intent
+   */
+  public static String[] getStringArrayExtra(Activity activity, String key) {
+    Intent intent = activity.getIntent();
+    if (!intent.hasExtra(key)) {
+      throw new ParamNotFoundException(activity, key);
+    }
+    return intent.getStringArrayExtra(key);
+  }
+
 }
