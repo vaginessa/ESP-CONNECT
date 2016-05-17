@@ -1,18 +1,19 @@
-package au.com.umranium.nodemcuwifi.presentation.task.scanning;
+package au.com.umranium.nodemcuwifi.presentation.tasks.scanning;
 
 import android.net.wifi.WifiManager;
 import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
-import au.com.umranium.nodemcuwifi.presentation.task.common.BaseTaskController;
+import au.com.umranium.nodemcuwifi.presentation.tasks.common.BaseTaskController;
+import au.com.umranium.nodemcuwifi.utils.rx.ToInstance;
 import au.com.umranium.nodemcuwifi.wifievents.WifiEvents;
-import au.com.umranium.nodemcuwifi.wifievents.WifiScanComplete;
 import rx.Observable;
 import rx.Subscription;
-import rx.functions.Action0;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.functions.Func1;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Controller for the scanning task screen.
@@ -69,21 +70,28 @@ public class ScanningController extends BaseTaskController {
   }
 
   private Observable<List<ScannedAccessPoint>> getAccessPoints() {
-    return wifiEvents
-        .getEvents()
-        .ofType(WifiScanComplete.class)
-        .doOnSubscribe(new Action0() {
-          @Override
-          public void call() {
-            startScan();
-          }
-        })
-        .map(new Func1<WifiScanComplete, List<ScannedAccessPoint>>() {
-          @Override
-          public List<ScannedAccessPoint> call(WifiScanComplete wifiScanComplete) {
-            return accessPointExtractor.extract(lastScanRequestTimestamp);
-          }
-        });
+    return Observable.timer(2, TimeUnit.SECONDS)
+        .map(ToInstance.getInstance(Arrays.asList(
+            new ScannedAccessPoint("00:00", "a", 1),
+            new ScannedAccessPoint("00:01", "b", 2)
+        )))
+//        .map(ToInstance.getInstance(Collections.<ScannedAccessPoint>emptyList()))
+        .observeOn(AndroidSchedulers.mainThread());
+//    return wifiEvents
+//        .getEvents()
+//        .ofType(WifiScanComplete.class)
+//        .doOnSubscribe(new Action0() {
+//          @Override
+//          public void call() {
+//            startScan();
+//          }
+//        })
+//        .map(new Func1<WifiScanComplete, List<ScannedAccessPoint>>() {
+//          @Override
+//          public List<ScannedAccessPoint> call(WifiScanComplete wifiScanComplete) {
+//            return accessPointExtractor.extract(lastScanRequestTimestamp);
+//          }
+//        });
   }
 
   private void startScan() {

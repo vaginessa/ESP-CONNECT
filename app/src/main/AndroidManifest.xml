@@ -14,7 +14,7 @@
                android:supportsRtl="true"
                android:theme="@style/AppTheme">
 
-    <activity android:name=".presentation.welcome.WelcomeActivity"
+    <activity android:name=".presentation.display.welcome.WelcomeActivity"
               android:label="@string/title_activity_welcome"
               android:theme="@style/AppTheme.NoActionBar">
       <intent-filter>
@@ -34,32 +34,32 @@
               android:theme="@style/AppTheme.NoActionBar">
     </activity>
 
-    <activity android:name=".presentation.error.ErrorActivity"
+    <activity android:name=".presentation.display.error.ErrorActivity"
               android:label="@string/title_activity_error"
               android:theme="@style/AppTheme.NoActionBar">
     </activity>
 
-    <activity android:name=".presentation.task.scanning.ScanningActivity"
+    <activity android:name=".presentation.tasks.scanning.ScanningActivity"
               android:label="@string/title_activity_scanning"
               android:theme="@style/AppTheme.NoActionBar">
     </activity>
 
-    <activity android:name=".presentation.aplist.AccessPointListActivity"
+    <activity android:name=".presentation.display.aplist.AccessPointListActivity"
               android:label="@string/title_activity_access_point_list"
               android:theme="@style/AppTheme.NoActionBar">
     </activity>
 
-    <activity android:name=".presentation.task.connecting.ConnectingActivity"
+    <activity android:name=".presentation.tasks.connecting.ConnectingActivity"
               android:label="@string/title_activity_connecting"
               android:theme="@style/AppTheme.NoActionBar">
     </activity>
 
-    <activity android:name=".presentation.task.configuring.ConfiguringActivity"
+    <activity android:name=".presentation.tasks.configuring.ConfiguringActivity"
               android:label="@string/title_activity_configuring"
               android:theme="@style/AppTheme.NoActionBar">
     </activity>
 
-    <activity android:name=".presentation.end.EndActivity"
+    <activity android:name=".presentation.display.end.EndActivity"
               android:label="@string/title_activity_end"
               android:theme="@style/AppTheme.NoActionBar">
     </activity>

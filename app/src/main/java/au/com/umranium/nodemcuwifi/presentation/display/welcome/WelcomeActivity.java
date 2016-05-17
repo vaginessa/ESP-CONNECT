@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi.presentation.welcome;
+package au.com.umranium.nodemcuwifi.presentation.display.welcome;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -7,7 +7,7 @@ import android.widget.Button;
 import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseActivity;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
-import au.com.umranium.nodemcuwifi.presentation.task.scanning.ScanningActivity;
+import au.com.umranium.nodemcuwifi.presentation.tasks.scanning.ScanningActivity;
 
 /**
  * The activity that displays the welcoming message.

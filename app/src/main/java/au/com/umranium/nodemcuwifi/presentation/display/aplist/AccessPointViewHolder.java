@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi.presentation.aplist;
+package au.com.umranium.nodemcuwifi.presentation.display.aplist;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

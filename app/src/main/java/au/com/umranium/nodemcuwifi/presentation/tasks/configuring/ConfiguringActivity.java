@@ -1,11 +1,11 @@
-package au.com.umranium.nodemcuwifi.presentation.task.configuring;
+package au.com.umranium.nodemcuwifi.presentation.tasks.configuring;
 
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import au.com.umranium.nodemcuwifi.presentation.end.EndActivity;
-import au.com.umranium.nodemcuwifi.presentation.task.common.BaseTaskActivity;
-import au.com.umranium.nodemcuwifi.presentation.task.common.BaseTaskController;
+import au.com.umranium.nodemcuwifi.presentation.display.end.EndActivity;
+import au.com.umranium.nodemcuwifi.presentation.tasks.common.BaseTaskActivity;
+import au.com.umranium.nodemcuwifi.presentation.tasks.common.BaseTaskController;
 
 /**
  * An activity that configures an ESP8266 node.

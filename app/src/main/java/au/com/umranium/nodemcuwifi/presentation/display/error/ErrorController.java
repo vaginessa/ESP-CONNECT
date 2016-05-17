@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi.presentation.error;
+package au.com.umranium.nodemcuwifi.presentation.display.error;
 
 import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
 

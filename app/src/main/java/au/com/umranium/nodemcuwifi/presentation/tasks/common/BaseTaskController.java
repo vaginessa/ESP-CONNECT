@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi.presentation.task.common;
+package au.com.umranium.nodemcuwifi.presentation.tasks.common;
 
 import android.support.annotation.StringRes;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseController;

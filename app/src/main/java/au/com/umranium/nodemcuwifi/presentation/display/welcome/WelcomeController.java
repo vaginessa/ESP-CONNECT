@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi.presentation.welcome;
+package au.com.umranium.nodemcuwifi.presentation.display.welcome;
 
 import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
 

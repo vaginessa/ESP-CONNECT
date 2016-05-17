@@ -1,13 +1,13 @@
-package au.com.umranium.nodemcuwifi.presentation.task.connecting;
+package au.com.umranium.nodemcuwifi.presentation.tasks.connecting;
 
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
-import au.com.umranium.nodemcuwifi.presentation.task.common.BaseTaskActivity;
-import au.com.umranium.nodemcuwifi.presentation.task.common.BaseTaskController;
-import au.com.umranium.nodemcuwifi.presentation.task.configuring.ConfiguringActivity;
+import au.com.umranium.nodemcuwifi.presentation.tasks.common.BaseTaskActivity;
+import au.com.umranium.nodemcuwifi.presentation.tasks.common.BaseTaskController;
+import au.com.umranium.nodemcuwifi.presentation.tasks.configuring.ConfiguringActivity;
 import au.com.umranium.nodemcuwifi.presentation.utils.IntentExtras;
 
 /**

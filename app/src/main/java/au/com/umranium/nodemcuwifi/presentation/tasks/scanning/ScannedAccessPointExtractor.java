@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi.presentation.task.scanning;
+package au.com.umranium.nodemcuwifi.presentation.tasks.scanning;
 
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;

@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi.presentation.error;
+package au.com.umranium.nodemcuwifi.presentation.display.error;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +10,7 @@ import android.widget.TextView;
 import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseActivity;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
-import au.com.umranium.nodemcuwifi.presentation.end.EndController;
+import au.com.umranium.nodemcuwifi.presentation.display.end.EndController;
 import au.com.umranium.nodemcuwifi.presentation.utils.IntentExtras;
 
 /**

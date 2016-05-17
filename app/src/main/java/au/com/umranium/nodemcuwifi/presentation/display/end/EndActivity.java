@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi.presentation.end;
+package au.com.umranium.nodemcuwifi.presentation.display.end;
 
 import android.content.Context;
 import android.content.Intent;

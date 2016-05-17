@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi.presentation.aplist;
+package au.com.umranium.nodemcuwifi.presentation.display.aplist;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +11,7 @@ import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseActivity;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
 import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
-import au.com.umranium.nodemcuwifi.presentation.task.connecting.ConnectingActivity;
+import au.com.umranium.nodemcuwifi.presentation.tasks.connecting.ConnectingActivity;
 import au.com.umranium.nodemcuwifi.presentation.utils.IntentExtras;
 import rx.Observer;
 

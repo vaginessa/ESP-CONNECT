@@ -1,8 +1,7 @@
-package au.com.umranium.nodemcuwifi.presentation.task.configuring;
+package au.com.umranium.nodemcuwifi.presentation.tasks.configuring;
 
 import au.com.umranium.nodemcuwifi.R;
-import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
-import au.com.umranium.nodemcuwifi.presentation.task.common.BaseTaskController;
+import au.com.umranium.nodemcuwifi.presentation.tasks.common.BaseTaskController;
 
 /**
  * Controller for the configuring task screen.
