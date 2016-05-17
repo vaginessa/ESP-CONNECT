@@ -32,6 +32,10 @@ public class ScannedAccessPoint implements Parcelable {
     return ssid;
   }
 
+  public String getQuotedSsid() {
+    return "\"" + ssid + "\"";
+  }
+
   public int getSignalStrength() {
     return signalStrength;
   }

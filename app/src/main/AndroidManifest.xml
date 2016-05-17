@@ -54,6 +54,11 @@
               android:theme="@style/AppTheme.NoActionBar">
     </activity>
 
+    <activity android:name=".presentation.display.config.ConfigureActivity"
+              android:label="@string/title_activity_configure"
+              android:theme="@style/AppTheme.NoActionBar">
+    </activity>
+
     <activity android:name=".presentation.tasks.configuring.ConfiguringActivity"
               android:label="@string/title_activity_configuring"
               android:theme="@style/AppTheme.NoActionBar">

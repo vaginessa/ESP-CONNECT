@@ -6,9 +6,9 @@ import au.com.umranium.nodemcuwifi.presentation.display.error.ErrorController;
 /**
  * Controller for the end screen.
  */
-public class EndController extends BaseController<ErrorController.Surface> {
+public class EndController extends BaseController<EndController.Surface> {
 
-  public EndController(ErrorController.Surface surface) {
+  public EndController(Surface surface) {
     super(surface);
   }
 

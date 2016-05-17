@@ -10,7 +10,7 @@ import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
 /**
  * The activity that displays the end message.
  */
-public class EndActivity extends BaseActivity implements BaseController.Surface {
+public class EndActivity extends BaseActivity implements EndController.Surface {
 
   @NonNull
   public static Intent createIntent(@NonNull Context context) {

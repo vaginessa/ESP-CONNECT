@@ -34,7 +34,7 @@ public class ErrorActivity extends BaseActivity implements ErrorController.Surfa
   @NonNull
   @Override
   protected BaseController createController() {
-    return new EndController(this);
+    return new ErrorController(this);
   }
 
   @Override
