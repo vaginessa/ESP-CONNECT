@@ -12,16 +12,14 @@ import java.util.List;
 /**
  * Controller for {@link AccessPointListActivity}
  */
-public class AccessPointListController extends BaseController {
+public class AccessPointListController extends BaseController<AccessPointListController.Surface> {
 
   private final PublishSubject<ScannedAccessPoint> accessPointClickEvents = PublishSubject.create();
 
-  private final Surface surface;
   private final List<ScannedAccessPoint> accessPoints;
 
-  public AccessPointListController(Surface surface, List<ScannedAccessPoint> accessPoints) {
+  public AccessPointListController(AccessPointListController.Surface surface, List<ScannedAccessPoint> accessPoints) {
     super(surface);
-    this.surface = surface;
     this.accessPoints = accessPoints;
   }
 

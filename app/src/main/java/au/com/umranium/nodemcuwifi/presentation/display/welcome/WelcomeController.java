@@ -5,13 +5,10 @@ import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
 /**
  * Controller for the welcome screen.
  */
-public class WelcomeController extends BaseController {
-
-  private final Surface surface;
+public class WelcomeController extends BaseController<WelcomeController.Surface> {
 
   public WelcomeController(Surface surface) {
     super(surface);
-    this.surface = surface;
   }
 
   public void onStartBtnClicked() {
