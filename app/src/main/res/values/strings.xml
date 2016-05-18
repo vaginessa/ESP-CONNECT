@@ -32,6 +32,11 @@
   <string name="title_activity_configure">Configure your ESP8266</string>
   <string name="configure_hint_ssid">SSID</string>
   <string name="configure_hint_password">Password</string>
+  <string name="configure_title_details">Wi-Fi details to configure with:</string>
+  <string name="configure_title_ssids">SSIDs visible to the ESP8266:</string>
+  <string name="configure_btn_submit">Submit</string>
+  <string name="configure_error_blank_ssid">Please enter an SSID</string>
+  <string name="configure_error_blank_password">Please enter a password</string>
 
   <string name="title_activity_configuring">Configuring ESP8266</string>
   <string name="configuring_title">Configuring your ESP8266</string>

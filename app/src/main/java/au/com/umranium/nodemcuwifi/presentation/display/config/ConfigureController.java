@@ -1,6 +1,8 @@
 package au.com.umranium.nodemcuwifi.presentation.display.config;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
+import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
 import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
 import rx.Observer;
@@ -41,6 +43,19 @@ public class ConfigureController extends BaseController<ConfigureController.Surf
     surface.showSsids(ssids);
   }
 
+  public void onSubmit(String ssid, String password) {
+    surface.clearErrors();
+    if (ssid.isEmpty()) {
+      surface.showSsidError(R.string.configure_error_blank_ssid);
+      return;
+    }
+    if (password.isEmpty()) {
+      surface.showPasswordError(R.string.configure_error_blank_password);
+      return;
+    }
+    surface.proceedToNextTask();
+  }
+
   private void onAccessPointClicked(ScannedAccessPoint accessPoint) {
     surface.updateInputSsid(accessPoint.getSsid());
   }
@@ -51,6 +66,12 @@ public class ConfigureController extends BaseController<ConfigureController.Surf
     void showSsids(List<ScannedAccessPoint> accessPoints);
 
     void updateInputSsid(String ssid);
+
+    void showSsidError(@StringRes int errorMsg);
+
+    void showPasswordError(@StringRes int errorMsg);
+
+    void clearErrors();
 
     void proceedToNextTask();
   }
