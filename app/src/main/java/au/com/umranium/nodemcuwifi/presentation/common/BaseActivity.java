@@ -6,25 +6,36 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import au.com.umranium.nodemcuwifi.R;
+import au.com.umranium.nodemcuwifi.di.scope.ActivityScope;
+import au.com.umranium.nodemcuwifi.presentation.app.App;
+
+import javax.inject.Inject;
 
 /**
  * A generic activity from which other activities inherit from.
  */
-abstract public class BaseActivity extends AppCompatActivity {
+abstract public class BaseActivity<BaseControllerType extends BaseController> extends AppCompatActivity {
 
   private static final int NEXT_TASK_REQUEST_CODE = 1;
 
-  protected BaseController controller;
-
-  @NonNull
-  protected abstract BaseController createController();
+  @Inject
+  @ActivityScope
+  protected BaseControllerType controller;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    controller = createController();
+    doInjection();
     initUi();
     controller.onCreate();
+  }
+
+  protected App getApp() {
+    return (App) getApplication();
+  }
+
+  protected void doInjection() {
+
   }
 
   protected void initUi() {

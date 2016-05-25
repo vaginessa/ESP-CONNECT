@@ -18,7 +18,7 @@ public class ConfiguringActivity extends BaseTaskActivity implements Configuring
   }
 
   @NonNull
-  @Override
+//  @Override
   protected BaseTaskController createController() {
     return new ConfiguringController(this);
   }

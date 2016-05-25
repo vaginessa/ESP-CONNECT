@@ -7,6 +7,7 @@ import rx.Observer;
 import rx.functions.Action1;
 import rx.subjects.PublishSubject;
 
+import javax.inject.Inject;
 import java.util.List;
 
 /**
@@ -18,6 +19,7 @@ public class AccessPointListController extends BaseController<AccessPointListCon
 
   private final List<ScannedAccessPoint> accessPoints;
 
+  @Inject
   public AccessPointListController(AccessPointListController.Surface surface, List<ScannedAccessPoint> accessPoints) {
     super(surface);
     this.accessPoints = accessPoints;

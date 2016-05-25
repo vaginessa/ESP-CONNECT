@@ -9,6 +9,7 @@ import rx.Observer;
 import rx.functions.Action1;
 import rx.subjects.PublishSubject;
 
+import javax.inject.Inject;
 import java.util.List;
 
 /**
@@ -21,6 +22,7 @@ public class ConfigureController extends BaseController<ConfigureController.Surf
   private final ScannedAccessPoint accessPoint;
   private final List<ScannedAccessPoint> ssids;
 
+  @Inject
   public ConfigureController(ConfigureController.Surface surface,
                              ScannedAccessPoint accessPoint,
                              List<ScannedAccessPoint> ssids) {

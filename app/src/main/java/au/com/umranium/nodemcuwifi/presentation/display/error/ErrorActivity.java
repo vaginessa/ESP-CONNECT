@@ -8,15 +8,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import au.com.umranium.nodemcuwifi.R;
+import au.com.umranium.nodemcuwifi.di.activity.ActivityModule;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseActivity;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
-import au.com.umranium.nodemcuwifi.presentation.display.end.EndController;
 import au.com.umranium.nodemcuwifi.presentation.utils.IntentExtras;
 
 /**
  * An generic activity that displays errors.
  */
-public class ErrorActivity extends BaseActivity implements ErrorController.Surface {
+public class ErrorActivity extends BaseActivity<ErrorController> implements ErrorController.Surface {
 
   private static final String PARAM_TITLE = "title";
   private static final String PARAM_DESCRIPTION = "description";
@@ -31,10 +31,15 @@ public class ErrorActivity extends BaseActivity implements ErrorController.Surfa
     return intent;
   }
 
-  @NonNull
   @Override
-  protected BaseController createController() {
-    return new ErrorController(this);
+  protected void doInjection() {
+    DaggerErrorComponent
+        .builder()
+        .appComponent(getApp().getAppComponent())
+        .activityModule(new ActivityModule(this))
+        .errorModule(new ErrorModule(this))
+        .build()
+        .inject(this);
   }
 
   @Override
@@ -57,7 +62,7 @@ public class ErrorActivity extends BaseActivity implements ErrorController.Surfa
     btnOk.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        ((ErrorController) controller).onOkBtnClicked();
+        controller.onOkBtnClicked();
       }
     });
   }

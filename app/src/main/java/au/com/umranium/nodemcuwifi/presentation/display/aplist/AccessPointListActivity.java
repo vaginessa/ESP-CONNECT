@@ -8,10 +8,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import au.com.umranium.nodemcuwifi.R;
+import au.com.umranium.nodemcuwifi.di.activity.ActivityModule;
 import au.com.umranium.nodemcuwifi.presentation.common.AccessPointArrayAdapter;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseActivity;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
 import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
+import au.com.umranium.nodemcuwifi.presentation.display.end.DaggerEndComponent;
+import au.com.umranium.nodemcuwifi.presentation.display.end.EndModule;
 import au.com.umranium.nodemcuwifi.presentation.tasks.connecting.ConnectingActivity;
 import au.com.umranium.nodemcuwifi.presentation.utils.IntentExtras;
 import rx.Observer;
@@ -22,7 +25,7 @@ import java.util.List;
 /**
  * The activity that displays a list of ESP8266 access points for the user to pick one.
  */
-public class AccessPointListActivity extends BaseActivity implements AccessPointListController.Surface {
+public class AccessPointListActivity extends BaseActivity<AccessPointListController> implements AccessPointListController.Surface {
 
   private static final String PARAM_ACCESS_POINTS = "access_points";
   private RecyclerView list;
@@ -46,10 +49,15 @@ public class AccessPointListActivity extends BaseActivity implements AccessPoint
     return accessPoints;
   }
 
-  @NonNull
   @Override
-  protected BaseController createController() {
-    return new AccessPointListController(this, getAccessPointsFromIntent());
+  protected void doInjection() {
+    DaggerAccessPointListComponent
+        .builder()
+        .appComponent(getApp().getAppComponent())
+        .activityModule(new ActivityModule(this))
+        .accessPointListModule(new AccessPointListModule(this, getAccessPointsFromIntent()))
+        .build()
+        .inject(this);
   }
 
   @Override

@@ -24,7 +24,7 @@ public class ScanningActivity extends BaseTaskActivity implements ScanningContro
     return new Intent(context, ScanningActivity.class);
   }
 
-  @Override
+//  @Override
   @NonNull
   protected BaseTaskController createController() {
     return new ScanningController(this,

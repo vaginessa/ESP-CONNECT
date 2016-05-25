@@ -31,7 +31,7 @@ public class ConnectingActivity extends BaseTaskActivity implements ConnectingCo
   }
 
   @NonNull
-  @Override
+//  @Override
   protected BaseTaskController createController() {
     ScannedAccessPoint accessPoint = IntentExtras.getParcelableExtra(this, PARAM_ACCESS_POINT);
     return new ConnectingController(this,

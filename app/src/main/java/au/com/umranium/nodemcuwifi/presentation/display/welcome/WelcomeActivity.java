@@ -1,23 +1,27 @@
 package au.com.umranium.nodemcuwifi.presentation.display.welcome;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
 import au.com.umranium.nodemcuwifi.R;
+import au.com.umranium.nodemcuwifi.di.activity.ActivityModule;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseActivity;
-import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
 import au.com.umranium.nodemcuwifi.presentation.tasks.scanning.ScanningActivity;
 
 /**
  * The activity that displays the welcoming message.
  */
-public class WelcomeActivity extends BaseActivity implements WelcomeController.Surface {
+public class WelcomeActivity extends BaseActivity<WelcomeController> implements WelcomeController.Surface {
 
-  @NonNull
   @Override
-  protected BaseController createController() {
-    return new WelcomeController(this);
+  protected void doInjection() {
+    DaggerWelcomeComponent
+        .builder()
+        .appComponent(getApp().getAppComponent())
+        .activityModule(new ActivityModule(this))
+        .welcomeModule(new WelcomeModule(this))
+        .build()
+        .inject(this);
   }
 
   @Override
@@ -31,7 +35,7 @@ public class WelcomeActivity extends BaseActivity implements WelcomeController.S
     btnStart.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        ((WelcomeController) controller).onStartBtnClicked();
+        controller.onStartBtnClicked();
       }
     });
   }

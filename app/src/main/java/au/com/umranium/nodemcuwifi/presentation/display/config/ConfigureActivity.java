@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import au.com.umranium.nodemcuwifi.R;
+import au.com.umranium.nodemcuwifi.di.activity.ActivityModule;
 import au.com.umranium.nodemcuwifi.presentation.common.AccessPointArrayAdapter;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseActivity;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
@@ -26,7 +27,7 @@ import java.util.List;
 /**
  * The activity that displays a list of ESP8266 access points for the user to pick one.
  */
-public class ConfigureActivity extends BaseActivity implements ConfigureController.Surface {
+public class ConfigureActivity extends BaseActivity<ConfigureController> implements ConfigureController.Surface {
 
   private static final String PARAM_ACCESS_POINT = "access_point";
   private static final String PARAM_SSIDS = "ssids";
@@ -49,7 +50,11 @@ public class ConfigureActivity extends BaseActivity implements ConfigureControll
     return intent;
   }
 
-  private List<ScannedAccessPoint> getAccessPointsFromIntent() {
+  private ScannedAccessPoint getAccessPointFromIntent() {
+    return (ScannedAccessPoint) IntentExtras.getParcelableExtra(this, PARAM_ACCESS_POINT);
+  }
+
+  private List<ScannedAccessPoint> getSsidsFromIntent() {
     Parcelable[] accessPointArr = IntentExtras.getParcelableArrayExtra(this, PARAM_SSIDS);
     ArrayList<ScannedAccessPoint> accessPoints = new ArrayList<>(accessPointArr.length);
     for (Parcelable parcelable : accessPointArr) {
@@ -58,13 +63,15 @@ public class ConfigureActivity extends BaseActivity implements ConfigureControll
     return accessPoints;
   }
 
-  @NonNull
   @Override
-  protected BaseController createController() {
-    return new ConfigureController(
-        this,
-        (ScannedAccessPoint) IntentExtras.getParcelableExtra(this, PARAM_ACCESS_POINT),
-        getAccessPointsFromIntent());
+  protected void doInjection() {
+    DaggerConfigureComponent
+        .builder()
+        .appComponent(getApp().getAppComponent())
+        .activityModule(new ActivityModule(this))
+        .configureModule(new ConfigureModule(this, getAccessPointFromIntent(), getSsidsFromIntent()))
+        .build()
+        .inject(this);
   }
 
   @Override
@@ -84,7 +91,7 @@ public class ConfigureActivity extends BaseActivity implements ConfigureControll
     submit.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        ((ConfigureController) controller).onSubmit(
+        controller.onSubmit(
             ssid.getText().toString(),
             password.getText().toString());
       }
