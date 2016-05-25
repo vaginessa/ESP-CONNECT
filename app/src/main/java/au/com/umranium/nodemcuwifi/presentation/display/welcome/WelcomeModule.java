@@ -21,10 +21,4 @@ public class WelcomeModule {
     return activity;
   }
 
-  @Provides
-  @ActivityScope
-  public BaseActivity provideBaseActivity() {
-    return activity;
-  }
-
 }

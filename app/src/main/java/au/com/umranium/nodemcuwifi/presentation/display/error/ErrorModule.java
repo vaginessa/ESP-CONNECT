@@ -21,10 +21,4 @@ public class ErrorModule {
     return activity;
   }
 
-  @Provides
-  @ActivityScope
-  public BaseActivity provideBaseActivity() {
-    return activity;
-  }
-
 }

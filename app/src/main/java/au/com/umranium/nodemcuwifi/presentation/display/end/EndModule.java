@@ -23,10 +23,4 @@ public class EndModule {
     return activity;
   }
 
-  @Provides
-  @ActivityScope
-  public BaseActivity provideBaseActivity() {
-    return activity;
-  }
-
 }

@@ -12,9 +12,9 @@ import javax.inject.Named;
 @Module
 public class ActivityModule {
 
-  private BaseActivity activity;
+  private final BaseActivity activity;
 
-  public ActivityModule(@ActivityScope BaseActivity activity) {
+  public ActivityModule(BaseActivity activity) {
     this.activity = activity;
   }
 
@@ -27,6 +27,13 @@ public class ActivityModule {
   @Provides
   @ActivityScope
   public Activity provideActivity() {
+    return activity;
+  }
+
+
+  @Provides
+  @ActivityScope
+  public BaseActivity provideBaseActivity() {
     return activity;
   }
 

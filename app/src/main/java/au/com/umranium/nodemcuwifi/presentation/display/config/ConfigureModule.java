@@ -3,8 +3,6 @@ package au.com.umranium.nodemcuwifi.presentation.display.config;
 import au.com.umranium.nodemcuwifi.di.activity.ActivityModule;
 import au.com.umranium.nodemcuwifi.di.scope.ActivityScope;
 import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
-import au.com.umranium.nodemcuwifi.presentation.display.aplist.AccessPointListActivity;
-import au.com.umranium.nodemcuwifi.presentation.display.aplist.AccessPointListController;
 import dagger.Module;
 import dagger.Provides;
 
@@ -15,14 +13,14 @@ public class ConfigureModule {
 
   private final ConfigureActivity activity;
   private final ScannedAccessPoint accessPoint;
-  private final List<ScannedAccessPoint> accessPoints;
+  private final List<ScannedAccessPoint> ssids;
 
   public ConfigureModule(ConfigureActivity activity,
                          ScannedAccessPoint accessPoint,
-                         List<ScannedAccessPoint> accessPoints) {
+                         List<ScannedAccessPoint> ssids) {
     this.activity = activity;
     this.accessPoint = accessPoint;
-    this.accessPoints = accessPoints;
+    this.ssids = ssids;
   }
 
   @Provides
@@ -39,8 +37,8 @@ public class ConfigureModule {
 
   @Provides
   @ActivityScope
-  public List<ScannedAccessPoint> provideAccessPoints() {
-    return accessPoints;
+  public List<ScannedAccessPoint> provideSsids() {
+    return ssids;
   }
 
 }
