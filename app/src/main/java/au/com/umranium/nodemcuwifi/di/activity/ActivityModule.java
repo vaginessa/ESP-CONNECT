@@ -9,6 +9,7 @@ import javax.inject.Named;
 
 import au.com.umranium.nodemcuwifi.di.scope.ActivityScope;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseActivity;
+import au.com.umranium.nodemcuwifi.presentation.common.ToastDispatcher;
 import dagger.Module;
 import dagger.Provides;
 
@@ -45,6 +46,11 @@ public class ActivityModule {
   @Provides
   public ConnectivityManager provideConnectivityManager() {
     return (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+  }
+
+  @Provides
+  public ToastDispatcher provideToastDispatcher() {
+    return new ToastDispatcher(activity);
   }
 
 }
