@@ -24,19 +24,16 @@ public class ConfigureModule {
   }
 
   @Provides
-  @ActivityScope
   public ConfigureController.Surface provideSurface() {
     return activity;
   }
 
   @Provides
-  @ActivityScope
   public ScannedAccessPoint provideAccessPoint() {
     return accessPoint;
   }
 
   @Provides
-  @ActivityScope
   public List<ScannedAccessPoint> provideSsids() {
     return ssids;
   }

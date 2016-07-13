@@ -1,8 +1,11 @@
 package au.com.umranium.nodemcuwifi.di.app;
 
 import android.content.Context;
+import android.net.wifi.WifiManager;
+
 import au.com.umranium.nodemcuwifi.di.scope.AppScope;
 import au.com.umranium.nodemcuwifi.presentation.app.App;
+import au.com.umranium.nodemcuwifi.wifievents.WifiEvents;
 import dagger.Module;
 import dagger.Provides;
 
@@ -28,6 +31,12 @@ public class AppModule {
   @Named("app")
   public Context provideAppContext() {
     return app;
+  }
+
+  @Provides
+  @AppScope
+  public WifiEvents provideWifiEvents() {
+    return new WifiEvents();
   }
 
 }

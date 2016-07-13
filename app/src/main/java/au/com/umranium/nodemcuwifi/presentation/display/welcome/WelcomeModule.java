@@ -16,7 +16,6 @@ public class WelcomeModule {
   }
 
   @Provides
-  @ActivityScope
   public WelcomeController.Surface provideSurface() {
     return activity;
   }

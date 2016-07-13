@@ -2,6 +2,7 @@ package au.com.umranium.nodemcuwifi.presentation.tasks.scanning;
 
 import android.net.wifi.WifiManager;
 import au.com.umranium.nodemcuwifi.R;
+import au.com.umranium.nodemcuwifi.di.scope.AppScope;
 import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
 import au.com.umranium.nodemcuwifi.presentation.tasks.common.BaseTaskController;
 import au.com.umranium.nodemcuwifi.utils.rx.ToInstance;
@@ -14,6 +15,8 @@ import rx.functions.Action1;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
 
 /**
  * Controller for the scanning task screen.
@@ -29,6 +32,7 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
   private Subscription scanningTask;
   private long lastScanRequestTimestamp = -1;
 
+  @Inject
   public ScanningController(Surface surface, WifiEvents wifiEvents, WifiManager wifiManager) {
     super(surface);
     this.wifiEvents = wifiEvents;

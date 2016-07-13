@@ -18,7 +18,6 @@ public class EndModule {
   }
 
   @Provides
-  @ActivityScope
   public EndController.Surface provideSurface() {
     return activity;
   }

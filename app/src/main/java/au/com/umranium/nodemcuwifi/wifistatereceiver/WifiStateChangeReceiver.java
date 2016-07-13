@@ -8,6 +8,8 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+
+import au.com.umranium.nodemcuwifi.presentation.app.App;
 import au.com.umranium.nodemcuwifi.wifievents.*;
 
 /**
@@ -19,12 +21,15 @@ public class WifiStateChangeReceiver extends BroadcastReceiver {
 
   @Override
   public void onReceive(Context context, Intent intent) {
+    App app = (App) context.getApplicationContext();
+    WifiEvents wifiEvents = app.getAppComponent().getWifiEvents();
+
     WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
     if (intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
       if (wifiManager.isWifiEnabled()) {
-        WifiEvents.getInstance().emitEvent(WifiEnabled.getInstance());
+        wifiEvents.emitEvent(WifiEnabled.getInstance());
       } else {
-        WifiEvents.getInstance().emitEvent(WifiDisabled.getInstance());
+        wifiEvents.emitEvent(WifiDisabled.getInstance());
       }
     } else if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
       NetworkInfo ntwkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
@@ -35,13 +40,13 @@ public class WifiStateChangeReceiver extends BroadcastReceiver {
         } else {
           wifiInfo = wifiManager.getConnectionInfo();
         }
-        WifiEvents.getInstance().emitEvent(new WifiConnected(wifiInfo));
+        wifiEvents.emitEvent(new WifiConnected(wifiInfo));
       } else {
-        WifiEvents.getInstance().emitEvent(WifiDisconnected.getInstance());
+        wifiEvents.emitEvent(WifiDisconnected.getInstance());
       }
     } else if (intent.getAction().equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)) {
 
-      WifiEvents.getInstance().emitEvent(WifiScanComplete.getInstance());
+      wifiEvents.emitEvent(WifiScanComplete.getInstance());
     }
   }
 

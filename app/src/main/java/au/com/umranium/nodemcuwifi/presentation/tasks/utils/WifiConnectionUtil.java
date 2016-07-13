@@ -12,12 +12,15 @@ import android.os.Build.VERSION_CODES;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import au.com.umranium.nodemcuwifi.R;
-import au.com.umranium.nodemcuwifi.old.configurer.WifiConnectionException;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+
+import javax.inject.Inject;
+
+import au.com.umranium.nodemcuwifi.R;
+import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
 
 /**
  * Utility class that helps connecting to a particular wifi access point.
@@ -28,11 +31,12 @@ public class WifiConnectionUtil {
   private final ConnectivityManager mConnectivityManager;
   private final String mQuotedSsid;
 
+  @Inject
   public WifiConnectionUtil(WifiManager wifiManager, ConnectivityManager connectivityManager,
-                            String quotedSsid) {
+                            ScannedAccessPoint scannedAccessPoint) {
     mWifiManager = wifiManager;
     mConnectivityManager = connectivityManager;
-    mQuotedSsid = quotedSsid;
+    mQuotedSsid = scannedAccessPoint.getQuotedSsid();
   }
 
   @CheckResult

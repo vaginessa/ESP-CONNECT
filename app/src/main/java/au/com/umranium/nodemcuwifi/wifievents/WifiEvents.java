@@ -1,27 +1,22 @@
 package au.com.umranium.nodemcuwifi.wifievents;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import au.com.umranium.nodemcuwifi.di.scope.AppScope;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 
 /**
  * @author umran
  */
+@AppScope
 public final class WifiEvents {
-
-  private static final String TAG = WifiEvents.class.getSimpleName();
-
-  private static WifiEvents sInstance;
-
-  public static synchronized WifiEvents getInstance() {
-    if (sInstance == null) {
-      sInstance = new WifiEvents();
-    }
-    return sInstance;
-  }
 
   private PublishSubject<WifiEvent> mEvents;
 
-  private WifiEvents() {
+  @Inject
+  public WifiEvents() {
     mEvents = PublishSubject.create();
   }
 

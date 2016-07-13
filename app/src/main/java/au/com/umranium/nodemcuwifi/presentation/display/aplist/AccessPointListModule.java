@@ -23,13 +23,11 @@ public class AccessPointListModule {
   }
 
   @Provides
-  @ActivityScope
   public AccessPointListController.Surface provideSurface() {
     return activity;
   }
 
   @Provides
-  @ActivityScope
   public List<ScannedAccessPoint> provideAccessPoints() {
     return accessPoints;
   }

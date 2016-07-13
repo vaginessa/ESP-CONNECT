@@ -6,10 +6,13 @@ import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.support.annotation.NonNull;
 import au.com.umranium.nodemcuwifi.R;
+import au.com.umranium.nodemcuwifi.di.activity.ActivityModule;
 import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
 import au.com.umranium.nodemcuwifi.presentation.display.config.ConfigureActivity;
 import au.com.umranium.nodemcuwifi.presentation.tasks.common.BaseTaskActivity;
 import au.com.umranium.nodemcuwifi.presentation.tasks.common.BaseTaskController;
+import au.com.umranium.nodemcuwifi.presentation.tasks.scanning.DaggerScanningComponent;
+import au.com.umranium.nodemcuwifi.presentation.tasks.scanning.ScanningModule;
 import au.com.umranium.nodemcuwifi.presentation.tasks.utils.WifiConnectionUtil;
 import au.com.umranium.nodemcuwifi.presentation.utils.IntentExtras;
 
@@ -18,7 +21,7 @@ import java.util.Arrays;
 /**
  * An activity that connects to a ESP8266 node.
  */
-public class ConnectingActivity extends BaseTaskActivity implements ConnectingController.Surface {
+public class ConnectingActivity extends BaseTaskActivity<ConnectingController> implements ConnectingController.Surface {
 
   private static final String PARAM_ACCESS_POINT = "access_point";
 
@@ -30,17 +33,15 @@ public class ConnectingActivity extends BaseTaskActivity implements ConnectingCo
     return intent;
   }
 
-  @NonNull
-//  @Override
-  protected BaseTaskController createController() {
+  @Override
+  protected void doInjection() {
     ScannedAccessPoint accessPoint = IntentExtras.getParcelableExtra(this, PARAM_ACCESS_POINT);
-    return new ConnectingController(this,
-        (ScannedAccessPoint) IntentExtras.getParcelableExtra(this, PARAM_ACCESS_POINT),
-        new WifiConnectionUtil(
-            (WifiManager) getSystemService(WIFI_SERVICE),
-            (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE),
-            accessPoint.getQuotedSsid()
-        ));
+    DaggerConnectingComponent.builder()
+        .appComponent(getApp().getAppComponent())
+        .activityModule(new ActivityModule(this))
+        .connectingModule(new ConnectingModule(this, accessPoint))
+        .build()
+        .inject(this);
   }
 
   @Override

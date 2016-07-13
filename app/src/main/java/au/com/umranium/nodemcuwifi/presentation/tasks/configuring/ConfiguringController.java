@@ -1,5 +1,7 @@
 package au.com.umranium.nodemcuwifi.presentation.tasks.configuring;
 
+import javax.inject.Inject;
+
 import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.presentation.tasks.common.BaseTaskController;
 
@@ -8,6 +10,7 @@ import au.com.umranium.nodemcuwifi.presentation.tasks.common.BaseTaskController;
  */
 public class ConfiguringController extends BaseTaskController<ConfiguringController.Surface> {
 
+  @Inject
   public ConfiguringController(Surface surface) {
     super(surface);
   }

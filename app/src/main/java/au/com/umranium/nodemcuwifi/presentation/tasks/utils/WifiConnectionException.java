@@ -1,4 +1,4 @@
-package au.com.umranium.nodemcuwifi.old.configurer;
+package au.com.umranium.nodemcuwifi.presentation.tasks.utils;
 
 import android.support.annotation.StringRes;
 

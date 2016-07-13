@@ -5,11 +5,12 @@ import android.support.annotation.StringRes;
 import android.widget.TextView;
 import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseActivity;
+import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
 
 /**
  * A generic activity that performs a long running task.
  */
-abstract public class BaseTaskActivity extends BaseActivity {
+abstract public class BaseTaskActivity<BaseControllerType extends BaseController> extends BaseActivity<BaseControllerType> {
 
   private TextView txtTitle;
   private TextView txtDescription;
