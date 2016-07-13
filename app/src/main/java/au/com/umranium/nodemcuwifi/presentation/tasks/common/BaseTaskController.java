@@ -41,6 +41,11 @@ public abstract class BaseTaskController<SurfaceType extends BaseTaskController.
     }
   }
 
+  @Override
+  public void nextTaskWasCancelled() {
+    surface.cancelTask();
+  }
+
   public void onStop() {
     subscription.unsubscribe();
   }
