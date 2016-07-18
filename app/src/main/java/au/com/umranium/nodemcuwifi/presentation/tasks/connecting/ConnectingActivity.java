@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
+import android.widget.Toast;
+
 import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.di.activity.ActivityModule;
 import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
@@ -17,6 +20,7 @@ import au.com.umranium.nodemcuwifi.presentation.tasks.utils.WifiConnectionUtil;
 import au.com.umranium.nodemcuwifi.presentation.utils.IntentExtras;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * An activity that connects to a ESP8266 node.
@@ -33,23 +37,18 @@ public class ConnectingActivity extends BaseTaskActivity<ConnectingController> i
     return intent;
   }
 
-  @Override
-  protected void doInjection() {
-    ScannedAccessPoint accessPoint = IntentExtras.getParcelableExtra(this, PARAM_ACCESS_POINT);
-    DaggerConnectingComponent.builder()
-        .appComponent(getApp().getAppComponent())
-        .activityModule(new ActivityModule(this))
-        .connectingModule(new ConnectingModule(this, accessPoint))
-        .build()
-        .inject(this);
+  private ScannedAccessPoint getAccessPointFromIntent() {
+    return (ScannedAccessPoint) IntentExtras.getParcelableExtra(this, PARAM_ACCESS_POINT);
   }
 
   @Override
-  protected Intent createIntentForNextTask() {
-    ScannedAccessPoint accessPoint = IntentExtras.getParcelableExtra(this, PARAM_ACCESS_POINT);
-    return ConfigureActivity.createIntent(this, accessPoint,
-        // TODO: Change this
-        Arrays.asList(accessPoint, accessPoint));
+  protected void doInjection() {
+    DaggerConnectingComponent.builder()
+        .appComponent(getApp().getAppComponent())
+        .activityModule(new ActivityModule(this))
+        .connectingModule(new ConnectingModule(this, getAccessPointFromIntent()))
+        .build()
+        .inject(this);
   }
 
   @Override
@@ -61,5 +60,19 @@ public class ConnectingActivity extends BaseTaskActivity<ConnectingController> i
   public void setMessage(String accessPointName) {
     super.setMessage(getString(R.string.connecting_description, accessPointName));
   }
+
+  @Override
+  public void showErrorMessage(@StringRes int message) {
+    Toast.makeText(this, message, Toast.LENGTH_LONG)
+        .show();
+  }
+
+  @Override
+  public void proceedToNextTask(List<ScannedAccessPoint> accessPoints) {
+    Intent intent = ConfigureActivity.createIntent(this,
+        getAccessPointFromIntent(), accessPoints);
+    startNextActivity(intent);
+  }
+
 
 }

@@ -3,6 +3,7 @@ package au.com.umranium.nodemcuwifi.presentation.tasks.common;
 import android.content.Intent;
 import android.support.annotation.StringRes;
 import android.widget.TextView;
+
 import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseActivity;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
@@ -41,7 +42,9 @@ abstract public class BaseTaskActivity<BaseControllerType extends BaseController
   }
 
   // TODO: Eventually remove this
-  abstract protected Intent createIntentForNextTask();
+  protected Intent createIntentForNextTask() {
+    throw new UnsupportedOperationException();
+  }
 
   // TODO: Eventually remove this
   public void proceedToNextTask() {

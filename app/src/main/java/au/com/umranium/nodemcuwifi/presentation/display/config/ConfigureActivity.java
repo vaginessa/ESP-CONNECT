@@ -11,11 +11,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
 import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.di.activity.ActivityModule;
 import au.com.umranium.nodemcuwifi.presentation.common.AccessPointArrayAdapter;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseActivity;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
+import au.com.umranium.nodemcuwifi.presentation.common.ConfigDetails;
 import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
 import au.com.umranium.nodemcuwifi.presentation.tasks.configuring.ConfiguringActivity;
 import au.com.umranium.nodemcuwifi.presentation.utils.IntentExtras;
@@ -36,7 +38,6 @@ public class ConfigureActivity extends BaseActivity<ConfigureController> impleme
   private AccessPointArrayAdapter adapter;
   private EditText ssid;
   private EditText password;
-  private Button submit;
 
 
   @NonNull
@@ -86,14 +87,12 @@ public class ConfigureActivity extends BaseActivity<ConfigureController> impleme
 
     ssid = (EditText) findViewById(R.id.edt_ssid);
     password = (EditText) findViewById(R.id.edt_password);
-    submit = (Button) findViewById(R.id.btn_submit);
+    Button submit = (Button) findViewById(R.id.btn_submit);
 
     submit.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        controller.onSubmit(
-            ssid.getText().toString(),
-            password.getText().toString());
+        controller.onSubmit(ssid.getText().toString(), password.getText().toString());
       }
     });
   }
@@ -131,7 +130,7 @@ public class ConfigureActivity extends BaseActivity<ConfigureController> impleme
   }
 
   @Override
-  public void proceedToNextTask() {
-    startNextActivity(ConfiguringActivity.createIntent(this));
+  public void proceedToNextTask(ConfigDetails configDetails) {
+    startNextActivity(ConfiguringActivity.createIntent(this, getAccessPointFromIntent(), configDetails));
   }
 }

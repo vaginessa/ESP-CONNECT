@@ -14,40 +14,24 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class BaseTaskController<SurfaceType extends BaseTaskController.Surface> extends BaseController<SurfaceType> {
 
-  private Subscription subscription;
-
   public BaseTaskController(SurfaceType surface) {
     super(surface);
   }
 
   public void onStart() {
-    // TODO: Remove this
-    subscription = Observable
-        .timer(2, TimeUnit.SECONDS)
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Action1<Long>() {
-          @Override
-          public void call(Long aLong) {
-            surface.proceedToNextTask();
-          }
-        });
+  }
+
+  public void onStop() {
   }
 
   @Override
   public void backPressed() {
     super.backPressed();
-    if (subscription != null) {
-      subscription.unsubscribe();
-    }
   }
 
   @Override
   public void nextTaskWasCancelled() {
     surface.cancelTask();
-  }
-
-  public void onStop() {
-    subscription.unsubscribe();
   }
 
   public interface Surface extends BaseController.Surface {
@@ -60,7 +44,5 @@ public abstract class BaseTaskController<SurfaceType extends BaseTaskController.
 
     void setMessage(String message);
 
-    // TODO: Eventually remove this
-    void proceedToNextTask();
   }
 }

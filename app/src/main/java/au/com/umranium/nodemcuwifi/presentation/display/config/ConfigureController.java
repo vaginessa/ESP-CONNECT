@@ -2,14 +2,18 @@ package au.com.umranium.nodemcuwifi.presentation.display.config;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+
 import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
+import au.com.umranium.nodemcuwifi.presentation.common.ConfigDetails;
 import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
+import au.com.umranium.nodemcuwifi.presentation.tasks.utils.WifiConnectionUtil;
 import rx.Observer;
 import rx.functions.Action1;
 import rx.subjects.PublishSubject;
 
 import javax.inject.Inject;
+
 import java.util.List;
 
 /**
@@ -21,14 +25,17 @@ public class ConfigureController extends BaseController<ConfigureController.Surf
 
   private final ScannedAccessPoint accessPoint;
   private final List<ScannedAccessPoint> ssids;
+  private final WifiConnectionUtil wifiConnectionUtil;
 
   @Inject
   public ConfigureController(ConfigureController.Surface surface,
                              ScannedAccessPoint accessPoint,
-                             List<ScannedAccessPoint> ssids) {
+                             List<ScannedAccessPoint> ssids,
+                             WifiConnectionUtil wifiConnectionUtil) {
     super(surface);
     this.accessPoint = accessPoint;
     this.ssids = ssids;
+    this.wifiConnectionUtil = wifiConnectionUtil;
   }
 
   @Override
@@ -45,6 +52,14 @@ public class ConfigureController extends BaseController<ConfigureController.Surf
     surface.showSsids(ssids);
   }
 
+  @Override
+  public void onStart() {
+    // TODO: Change to listening broadcasted wifi events
+    if (!wifiConnectionUtil.isAlreadyConnected()) {
+      surface.cancelTask();
+    }
+  }
+
   public void onSubmit(String ssid, String password) {
     surface.clearErrors();
     if (ssid.isEmpty()) {
@@ -55,7 +70,7 @@ public class ConfigureController extends BaseController<ConfigureController.Surf
       surface.showPasswordError(R.string.configure_error_blank_password);
       return;
     }
-    surface.proceedToNextTask();
+    surface.proceedToNextTask(new ConfigDetails(ssid, password));
   }
 
   private void onAccessPointClicked(ScannedAccessPoint accessPoint) {
@@ -75,7 +90,7 @@ public class ConfigureController extends BaseController<ConfigureController.Surf
 
     void clearErrors();
 
-    void proceedToNextTask();
+    void proceedToNextTask(ConfigDetails configDetails);
   }
 
 }

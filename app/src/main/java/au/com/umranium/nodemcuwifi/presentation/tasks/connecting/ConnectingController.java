@@ -1,5 +1,10 @@
 package au.com.umranium.nodemcuwifi.presentation.tasks.connecting;
 
+import android.support.annotation.StringRes;
+
+import java.util.Arrays;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
@@ -33,14 +38,19 @@ public class ConnectingController extends BaseTaskController<ConnectingControlle
 
   @Override
   public void onStart() {
-    super.onStart();
-
-    if (wifiConnectionUtil.isAlreadyConnected()) {
+    if (!wifiConnectionUtil.isAlreadyConnected()) {
       try {
         wifiConnectionUtil.connectToNetwork();
       } catch (WifiConnectionException e) {
-
+        surface.showErrorMessage(e.getMessageId());
+        surface.cancelTask();
+        return;
       }
+    }
+
+    if (wifiConnectionUtil.isAlreadyConnected()) {
+      //  TODO: Change this
+      surface.proceedToNextTask(Arrays.asList(accessPoint, accessPoint));
     }
   }
 
@@ -49,5 +59,9 @@ public class ConnectingController extends BaseTaskController<ConnectingControlle
     void setTitle(String accessPointName);
 
     void setMessage(String accessPointName);
+
+    void showErrorMessage(@StringRes int message);
+
+    void proceedToNextTask(List<ScannedAccessPoint> accessPoints);
   }
 }
