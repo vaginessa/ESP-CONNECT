@@ -16,6 +16,7 @@ import android.util.Log;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -106,7 +107,11 @@ public class WifiConnectionUtil {
 
   @CheckResult
   private WifiConfiguration getConfiguredNetwork() {
-    for (WifiConfiguration conf : mWifiManager.getConfiguredNetworks()) {
+    List<WifiConfiguration> configuredNetworks = mWifiManager.getConfiguredNetworks();
+    if (configuredNetworks == null) {
+      return null;
+    }
+    for (WifiConfiguration conf : configuredNetworks) {
       if (conf.SSID != null && mQuotedSsid.equals(conf.SSID)) {
         return conf;
       }

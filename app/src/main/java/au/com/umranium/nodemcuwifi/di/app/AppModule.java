@@ -5,6 +5,7 @@ import android.net.wifi.WifiManager;
 
 import au.com.umranium.nodemcuwifi.di.scope.AppScope;
 import au.com.umranium.nodemcuwifi.presentation.app.App;
+import au.com.umranium.nodemcuwifi.presentation.common.Scheduler;
 import au.com.umranium.nodemcuwifi.wifievents.WifiEvents;
 import dagger.Module;
 import dagger.Provides;
@@ -37,6 +38,12 @@ public class AppModule {
   @AppScope
   public WifiEvents provideWifiEvents() {
     return new WifiEvents();
+  }
+
+  @Provides
+  @AppScope
+  public Scheduler provideScheduler() {
+    return new Scheduler();
   }
 
 }

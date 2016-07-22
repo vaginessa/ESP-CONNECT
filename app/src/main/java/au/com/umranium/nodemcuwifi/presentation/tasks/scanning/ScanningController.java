@@ -24,7 +24,8 @@ import javax.inject.Inject;
  */
 public class ScanningController extends BaseTaskController<ScanningController.Surface> {
 
-  private static final String NODE_MCU_AP_FMT = "ESP.*";
+  private static final String NODE_MCU_AP_FMT = ".*";
+//  private static final String NODE_MCU_AP_FMT = "ESP.*";
 
   private final WifiEvents wifiEvents;
   private final WifiManager wifiManager;

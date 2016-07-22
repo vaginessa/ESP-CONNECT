@@ -3,6 +3,7 @@ package au.com.umranium.nodemcuwifi.di.app;
 import android.content.Context;
 import au.com.umranium.nodemcuwifi.di.scope.AppScope;
 import au.com.umranium.nodemcuwifi.presentation.app.App;
+import au.com.umranium.nodemcuwifi.presentation.common.Scheduler;
 import au.com.umranium.nodemcuwifi.wifievents.WifiEvents;
 import dagger.Component;
 
@@ -20,5 +21,7 @@ public interface AppComponent {
   Context getAppContext();
 
   WifiEvents getWifiEvents();
+
+  Scheduler getScheduler();
 
 }

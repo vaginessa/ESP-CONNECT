@@ -48,11 +48,6 @@ public class ScanningActivity extends BaseTaskActivity<ScanningController> imple
   }
 
   @Override
-  protected Intent createIntentForNextTask() {
-    throw new RuntimeException();
-  }
-
-  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     ScanningActivityPermissionsDispatcher.ensureHasLocationPermissionWithCheck(this);

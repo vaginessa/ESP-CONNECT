@@ -32,9 +32,10 @@ public class ConfiguringController extends BaseTaskController<ConfiguringControl
     if (!wifiConnectionUtil.isAlreadyConnected()) {
       surface.cancelTask();
     }
+    surface.proceedToNextTask();
   }
 
   public interface Surface extends BaseTaskController.Surface {
-
+    void proceedToNextTask();
   }
 }

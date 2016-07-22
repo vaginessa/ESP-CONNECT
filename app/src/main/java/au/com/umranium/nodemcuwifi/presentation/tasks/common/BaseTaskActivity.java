@@ -1,6 +1,5 @@
 package au.com.umranium.nodemcuwifi.presentation.tasks.common;
 
-import android.content.Intent;
 import android.support.annotation.StringRes;
 import android.widget.TextView;
 
@@ -39,16 +38,6 @@ abstract public class BaseTaskActivity<BaseControllerType extends BaseController
 
   public void setMessage(String message) {
     txtDescription.setText(message);
-  }
-
-  // TODO: Eventually remove this
-  protected Intent createIntentForNextTask() {
-    throw new UnsupportedOperationException();
-  }
-
-  // TODO: Eventually remove this
-  public void proceedToNextTask() {
-    startNextActivity(createIntentForNextTask());
   }
 
 }

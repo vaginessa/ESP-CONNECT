@@ -48,8 +48,8 @@ public class ConfiguringActivity extends BaseTaskActivity<ConfiguringController>
   }
 
   @Override
-  protected Intent createIntentForNextTask() {
-    return EndActivity.createIntent(this);
+  public void proceedToNextTask() {
+    startNextActivity(EndActivity.createIntent(this));
   }
 
 }
