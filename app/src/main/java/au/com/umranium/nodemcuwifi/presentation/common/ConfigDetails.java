@@ -18,6 +18,14 @@ public class ConfigDetails implements Parcelable {
     this.password = in.readString();
   }
 
+  public String getSsid() {
+    return ssid;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
   @Override
   public int describeContents() {
     return 0;

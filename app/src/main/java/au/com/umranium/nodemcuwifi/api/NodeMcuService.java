@@ -1,6 +1,7 @@
 package au.com.umranium.nodemcuwifi.api;
 
 import retrofit2.http.GET;
+import retrofit2.http.Query;
 import rx.Observable;
 
 /**
@@ -13,5 +14,8 @@ public interface NodeMcuService {
 
   @GET("/scan")
   Observable<ReceivedAccessPoints> scan();
+
+  @GET("/wifisave")
+  Observable<Void> save(@Query("s") String username, @Query("p") String password);
 
 }

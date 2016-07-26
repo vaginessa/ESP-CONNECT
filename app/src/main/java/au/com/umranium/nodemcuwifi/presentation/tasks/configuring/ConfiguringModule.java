@@ -1,13 +1,8 @@
 package au.com.umranium.nodemcuwifi.presentation.tasks.configuring;
 
-import javax.inject.Named;
-
 import au.com.umranium.nodemcuwifi.di.activity.ActivityModule;
-import au.com.umranium.nodemcuwifi.di.scope.ActivityScope;
 import au.com.umranium.nodemcuwifi.presentation.common.ConfigDetails;
 import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
-import au.com.umranium.nodemcuwifi.presentation.tasks.connecting.ConnectingActivity;
-import au.com.umranium.nodemcuwifi.presentation.tasks.connecting.ConnectingController;
 import dagger.Module;
 import dagger.Provides;
 
