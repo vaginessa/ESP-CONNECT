@@ -64,6 +64,10 @@ public class ConnectingControllerTest {
       scheduler.mainThread();
       result = Schedulers.immediate();
       minTimes = 0;
+
+      scheduler.io();
+      result = Schedulers.immediate();
+      minTimes = 0;
     }};
   }
 

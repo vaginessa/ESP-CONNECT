@@ -12,6 +12,12 @@ public class ScannedAccessPoint implements Parcelable {
   private final String ssid;
   private final int signalStrength;
 
+  public ScannedAccessPoint(long id, String ssid, int signalStrength) {
+    this.id = id;
+    this.ssid = ssid;
+    this.signalStrength = signalStrength;
+  }
+
   public ScannedAccessPoint(String bssid, String ssid, int signalStrength) {
     this.id = bssidToLong(bssid.toLowerCase());
     this.ssid = ssid;

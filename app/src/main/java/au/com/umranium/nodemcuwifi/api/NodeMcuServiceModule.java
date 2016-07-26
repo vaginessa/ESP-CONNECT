@@ -1,12 +1,12 @@
 package au.com.umranium.nodemcuwifi.api;
 
+import android.net.Network;
+import android.os.Build;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.net.InetAddress;
-
-import javax.inject.Named;
-import javax.net.SocketFactory;
 
 import au.com.umranium.nodemcuwifi.di.activity.ActivityModule;
 import au.com.umranium.nodemcuwifi.presentation.tasks.utils.WifiConnectionUtil;
@@ -21,6 +21,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Module(includes = ActivityModule.class)
 public class NodeMcuServiceModule {
 
+  private static final String HTTP_SCHEME = "http";
+  private static final int HTTP_PORT = 80;
+
   @Provides
   public NodeMcuService provideService(WifiConnectionUtil connectionUtil) {
     InetAddress gateway = connectionUtil.getGateway();
@@ -30,12 +33,16 @@ public class NodeMcuServiceModule {
         .create();
 
     HttpUrl baseUrl = new HttpUrl.Builder()
-        .scheme("http")
+        .scheme(HTTP_SCHEME)
         .host(gateway.getHostAddress())
-        .port(80)
+        .port(HTTP_PORT)
         .build();
 
     OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      Network network = connectionUtil.getWifiNetwork();
+      clientBuilder.socketFactory(network.getSocketFactory());
+    }
     OkHttpClient client = clientBuilder.build();
 
     Retrofit retrofit = new Retrofit.Builder()

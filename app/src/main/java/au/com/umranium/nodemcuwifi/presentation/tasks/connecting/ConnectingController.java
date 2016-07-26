@@ -1,5 +1,6 @@
 package au.com.umranium.nodemcuwifi.presentation.tasks.connecting;
 
+import android.net.Network;
 import android.support.annotation.StringRes;
 
 import java.util.ArrayList;
@@ -22,8 +23,6 @@ import au.com.umranium.nodemcuwifi.wifievents.WifiConnected;
 import au.com.umranium.nodemcuwifi.wifievents.WifiEvents;
 import rx.Observable;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func1;
 
@@ -96,7 +95,9 @@ public class ConnectingController extends BaseTaskController<ConnectingControlle
     Func1<Void, Observable<ReceivedAccessPoints>> scan = new Func1<Void, Observable<ReceivedAccessPoints>>() {
       @Override
       public Observable<ReceivedAccessPoints> call(Void aVoid) {
-        return serviceProvider.get().scan();
+        return serviceProvider.get()
+            .scan()
+            .subscribeOn(scheduler.io());
       }
     };
 
@@ -106,7 +107,8 @@ public class ConnectingController extends BaseTaskController<ConnectingControlle
         List<ScannedAccessPoint> scannedAccessPoints = new ArrayList<>(receivedAccessPoints.mAccessPoints.size());
         for (int i = 0; i < receivedAccessPoints.mAccessPoints.size(); i++) {
           ReceivedAccessPoint receivedAccessPoint = receivedAccessPoints.mAccessPoints.get(i);
-          scannedAccessPoints.add(new ScannedAccessPoint("00:00:00", receivedAccessPoint.mSsid, 0));
+          int signalStrength = Integer.parseInt(receivedAccessPoint.mQuality); // TODO: Get Ken to change this to an integer
+          scannedAccessPoints.add(new ScannedAccessPoint(i, receivedAccessPoint.mSsid, signalStrength));
         }
         return scannedAccessPoints;
       }

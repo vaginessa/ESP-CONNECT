@@ -16,6 +16,7 @@ import android.util.Log;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -95,14 +96,21 @@ public class WifiConnectionUtil {
   @NonNull
   @CheckResult
   public Network getWifiNetwork() {
+    List<Network> networks = new ArrayList<>();
     for (Network network : mConnectivityManager.getAllNetworks()) {
       NetworkInfo networkInfo = mConnectivityManager.getNetworkInfo(network);
       if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-        return network;
+        networks.add(network);
       }
     }
-    // this shouldn't happen
-    throw new RuntimeException("Unable to find WiFi network object");
+    if (networks.size() == 1) {
+      return networks.get(0);
+    } else if (networks.size() == 0) {
+      // this shouldn't happen
+      throw new RuntimeException("Unable to find WiFi network object");
+    } else {
+      throw new RuntimeException("Found multiple WiFi network objects");
+    }
   }
 
   @CheckResult
