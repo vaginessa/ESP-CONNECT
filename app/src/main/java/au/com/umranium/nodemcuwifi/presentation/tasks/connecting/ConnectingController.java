@@ -1,6 +1,5 @@
 package au.com.umranium.nodemcuwifi.presentation.tasks.connecting;
 
-import android.net.Network;
 import android.support.annotation.StringRes;
 
 import java.util.ArrayList;
@@ -12,12 +11,12 @@ import javax.inject.Provider;
 import au.com.umranium.nodemcuwifi.api.NodeMcuService;
 import au.com.umranium.nodemcuwifi.api.ReceivedAccessPoint;
 import au.com.umranium.nodemcuwifi.api.ReceivedAccessPoints;
+import au.com.umranium.nodemcuwifi.presentation.common.IsConnectedToEsp;
 import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
 import au.com.umranium.nodemcuwifi.presentation.common.Scheduler;
 import au.com.umranium.nodemcuwifi.presentation.tasks.common.BaseTaskController;
 import au.com.umranium.nodemcuwifi.presentation.tasks.utils.WifiConnectionException;
 import au.com.umranium.nodemcuwifi.presentation.tasks.utils.WifiConnectionUtil;
-import au.com.umranium.nodemcuwifi.utils.rx.Pred;
 import au.com.umranium.nodemcuwifi.utils.rx.ToVoid;
 import au.com.umranium.nodemcuwifi.wifievents.WifiConnected;
 import au.com.umranium.nodemcuwifi.wifievents.WifiEvents;
@@ -67,7 +66,6 @@ public class ConnectingController extends BaseTaskController<ConnectingControlle
       } catch (WifiConnectionException e) {
         surface.showErrorMessage(e.getMessageId());
         surface.cancelTask();
-        stopMonitoring();
       }
     }
   }
@@ -78,13 +76,6 @@ public class ConnectingController extends BaseTaskController<ConnectingControlle
   }
 
   private void startMonitoring() {
-    Pred<Void> onlyWhenConnected = new Pred<Void>() {
-      @Override
-      public Boolean call(Void aVoid) {
-        return wifiConnectionUtil.isAlreadyConnected();
-      }
-    };
-
     Observable<Void> initialEvent;
     if (wifiConnectionUtil.isAlreadyConnected()) {
       initialEvent = Observable.just((Void) null);
@@ -92,39 +83,16 @@ public class ConnectingController extends BaseTaskController<ConnectingControlle
       initialEvent = Observable.empty();
     }
 
-    Func1<Void, Observable<ReceivedAccessPoints>> scan = new Func1<Void, Observable<ReceivedAccessPoints>>() {
-      @Override
-      public Observable<ReceivedAccessPoints> call(Void aVoid) {
-        return serviceProvider.get()
-            .scan()
-            .subscribeOn(scheduler.io());
-      }
-    };
-
-    Func1<ReceivedAccessPoints, List<ScannedAccessPoint>> toScannedAccessPoints = new Func1<ReceivedAccessPoints, List<ScannedAccessPoint>>() {
-      @Override
-      public List<ScannedAccessPoint> call(ReceivedAccessPoints receivedAccessPoints) {
-        List<ScannedAccessPoint> scannedAccessPoints = new ArrayList<>(receivedAccessPoints.mAccessPoints.size());
-        for (int i = 0; i < receivedAccessPoints.mAccessPoints.size(); i++) {
-          ReceivedAccessPoint receivedAccessPoint = receivedAccessPoints.mAccessPoints.get(i);
-          int signalStrength = Integer.parseInt(receivedAccessPoint.mQuality); // TODO: Get Ken to change this to an integer
-          scannedAccessPoints.add(new ScannedAccessPoint(i, receivedAccessPoint.mSsid, signalStrength));
-        }
-        return scannedAccessPoints;
-      }
-    };
-
-    Observable<Void> wifiConnectionEvents = wifiEvents
-        .getConnectivityEvents()
-        .ofType(WifiConnected.class)
-        .map(ToVoid.<WifiConnected>getInstance())
-        .filter(onlyWhenConnected);
+    Observable<Void> connectedToEspEvents = wifiEvents
+        .getConnected()
+        .filter(new IsConnectedToEsp<WifiConnected>(wifiConnectionUtil))
+        .map(ToVoid.<WifiConnected>getInstance());
 
     task = initialEvent
-        .mergeWith(wifiConnectionEvents)
+        .mergeWith(connectedToEspEvents)
         .first()
-        .flatMap(scan)
-        .map(toScannedAccessPoints)
+        .flatMap(new ScanApiCall(scheduler, serviceProvider))
+        .map(new ReceivedToScannedAccessPoints())
         .observeOn(scheduler.mainThread())
         .subscribe(new Action1<List<ScannedAccessPoint>>() {
           @Override
@@ -150,4 +118,36 @@ public class ConnectingController extends BaseTaskController<ConnectingControlle
 
     void proceedToNextTask(List<ScannedAccessPoint> accessPoints);
   }
+
+  private static class ReceivedToScannedAccessPoints implements Func1<ReceivedAccessPoints, List<ScannedAccessPoint>> {
+    @Override
+    public List<ScannedAccessPoint> call(ReceivedAccessPoints receivedAccessPoints) {
+      List<ScannedAccessPoint> scannedAccessPoints = new ArrayList<>(receivedAccessPoints.mAccessPoints.size());
+      for (int i = 0; i < receivedAccessPoints.mAccessPoints.size(); i++) {
+        ReceivedAccessPoint receivedAccessPoint = receivedAccessPoints.mAccessPoints.get(i);
+        int signalStrength = Integer.parseInt(receivedAccessPoint.mQuality); // TODO: Get Ken to change this to an integer
+        scannedAccessPoints.add(new ScannedAccessPoint(i, receivedAccessPoint.mSsid, signalStrength));
+      }
+      return scannedAccessPoints;
+    }
+  }
+
+  private static class ScanApiCall implements Func1<Void, Observable<ReceivedAccessPoints>> {
+
+    private Scheduler scheduler;
+    private Provider<NodeMcuService> serviceProvider;
+
+    public ScanApiCall(Scheduler scheduler, Provider<NodeMcuService> serviceProvider) {
+      this.scheduler = scheduler;
+      this.serviceProvider = serviceProvider;
+    }
+
+    @Override
+    public Observable<ReceivedAccessPoints> call(Void aVoid) {
+      return serviceProvider.get()
+          .scan()
+          .subscribeOn(scheduler.io());
+    }
+  }
+
 }

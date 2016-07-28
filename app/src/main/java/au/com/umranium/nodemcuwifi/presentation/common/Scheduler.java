@@ -15,4 +15,8 @@ public class Scheduler {
     return Schedulers.io();
   }
 
+  public rx.Scheduler computation() {
+    return Schedulers.computation();
+  }
+
 }
