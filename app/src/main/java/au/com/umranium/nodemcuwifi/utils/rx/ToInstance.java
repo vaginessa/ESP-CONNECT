@@ -9,7 +9,7 @@ import rx.functions.Func1;
  */
 public final class ToInstance<T, R> implements Func1<T, R> {
 
-  public static <T, R> ToInstance<T, R> getInstance(R returnValue) {
+  public static <T, R> ToInstance<T, R> instance(R returnValue) {
     return new ToInstance<>(returnValue);
   }
 

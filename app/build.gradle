@@ -21,7 +21,7 @@ android {
 }
 
 def permissionDispatcherVersion = '2.1.2';
-def androidSupportVersion = '24.0.0';
+def androidSupportVersion = '23.0.0';
 def rxVersion = '1.1.0';
 def retrofitVersion = '2.0.1';
 

@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
@@ -92,8 +93,22 @@ public class WifiConnectionUtil {
     }
   }
 
+  @CheckResult
+  public boolean isTrackingWifiNetwork() {
+    if (Build.VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+      for (Network network : mConnectivityManager.getAllNetworks()) {
+        NetworkInfo networkInfo = mConnectivityManager.getNetworkInfo(network);
+        if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+          return true;
+        }
+      }
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   @TargetApi(VERSION_CODES.LOLLIPOP)
-  @NonNull
   @CheckResult
   public Network getWifiNetwork() {
     List<Network> networks = new ArrayList<>();
@@ -106,10 +121,10 @@ public class WifiConnectionUtil {
     if (networks.size() == 1) {
       return networks.get(0);
     } else if (networks.size() == 0) {
-      // this shouldn't happen
-      throw new RuntimeException("Unable to find WiFi network object");
+      return null;
     } else {
-      throw new RuntimeException("Found multiple WiFi network objects");
+      Log.wtf(WifiConnectionUtil.class.getSimpleName(), "Found multiple WiFi network objects found!");
+      return networks.get(0);
     }
   }
 

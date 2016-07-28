@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.widget.Toast;
 
+import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.di.activity.ActivityModule;
 import au.com.umranium.nodemcuwifi.presentation.common.ConfigDetails;
 import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
@@ -47,6 +48,11 @@ public class ConfiguringActivity extends BaseTaskActivity<ConfiguringController>
         .configuringModule(new ConfiguringModule(this, getAccessPointFromIntent(), getConfigDetailsFromIntent()))
         .build()
         .inject(this);
+  }
+
+  @Override
+  public void setMessage(String networkName) {
+    super.setMessage(getString(R.string.configuring_description, networkName));
   }
 
   @Override

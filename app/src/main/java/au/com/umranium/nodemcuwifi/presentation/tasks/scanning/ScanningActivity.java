@@ -66,10 +66,8 @@ public class ScanningActivity extends BaseTaskActivity<ScanningController> imple
 
   @Override
   public void proceedWithNoAccessPoints() {
-    Intent intent = ErrorActivity.createIntent(this,
-        R.string.scanning_error_noap_title,
+    showErrorScreen(R.string.scanning_error_noap_title,
         R.string.scanning_error_noap_description);
-    startNextActivity(intent);
   }
 
   @NeedsPermission(Manifest.permission.ACCESS_COARSE_LOCATION)

@@ -28,6 +28,10 @@ public class State implements Parcelable {
   @SerializedName("SSID")
   public String mSsid;
 
+  public boolean isStationIpBlank() {
+    return mStationIp == null || mStationIp.isEmpty() || "0.0.0.0".equals(mStationIp);
+  }
+
   @Override
   public String toString() {
     return "State{" +

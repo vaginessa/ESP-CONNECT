@@ -6,18 +6,18 @@ import android.util.Log;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.api.NodeMcuService;
 import au.com.umranium.nodemcuwifi.api.State;
 import au.com.umranium.nodemcuwifi.presentation.common.ConfigDetails;
 import au.com.umranium.nodemcuwifi.presentation.common.IsConnectedToEsp;
+import au.com.umranium.nodemcuwifi.presentation.common.IsTrackingWifiNetwork;
 import au.com.umranium.nodemcuwifi.presentation.common.Scheduler;
 import au.com.umranium.nodemcuwifi.presentation.tasks.common.BaseTaskController;
 import au.com.umranium.nodemcuwifi.presentation.tasks.utils.WifiConnectionException;
 import au.com.umranium.nodemcuwifi.presentation.tasks.utils.WifiConnectionUtil;
-import au.com.umranium.nodemcuwifi.utils.rx.LogThrowable;
-import au.com.umranium.nodemcuwifi.utils.rx.ToInstance;
 import au.com.umranium.nodemcuwifi.wifievents.WifiDisconnected;
 import au.com.umranium.nodemcuwifi.wifievents.WifiEvents;
 import rx.Observable;
@@ -26,24 +26,28 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.subscriptions.CompositeSubscription;
 
+import static au.com.umranium.nodemcuwifi.utils.rx.ToInstance.instance;
+
 /**
  * Controller for the configuring task screen.
  */
 public class ConfiguringController extends BaseTaskController<ConfiguringController.Surface> {
 
+  public static final int TIMEOUT_SECONDS = 10;
+
   private final WifiConnectionUtil wifiConnectionUtil;
   private final ConfigDetails configDetails;
-  private final NodeMcuService service;
+  private final Provider<NodeMcuService> serviceProvider;
   private final Scheduler scheduler;
   private final WifiEvents wifiEvents;
   private Subscription task;
 
   @Inject
-  public ConfiguringController(Surface surface, WifiConnectionUtil wifiConnectionUtil, ConfigDetails configDetails, NodeMcuService service, Scheduler scheduler, WifiEvents wifiEvents) {
+  public ConfiguringController(Surface surface, WifiConnectionUtil wifiConnectionUtil, ConfigDetails configDetails, Provider<NodeMcuService> serviceProvider, Scheduler scheduler, WifiEvents wifiEvents) {
     super(surface);
     this.wifiConnectionUtil = wifiConnectionUtil;
     this.configDetails = configDetails;
-    this.service = service;
+    this.serviceProvider = serviceProvider;
     this.scheduler = scheduler;
     this.wifiEvents = wifiEvents;
   }
@@ -52,7 +56,7 @@ public class ConfiguringController extends BaseTaskController<ConfiguringControl
   public void onCreate() {
     super.onCreate();
     surface.setTitle(R.string.configuring_title);
-    surface.setMessage(R.string.configuring_description);
+    surface.setMessage(configDetails.getSsid());
   }
 
   @Override
@@ -85,19 +89,26 @@ public class ConfiguringController extends BaseTaskController<ConfiguringControl
         .interval(1, TimeUnit.SECONDS, scheduler.computation())
         .onBackpressureDrop()
         .filter(new IsConnectedToEsp<Long>(wifiConnectionUtil))
-        .flatMap(new MapToStateCall<Long>(scheduler, service))
+        .filter(new IsTrackingWifiNetwork<Long>(wifiConnectionUtil))
+        .flatMap(new MapToStateCall<Long>(scheduler, serviceProvider))
         .filter(new Func1<State, Boolean>() {
           @Override
           public Boolean call(State state) {
-            return configDetails.getSsid().equals(state.mSsid);
+            return configDetails.getSsid().equals(state.mSsid) && !state.isStationIpBlank();
           }
         });
 
-    // configure and wait for ESP to connect
-    Subscription configureAndWaitForConnect = service
+    // wait for timeout then emit error
+    Observable<State> throwErrorOnTimeOut = Observable
+        .timer(TIMEOUT_SECONDS, TimeUnit.SECONDS, scheduler.computation())
+        .flatMap(instance(Observable.<State>error(new ConfiguringTimeoutException())));
+
+    // configure and wait for ESP to connect or timeout
+    Subscription configureAndWaitForConnect = serviceProvider
+        .get()
         .save(configDetails.getSsid(), configDetails.getPassword())
         .subscribeOn(scheduler.io())
-        .switchMap(ToInstance.getInstance(waitForEspConnectedState))
+        .switchMap(instance(Observable.merge(waitForEspConnectedState, throwErrorOnTimeOut)))//wait for esp connection or timeout
         .observeOn(scheduler.mainThread())
         .subscribe(new Action1<State>() {
           @Override
@@ -107,7 +118,9 @@ public class ConfiguringController extends BaseTaskController<ConfiguringControl
         }, new Action1<Throwable>() {
           @Override
           public void call(Throwable error) {
-            Log.e(ConfiguringController.class.getSimpleName(), "Error while configuring ESP8266", error);
+            if (!(error instanceof ConfiguringTimeoutException)) {
+              Log.e(ConfiguringController.class.getSimpleName(), "Error while configuring ESP8266", error);
+            }
             surface.showErrorMessage(R.string.configuring_generic_error);
             surface.cancelTask();
           }
@@ -125,6 +138,8 @@ public class ConfiguringController extends BaseTaskController<ConfiguringControl
   }
 
   public interface Surface extends BaseTaskController.Surface {
+    void setMessage(String networkName);
+
     void showErrorMessage(@StringRes int message);
 
     void proceedToNextTask();
@@ -133,20 +148,31 @@ public class ConfiguringController extends BaseTaskController<ConfiguringControl
   private static class MapToStateCall<T> implements Func1<T, Observable<State>> {
 
     private Scheduler scheduler;
-    private NodeMcuService service;
+    private Provider<NodeMcuService> serviceProvider;
 
-    public MapToStateCall(Scheduler scheduler, NodeMcuService service) {
+    public MapToStateCall(Scheduler scheduler, Provider<NodeMcuService> serviceProvider) {
       this.scheduler = scheduler;
-      this.service = service;
+      this.serviceProvider = serviceProvider;
     }
 
     @Override
     public Observable<State> call(T ignored) {
-      return service
+      return serviceProvider
+          .get()
           .getState()
           .subscribeOn(scheduler.io())
-          .doOnError(new LogThrowable(ConfiguringController.class.getSimpleName(), "Error retrieving ESP's state"))
-          .onErrorResumeNext(Observable.<State>empty()); // avoid throwing errors
+          .onErrorResumeNext(new Func1<Throwable, Observable<? extends State>>() {
+            @Override
+            public Observable<? extends State> call(Throwable throwable) {
+              if (throwable instanceof java.net.SocketTimeoutException ||
+                  throwable instanceof java.net.SocketException) {
+                // avoid throwing errors for socket time-outs
+                return Observable.<State>empty();
+              } else {
+                return Observable.error(throwable);
+              }
+            }
+          });
     }
   }
 

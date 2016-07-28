@@ -7,6 +7,7 @@ import android.support.annotation.StringRes;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
 import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.di.activity.ActivityModule;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseActivity;
@@ -23,8 +24,8 @@ public class ErrorActivity extends BaseActivity<ErrorController> implements Erro
 
   @NonNull
   public static Intent createIntent(@NonNull Context context,
-                                    @StringRes int title,
-                                    @StringRes int description) {
+                                    @NonNull String title,
+                                    @NonNull String description) {
     Intent intent = new Intent(context, ErrorActivity.class);
     intent.putExtra(PARAM_TITLE, title);
     intent.putExtra(PARAM_DESCRIPTION, description);
@@ -46,8 +47,8 @@ public class ErrorActivity extends BaseActivity<ErrorController> implements Erro
   protected void initUi() {
     setContentView(R.layout.activity_error);
 
-    int title = IntentExtras.getIntExtra(this, PARAM_TITLE);
-    int description = IntentExtras.getIntExtra(this, PARAM_DESCRIPTION);
+    String title = IntentExtras.getStringExtra(this, PARAM_TITLE);
+    String description = IntentExtras.getStringExtra(this, PARAM_DESCRIPTION);
 
     TextView txtTitle = (TextView) findViewById(R.id.txt_title);
     TextView txtDescription = (TextView) findViewById(R.id.txt_description);

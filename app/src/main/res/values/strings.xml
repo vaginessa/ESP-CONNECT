@@ -38,7 +38,7 @@
 
   <string name="title_activity_configuring">Configuring ESP8266</string>
   <string name="configuring_title">Configuring your ESP8266</string>
-  <string name="configuring_description">Please hold on as we configure to your ESP8266</string>
+  <string name="configuring_description">Please hold on as we configure your ESP8266 to connect to %s</string>
   <string name="configuring_generic_error">An error occurred while configuring your ESP8266</string>
 
   <string name="title_activity_scan">Find NodeMCU</string>

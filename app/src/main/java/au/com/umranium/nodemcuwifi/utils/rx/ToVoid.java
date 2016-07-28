@@ -9,12 +9,13 @@ import rx.functions.Func1;
  */
 public final class ToVoid<T> implements Func1<T, Void> {
 
-  private static ToVoid sInstance;
+  private static volatile ToVoid sInstance;
 
-  public synchronized static <T> ToVoid<T> getInstance() {
+  public synchronized static <T> ToVoid<T> toVoid() {
     if (sInstance == null) {
       sInstance = new ToVoid();
     }
+    //noinspection unchecked
     return sInstance;
   }
 

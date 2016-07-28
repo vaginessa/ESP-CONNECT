@@ -1,6 +1,7 @@
 package au.com.umranium.nodemcuwifi.presentation.tasks.common;
 
 import android.support.annotation.StringRes;
+
 import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
 import rx.Observable;
 import rx.Subscription;
@@ -34,6 +35,14 @@ public abstract class BaseTaskController<SurfaceType extends BaseTaskController.
     surface.cancelTask();
   }
 
+  public void showErrorScreen(@StringRes int title, @StringRes int message) {
+    surface.showErrorScreen(title, message);
+  }
+
+  public void showErrorScreen(String title, String message) {
+    surface.showErrorScreen(title, message);
+  }
+
   public interface Surface extends BaseController.Surface {
 
     void setTitle(@StringRes int title);
@@ -44,5 +53,8 @@ public abstract class BaseTaskController<SurfaceType extends BaseTaskController.
 
     void setMessage(String message);
 
+    void showErrorScreen(@StringRes int title, @StringRes int message);
+
+    void showErrorScreen(String title, String message);
   }
 }

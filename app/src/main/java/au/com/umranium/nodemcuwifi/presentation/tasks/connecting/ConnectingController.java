@@ -4,6 +4,7 @@ import android.support.annotation.StringRes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -17,8 +18,8 @@ import au.com.umranium.nodemcuwifi.presentation.common.Scheduler;
 import au.com.umranium.nodemcuwifi.presentation.tasks.common.BaseTaskController;
 import au.com.umranium.nodemcuwifi.presentation.tasks.utils.WifiConnectionException;
 import au.com.umranium.nodemcuwifi.presentation.tasks.utils.WifiConnectionUtil;
+import au.com.umranium.nodemcuwifi.presentation.common.IsTrackingWifiNetwork;
 import au.com.umranium.nodemcuwifi.utils.rx.ToVoid;
-import au.com.umranium.nodemcuwifi.wifievents.WifiConnected;
 import au.com.umranium.nodemcuwifi.wifievents.WifiEvents;
 import rx.Observable;
 import rx.Subscription;
@@ -76,21 +77,13 @@ public class ConnectingController extends BaseTaskController<ConnectingControlle
   }
 
   private void startMonitoring() {
-    Observable<Void> initialEvent;
-    if (wifiConnectionUtil.isAlreadyConnected()) {
-      initialEvent = Observable.just((Void) null);
-    } else {
-      initialEvent = Observable.empty();
-    }
-
-    Observable<Void> connectedToEspEvents = wifiEvents
-        .getConnected()
-        .filter(new IsConnectedToEsp<WifiConnected>(wifiConnectionUtil))
-        .map(ToVoid.<WifiConnected>getInstance());
-
-    task = initialEvent
-        .mergeWith(connectedToEspEvents)
+    // wait for first event where
+    task = Observable
+        .interval(1, TimeUnit.SECONDS)
+        .filter(new IsConnectedToEsp<Long>(wifiConnectionUtil))
+        .filter(new IsTrackingWifiNetwork<Long>(wifiConnectionUtil))
         .first()
+        .map(ToVoid.<Long>toVoid())
         .flatMap(new ScanApiCall(scheduler, serviceProvider))
         .map(new ReceivedToScannedAccessPoints())
         .observeOn(scheduler.mainThread())

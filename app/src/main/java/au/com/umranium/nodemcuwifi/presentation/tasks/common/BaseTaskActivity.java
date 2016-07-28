@@ -1,11 +1,13 @@
 package au.com.umranium.nodemcuwifi.presentation.tasks.common;
 
+import android.content.Intent;
 import android.support.annotation.StringRes;
 import android.widget.TextView;
 
 import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseActivity;
 import au.com.umranium.nodemcuwifi.presentation.common.BaseController;
+import au.com.umranium.nodemcuwifi.presentation.display.error.ErrorActivity;
 
 /**
  * A generic activity that performs a long running task.
@@ -40,4 +42,12 @@ abstract public class BaseTaskActivity<BaseControllerType extends BaseController
     txtDescription.setText(message);
   }
 
+  public void showErrorScreen(@StringRes int title, @StringRes int message) {
+    Intent intent = ErrorActivity.createIntent(this, getString(title), getString(message));
+    startNextActivity(intent);
+  }
+
+  public void showErrorScreen(String title, String message) {
+    ErrorActivity.createIntent(this, title, message);
+  }
 }
