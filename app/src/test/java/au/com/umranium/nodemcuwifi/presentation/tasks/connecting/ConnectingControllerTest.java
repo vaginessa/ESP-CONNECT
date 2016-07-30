@@ -1,11 +1,15 @@
 package au.com.umranium.nodemcuwifi.presentation.tasks.connecting;
 
+import android.util.Log;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Provider;
 
@@ -14,18 +18,22 @@ import au.com.umranium.nodemcuwifi.api.ReceivedAccessPoint;
 import au.com.umranium.nodemcuwifi.api.ReceivedAccessPoints;
 import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
 import au.com.umranium.nodemcuwifi.presentation.common.Scheduler;
+import au.com.umranium.nodemcuwifi.presentation.tasks.utils.NetworkPollingCall;
 import au.com.umranium.nodemcuwifi.presentation.tasks.utils.WifiConnectionUtil;
 import au.com.umranium.nodemcuwifi.wifievents.WifiConnected;
 import au.com.umranium.nodemcuwifi.wifievents.WifiConnectivityEvent;
 import au.com.umranium.nodemcuwifi.wifievents.WifiEvents;
 import mockit.Expectations;
 import mockit.Injectable;
+import mockit.Mock;
+import mockit.MockUp;
 import mockit.Mocked;
 import mockit.Tested;
 import mockit.Verifications;
 import mockit.integration.junit4.JMockit;
 import rx.Observable;
 import rx.schedulers.Schedulers;
+import rx.schedulers.TestScheduler;
 import rx.subjects.PublishSubject;
 
 @RunWith(JMockit.class)
@@ -34,33 +42,19 @@ public class ConnectingControllerTest {
   @Injectable
   ConnectingController.Surface surface;
   @Injectable
-  ScannedAccessPoint scannedAccessPoint;
-  @Injectable
-  WifiEvents wifiEvents;
+  ScannedAccessPoint accessPoint;
   @Injectable
   WifiConnectionUtil wifiConnectionUtil;
   @Injectable
-  Provider<NodeMcuService> serviceProvider;
-  @Injectable
-  NodeMcuService service;
-  @Injectable
   Scheduler scheduler;
-  @Mocked
-  WifiConnected wifiConnected;
+  @Injectable
+  NetworkPollingCall<ReceivedAccessPoints> scanCall;
   @Tested
   ConnectingController controller;
 
   @Before
   public void setUp() throws Exception {
     new Expectations() {{
-      serviceProvider.get();
-      result = service;
-      minTimes = 0;
-
-      service.scan();
-      result = Observable.just(createAccessPoints(new ReceivedAccessPoint("a", true, "0")));
-      minTimes = 0;
-
       scheduler.mainThread();
       result = Schedulers.immediate();
       minTimes = 0;
@@ -68,30 +62,18 @@ public class ConnectingControllerTest {
       scheduler.io();
       result = Schedulers.immediate();
       minTimes = 0;
+
+      new MockUp<Log>() {
+        @Mock
+        int e(String tag, String msg, Throwable tr) {
+          return 0;
+        }
+      };
     }};
   }
 
   @Test
-  public void whenAlreadyConnected_firesInitialEvent() throws Exception {
-    // given:
-    new Expectations() {{
-      //noinspection CheckResult
-      wifiConnectionUtil.isAlreadyConnected();
-      result = true;
-    }};
-
-    // when:
-    controller.onStart();
-
-    // then:
-    new Verifications() {{
-      //noinspection unchecked
-      surface.proceedToNextTask((List<ScannedAccessPoint>) any);
-    }};
-  }
-
-  @Test
-  public void whenNotConnected_doesNotFireEvent() throws Exception {
+  public void ifNotAlreadyConnected_connectsToNetwork() throws Exception {
     // given:
     new Expectations() {{
       //noinspection CheckResult
@@ -104,35 +86,51 @@ public class ConnectingControllerTest {
 
     // then:
     new Verifications() {{
-      //noinspection unchecked
-      surface.proceedToNextTask((List<ScannedAccessPoint>) any);
-      times = 0;
+      wifiConnectionUtil.connectToNetwork();
+      times = 1;
     }};
   }
 
   @Test
-  public void whenConnectedLater_firesEvent() throws Exception {
-    final PublishSubject<WifiConnectivityEvent> connectivityEvents = PublishSubject.create();
+  public void afterFirstSuccessfulScanCall_proceedsToNext() throws Exception {
+    final ReceivedAccessPoints receivedAccessPoints = createAccessPoints(
+        new ReceivedAccessPoint("a", false, "1")
+    );
+    final List<ScannedAccessPoint> scannedAccessPoints = Arrays.asList(
+        new ScannedAccessPoint(0, "a", 1)
+    );
 
     // given:
     new Expectations() {{
-      //noinspection CheckResult
-      wifiConnectionUtil.isAlreadyConnected();
-      returns(false, false, true);
-
-      wifiEvents.getConnectivityEvents();
-      result = (Object) connectivityEvents;
+      scanCall.call();
+      returns(Observable.just(receivedAccessPoints));
     }};
 
     // when:
     controller.onStart();
-    connectivityEvents.onNext(wifiConnected);
 
     // then:
     new Verifications() {{
       //noinspection unchecked
-      surface.proceedToNextTask((List<ScannedAccessPoint>) any);
-      times = 1;
+      surface.proceedToNextTask(scannedAccessPoints);
+    }};
+  }
+
+  @Test
+  public void afterScanCallError_showsErrorMessage() throws Exception {
+    // given:
+    new Expectations() {{
+      scanCall.call();
+      returns(Observable.error(new RuntimeException()));
+    }};
+
+    // when:
+    controller.onStart();
+
+    // then:
+    new Verifications() {{
+      //noinspection unchecked
+      surface.showErrorScreen(anyInt, anyInt);
     }};
   }
 

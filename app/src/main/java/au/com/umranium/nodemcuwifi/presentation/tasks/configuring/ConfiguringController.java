@@ -3,17 +3,12 @@ package au.com.umranium.nodemcuwifi.presentation.tasks.configuring;
 import android.support.annotation.StringRes;
 import android.util.Log;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import au.com.umranium.nodemcuwifi.R;
-import au.com.umranium.nodemcuwifi.api.NodeMcuService;
+import au.com.umranium.nodemcuwifi.presentation.tasks.utils.NetworkPollingCall;
 import au.com.umranium.nodemcuwifi.api.State;
 import au.com.umranium.nodemcuwifi.presentation.common.ConfigDetails;
-import au.com.umranium.nodemcuwifi.presentation.common.IsConnectedToEsp;
-import au.com.umranium.nodemcuwifi.presentation.common.IsTrackingWifiNetwork;
 import au.com.umranium.nodemcuwifi.presentation.common.Scheduler;
 import au.com.umranium.nodemcuwifi.presentation.tasks.common.BaseTaskController;
 import au.com.umranium.nodemcuwifi.presentation.tasks.utils.WifiConnectionException;
@@ -26,30 +21,28 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.subscriptions.CompositeSubscription;
 
-import static au.com.umranium.nodemcuwifi.utils.rx.ToInstance.instance;
-
 /**
  * Controller for the configuring task screen.
  */
 public class ConfiguringController extends BaseTaskController<ConfiguringController.Surface> {
 
-  public static final int TIMEOUT_SECONDS = 10;
-
   private final WifiConnectionUtil wifiConnectionUtil;
   private final ConfigDetails configDetails;
-  private final Provider<NodeMcuService> serviceProvider;
   private final Scheduler scheduler;
   private final WifiEvents wifiEvents;
+  private final NetworkPollingCall<Void> saveCall;
+  private final NetworkPollingCall<State> stateCall;
   private Subscription task;
 
   @Inject
-  public ConfiguringController(Surface surface, WifiConnectionUtil wifiConnectionUtil, ConfigDetails configDetails, Provider<NodeMcuService> serviceProvider, Scheduler scheduler, WifiEvents wifiEvents) {
+  public ConfiguringController(Surface surface, WifiConnectionUtil wifiConnectionUtil, ConfigDetails configDetails, Scheduler scheduler, WifiEvents wifiEvents, NetworkPollingCall<Void> saveCall, NetworkPollingCall<State> stateCall) {
     super(surface);
     this.wifiConnectionUtil = wifiConnectionUtil;
     this.configDetails = configDetails;
-    this.serviceProvider = serviceProvider;
     this.scheduler = scheduler;
     this.wifiEvents = wifiEvents;
+    this.saveCall = saveCall;
+    this.stateCall = stateCall;
   }
 
   @Override
@@ -78,51 +71,37 @@ public class ConfiguringController extends BaseTaskController<ConfiguringControl
             try {
               wifiConnectionUtil.connectToNetwork();
             } catch (WifiConnectionException e) {
-              surface.showErrorMessage(e.getMessageId());
-              surface.cancelTask();
+              surface.showErrorScreen(R.string.configuring_generic_error_title, e.getMessageId());
             }
           }
         });
 
-    // once every second, when connected to the ESP, wait for the ESP is connected to the required network
-    Observable<State> waitForEspConnectedState = Observable
-        .interval(1, TimeUnit.SECONDS, scheduler.computation())
-        .onBackpressureDrop()
-        .filter(new IsConnectedToEsp<Long>(wifiConnectionUtil))
-        .filter(new IsTrackingWifiNetwork<Long>(wifiConnectionUtil))
-        .flatMap(new MapToStateCall<Long>(scheduler, serviceProvider))
-        .filter(new Func1<State, Boolean>() {
-          @Override
-          public Boolean call(State state) {
-            return configDetails.getSsid().equals(state.mSsid) && !state.isStationIpBlank();
-          }
-        });
-
-    // wait for timeout then emit error
-    Observable<State> throwErrorOnTimeOut = Observable
-        .timer(TIMEOUT_SECONDS, TimeUnit.SECONDS, scheduler.computation())
-        .flatMap(instance(Observable.<State>error(new ConfiguringTimeoutException())));
-
     // configure and wait for ESP to connect or timeout
-    Subscription configureAndWaitForConnect = serviceProvider
-        .get()
-        .save(configDetails.getSsid(), configDetails.getPassword())
-        .subscribeOn(scheduler.io())
-        .switchMap(instance(Observable.merge(waitForEspConnectedState, throwErrorOnTimeOut)))//wait for esp connection or timeout
+    Subscription configureAndWaitForConnect = saveCall
+        .call()
+        .take(1)
+        .switchMap(new ToStateCall())
+        .take(1)
+        .map(new ConnectedToConfigNetwork())
         .observeOn(scheduler.mainThread())
-        .subscribe(new Action1<State>() {
+        .subscribe(new Action1<Boolean>() {
           @Override
-          public void call(State state) {
-            surface.proceedToNextTask();
+          public void call(Boolean connected) {
+            if (connected) {
+              surface.proceedToNextTask(configDetails.getSsid());
+            } else {
+              surface.showErrorScreen(R.string.configuring_generic_error_title, R.string.configuring_esp_unable_to_connect);
+            }
           }
         }, new Action1<Throwable>() {
           @Override
           public void call(Throwable error) {
-            if (!(error instanceof ConfiguringTimeoutException)) {
+            if (!(error instanceof NetworkPollingCall.MaxRetryException)) {
               Log.e(ConfiguringController.class.getSimpleName(), "Error while configuring ESP8266", error);
+              surface.showErrorScreen(R.string.configuring_generic_error_title, R.string.configuring_generic_error_msg);
+            } else {
+              surface.showErrorScreen(R.string.configuring_generic_error_title, R.string.configuring_connection_error_msg);
             }
-            surface.showErrorMessage(R.string.configuring_generic_error);
-            surface.cancelTask();
           }
         });
 
@@ -140,40 +119,20 @@ public class ConfiguringController extends BaseTaskController<ConfiguringControl
   public interface Surface extends BaseTaskController.Surface {
     void setMessage(String networkName);
 
-    void showErrorMessage(@StringRes int message);
-
-    void proceedToNextTask();
+    void proceedToNextTask(String ssid);
   }
 
-  private static class MapToStateCall<T> implements Func1<T, Observable<State>> {
-
-    private Scheduler scheduler;
-    private Provider<NodeMcuService> serviceProvider;
-
-    public MapToStateCall(Scheduler scheduler, Provider<NodeMcuService> serviceProvider) {
-      this.scheduler = scheduler;
-      this.serviceProvider = serviceProvider;
-    }
-
+  private class ToStateCall implements Func1<Void, Observable<State>> {
     @Override
-    public Observable<State> call(T ignored) {
-      return serviceProvider
-          .get()
-          .getState()
-          .subscribeOn(scheduler.io())
-          .onErrorResumeNext(new Func1<Throwable, Observable<? extends State>>() {
-            @Override
-            public Observable<? extends State> call(Throwable throwable) {
-              if (throwable instanceof java.net.SocketTimeoutException ||
-                  throwable instanceof java.net.SocketException) {
-                // avoid throwing errors for socket time-outs
-                return Observable.<State>empty();
-              } else {
-                return Observable.error(throwable);
-              }
-            }
-          });
+    public Observable<State> call(Void ignore) {
+      return stateCall.call();
     }
   }
 
+  private class ConnectedToConfigNetwork implements Func1<State, Boolean> {
+    @Override
+    public Boolean call(State state) {
+      return configDetails.getSsid().equals(state.mSsid) && !state.isStationIpBlank();
+    }
+  }
 }

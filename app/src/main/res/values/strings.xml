@@ -26,6 +26,9 @@
   <string name="title_activity_connecting">Connecting to ESP8266</string>
   <string name="connecting_title">Connecting to %s</string>
   <string name="connecting_description">Please hold on as we connect to %s</string>
+  <string name="connecting_generic_error_title">Error connecting to ESP8266.</string>
+  <string name="connecting_generic_error_msg">An error occurred while connecting to your ESP8266.</string>
+  <string name="connecting_connection_error_msg">Unable to maintain a connection to the ESP8266 long enough to check the WiFi networks it sees.</string>
 
   <string name="title_activity_configure">Configure your ESP8266</string>
   <string name="configure_hint_ssid">SSID</string>
@@ -38,8 +41,11 @@
 
   <string name="title_activity_configuring">Configuring ESP8266</string>
   <string name="configuring_title">Configuring your ESP8266</string>
-  <string name="configuring_description">Please hold on as we configure your ESP8266 to connect to %s</string>
-  <string name="configuring_generic_error">An error occurred while configuring your ESP8266</string>
+  <string name="configuring_description">Please hold on as we configure your ESP8266 to connect to %s.</string>
+  <string name="configuring_generic_error_title">Error configuring ESP8266</string>
+  <string name="configuring_generic_error_msg">An error occurred while configuring your ESP8266.\nPlease try again.</string>
+  <string name="configuring_connection_error_msg">Unable to maintain a connection to the ESP8266 long enough to configure it.</string>
+  <string name="configuring_esp_unable_to_connect">Your ESP8266 was configured successfully but it was unable to connect to the network you specified.</string>
 
   <string name="title_activity_scan">Find NodeMCU</string>
   <string name="title_activity_configurer">Configure NodeMCU</string>
@@ -47,7 +53,7 @@
 
   <string name="title_activity_end">ESP8266 Configured</string>
   <string name="end_txt_title">All done!</string>
-  <string name="end_txt_description">Your ESP8266 has been successfully configured.</string>
+  <string name="end_txt_description">Your ESP8266 has been successfully configured to connect to %s.</string>
 
   <string name="wificonn_error_msg_unable_to_enable">Unable to enable network</string>
   <string name="wificonn_error_msg_unable_to_disconnect">Unable to disconnect</string>

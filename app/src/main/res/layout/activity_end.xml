@@ -28,6 +28,6 @@
     android:layout_centerHorizontal="true"
     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
     android:gravity="center"
-    android:text="@string/end_txt_description"/>
+    tools:text="@string/end_txt_description"/>
 
 </RelativeLayout>

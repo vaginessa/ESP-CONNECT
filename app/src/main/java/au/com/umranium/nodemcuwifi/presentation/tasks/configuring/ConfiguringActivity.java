@@ -56,14 +56,8 @@ public class ConfiguringActivity extends BaseTaskActivity<ConfiguringController>
   }
 
   @Override
-  public void proceedToNextTask() {
-    startNextActivity(EndActivity.createIntent(this));
-  }
-
-  @Override
-  public void showErrorMessage(@StringRes int message) {
-    Toast.makeText(this, message, Toast.LENGTH_LONG)
-        .show();
+  public void proceedToNextTask(String ssid) {
+    startNextActivity(EndActivity.createIntent(this, ssid));
   }
 
 }

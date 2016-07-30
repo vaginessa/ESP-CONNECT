@@ -1,27 +1,21 @@
 package au.com.umranium.nodemcuwifi.presentation.tasks.connecting;
 
-import android.support.annotation.StringRes;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
-import au.com.umranium.nodemcuwifi.api.NodeMcuService;
+import au.com.umranium.nodemcuwifi.R;
 import au.com.umranium.nodemcuwifi.api.ReceivedAccessPoint;
 import au.com.umranium.nodemcuwifi.api.ReceivedAccessPoints;
-import au.com.umranium.nodemcuwifi.presentation.common.IsConnectedToEsp;
 import au.com.umranium.nodemcuwifi.presentation.common.ScannedAccessPoint;
 import au.com.umranium.nodemcuwifi.presentation.common.Scheduler;
 import au.com.umranium.nodemcuwifi.presentation.tasks.common.BaseTaskController;
+import au.com.umranium.nodemcuwifi.presentation.tasks.utils.NetworkPollingCall;
 import au.com.umranium.nodemcuwifi.presentation.tasks.utils.WifiConnectionException;
 import au.com.umranium.nodemcuwifi.presentation.tasks.utils.WifiConnectionUtil;
-import au.com.umranium.nodemcuwifi.presentation.common.IsTrackingWifiNetwork;
-import au.com.umranium.nodemcuwifi.utils.rx.ToVoid;
-import au.com.umranium.nodemcuwifi.wifievents.WifiEvents;
-import rx.Observable;
 import rx.Subscription;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -32,22 +26,18 @@ import rx.functions.Func1;
 public class ConnectingController extends BaseTaskController<ConnectingController.Surface> {
 
   private final ScannedAccessPoint accessPoint;
-  private final WifiEvents wifiEvents;
   private final WifiConnectionUtil wifiConnectionUtil;
-  private final Provider<NodeMcuService> serviceProvider;
   private final Scheduler scheduler;
+  private final NetworkPollingCall<ReceivedAccessPoints> scanCall;
   private Subscription task;
 
   @Inject
-  public ConnectingController(Surface surface, ScannedAccessPoint accessPoint, WifiEvents wifiEvents,
-                              WifiConnectionUtil wifiConnectionUtil, Provider<NodeMcuService> serviceProvider,
-                              Scheduler scheduler) {
+  public ConnectingController(Surface surface, ScannedAccessPoint accessPoint, WifiConnectionUtil wifiConnectionUtil, Scheduler scheduler, NetworkPollingCall<ReceivedAccessPoints> scanCall) {
     super(surface);
     this.accessPoint = accessPoint;
-    this.wifiEvents = wifiEvents;
     this.wifiConnectionUtil = wifiConnectionUtil;
-    this.serviceProvider = serviceProvider;
     this.scheduler = scheduler;
+    this.scanCall = scanCall;
   }
 
   @Override
@@ -65,8 +55,7 @@ public class ConnectingController extends BaseTaskController<ConnectingControlle
       try {
         wifiConnectionUtil.connectToNetwork();
       } catch (WifiConnectionException e) {
-        surface.showErrorMessage(e.getMessageId());
-        surface.cancelTask();
+        surface.showErrorScreen(R.string.connecting_generic_error_title, e.getMessageId());
       }
     }
   }
@@ -77,20 +66,24 @@ public class ConnectingController extends BaseTaskController<ConnectingControlle
   }
 
   private void startMonitoring() {
-    // wait for first event where
-    task = Observable
-        .interval(1, TimeUnit.SECONDS)
-        .filter(new IsConnectedToEsp<Long>(wifiConnectionUtil))
-        .filter(new IsTrackingWifiNetwork<Long>(wifiConnectionUtil))
-        .first()
-        .map(ToVoid.<Long>toVoid())
-        .flatMap(new ScanApiCall(scheduler, serviceProvider))
+    task = scanCall.call()
+        .take(1)
         .map(new ReceivedToScannedAccessPoints())
         .observeOn(scheduler.mainThread())
         .subscribe(new Action1<List<ScannedAccessPoint>>() {
           @Override
           public void call(List<ScannedAccessPoint> scannedAccessPoints) {
             surface.proceedToNextTask(scannedAccessPoints);
+          }
+        }, new Action1<Throwable>() {
+          @Override
+          public void call(Throwable error) {
+            if (!(error instanceof NetworkPollingCall.MaxRetryException)) {
+              Log.e(ConnectingController.class.getSimpleName(), "Error while connecting to ESP8266", error);
+              surface.showErrorScreen(R.string.connecting_generic_error_title, R.string.connecting_generic_error_msg);
+            } else {
+              surface.showErrorScreen(R.string.connecting_generic_error_title, R.string.connecting_connection_error_msg);
+            }
           }
         });
   }
@@ -107,8 +100,6 @@ public class ConnectingController extends BaseTaskController<ConnectingControlle
 
     void setMessage(String accessPointName);
 
-    void showErrorMessage(@StringRes int message);
-
     void proceedToNextTask(List<ScannedAccessPoint> accessPoints);
   }
 
@@ -122,24 +113,6 @@ public class ConnectingController extends BaseTaskController<ConnectingControlle
         scannedAccessPoints.add(new ScannedAccessPoint(i, receivedAccessPoint.mSsid, signalStrength));
       }
       return scannedAccessPoints;
-    }
-  }
-
-  private static class ScanApiCall implements Func1<Void, Observable<ReceivedAccessPoints>> {
-
-    private Scheduler scheduler;
-    private Provider<NodeMcuService> serviceProvider;
-
-    public ScanApiCall(Scheduler scheduler, Provider<NodeMcuService> serviceProvider) {
-      this.scheduler = scheduler;
-      this.serviceProvider = serviceProvider;
-    }
-
-    @Override
-    public Observable<ReceivedAccessPoints> call(Void aVoid) {
-      return serviceProvider.get()
-          .scan()
-          .subscribeOn(scheduler.io());
     }
   }
 

@@ -7,16 +7,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.util.concurrent.TimeUnit;
-
-import javax.inject.Provider;
 
 import au.com.umranium.nodemcuwifi.R;
-import au.com.umranium.nodemcuwifi.api.NodeMcuService;
 import au.com.umranium.nodemcuwifi.api.State;
 import au.com.umranium.nodemcuwifi.presentation.common.ConfigDetails;
 import au.com.umranium.nodemcuwifi.presentation.common.Scheduler;
+import au.com.umranium.nodemcuwifi.presentation.tasks.utils.NetworkPollingCall;
 import au.com.umranium.nodemcuwifi.presentation.tasks.utils.WifiConnectionException;
 import au.com.umranium.nodemcuwifi.presentation.tasks.utils.WifiConnectionUtil;
 import au.com.umranium.nodemcuwifi.wifievents.WifiDisconnected;
@@ -25,11 +21,12 @@ import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Mock;
 import mockit.MockUp;
+import mockit.Tested;
 import mockit.Verifications;
 import mockit.integration.junit4.JMockit;
 import rx.Observable;
 import rx.schedulers.Schedulers;
-import rx.schedulers.TestScheduler;
+import rx.subjects.PublishSubject;
 
 @RunWith(JMockit.class)
 public class ConfiguringControllerTest {
@@ -46,14 +43,14 @@ public class ConfiguringControllerTest {
   @Injectable
   ConfigDetails configDetails;
   @Injectable
-  Provider<NodeMcuService> serviceProvider;
-  @Injectable
-  NodeMcuService service;
-  @Injectable
   Scheduler scheduler;
-
+  @Injectable
   WifiEvents wifiEvents;
-
+  @Injectable
+  NetworkPollingCall<Void> saveCall;
+  @Injectable
+  NetworkPollingCall<State> stateCall;
+  @Tested
   ConfiguringController controller;
 
   @Before
@@ -65,10 +62,6 @@ public class ConfiguringControllerTest {
 
       configDetails.getPassword();
       result = "";
-      minTimes = 0;
-
-      serviceProvider.get();
-      result = service;
       minTimes = 0;
 
       scheduler.mainThread();
@@ -87,9 +80,6 @@ public class ConfiguringControllerTest {
         }
       };
     }};
-
-    wifiEvents = new WifiEvents();
-    controller = new ConfiguringController(surface, wifiConnectionUtil, configDetails, serviceProvider, scheduler, wifiEvents);
   }
 
   @Test
@@ -110,341 +100,172 @@ public class ConfiguringControllerTest {
     }};
   }
 
-
-  @Test
-  public void ifSaveThrowsError_cancelsTaskAndShowsError() {
-    // given
-    new Expectations() {{
-      //noinspection CheckResult
-      wifiConnectionUtil.isAlreadyConnected();
-      result = false;
-
-      service.save(anyString, anyString);
-      result = Observable.error(new RuntimeException());
-    }};
-
-    // when
-    controller.onStart();
-
-    // then
-    new Verifications() {{
-      surface.cancelTask();
-      surface.showErrorMessage(R.string.configuring_generic_error);
-    }};
-  }
-
-  @Test
-  public void whenConnectedToAnotherNetwork_doesNotCallState() {
-    final TestScheduler computation = new TestScheduler();
-
-    // given
-    new Expectations() {{
-      //noinspection CheckResult
-      wifiConnectionUtil.isAlreadyConnected();
-      result = false;
-
-      //noinspection CheckResult
-      wifiConnectionUtil.isTrackingWifiNetwork();
-      result = true;
-      minTimes = 0;
-
-      service.save(anyString, anyString);
-      result = Observable.just((Void) null);
-      minTimes = 0;
-
-      scheduler.computation();
-      result = computation;
-      minTimes = 0;
-    }};
-
-    // when
-    controller.onStart();
-    computation.advanceTimeBy(10, TimeUnit.SECONDS);
-
-    // then
-    new Verifications() {{
-      service.getState();
-      times = 0;
-    }};
-  }
-
-  @Test
-  public void whenNotTrackingAWifiNetwork_doesNotCallState() {
-    final TestScheduler computation = new TestScheduler();
-
-    // given
-    new Expectations() {{
-      //noinspection CheckResult
-      wifiConnectionUtil.isAlreadyConnected();
-      result = true;
-      minTimes = 0;
-
-      //noinspection CheckResult
-      wifiConnectionUtil.isTrackingWifiNetwork();
-      result = false;
-
-      service.save(anyString, anyString);
-      result = Observable.just((Void) null);
-      minTimes = 0;
-
-      scheduler.computation();
-      result = computation;
-      minTimes = 0;
-    }};
-
-    // when
-    controller.onStart();
-    computation.advanceTimeBy(10, TimeUnit.SECONDS);
-
-    // then
-    new Verifications() {{
-      service.getState();
-      times = 0;
-    }};
-  }
-
-  @Test
-  public void whenConnectedToEspAndEspStateCallThrowsSocketError_doesNotThrowError() {
-    final TestScheduler computation = new TestScheduler();
-
-    // given
-    new Expectations() {{
-      //noinspection CheckResult
-      wifiConnectionUtil.isAlreadyConnected();
-      result = true;
-
-      //noinspection CheckResult
-      wifiConnectionUtil.isTrackingWifiNetwork();
-      result = true;
-
-      service.save(anyString, anyString);
-      result = Observable.just((Void) null);
-      minTimes = 0;
-
-      service.getState();
-      returns(Observable.error(new SocketException()),
-          Observable.error(new SocketTimeoutException()));
-
-      scheduler.computation();
-      result = computation;
-      minTimes = 0;
-    }};
-
-    // when
-    controller.onStart();
-    computation.advanceTimeBy(2, TimeUnit.SECONDS);
-
-    // then
-    new Verifications() {{
-      surface.proceedToNextTask();
-      times = 0;
-
-      surface.showErrorMessage(anyInt);
-      times = 0;
-    }};
-  }
-
-  @Test
-  public void whenConnectedToEspAndEspStateCallThrowsNonSocketError_showsError() {
-    final TestScheduler computation = new TestScheduler();
-
-    // given
-    new Expectations() {{
-      //noinspection CheckResult
-      wifiConnectionUtil.isAlreadyConnected();
-      result = true;
-
-      //noinspection CheckResult
-      wifiConnectionUtil.isTrackingWifiNetwork();
-      result = true;
-
-      service.save(anyString, anyString);
-      result = Observable.just((Void) null);
-      minTimes = 0;
-
-      service.getState();
-      result = Observable.error(new RuntimeException());
-
-      scheduler.computation();
-      result = computation;
-      minTimes = 0;
-    }};
-
-    // when
-    controller.onStart();
-    computation.advanceTimeBy(1, TimeUnit.SECONDS);
-
-    // then
-    new Verifications() {{
-      surface.proceedToNextTask();
-      times = 0;
-
-      surface.showErrorMessage(anyInt);
-    }};
-  }
-
-  @Test
-  public void whenConnectedToEspAndEspStateCallThrowsErrorThenSucceeds_eventuallyProceedsToNext() {
-    final TestScheduler computation = new TestScheduler();
-
-    // given
-    new Expectations() {{
-      //noinspection CheckResult
-      wifiConnectionUtil.isAlreadyConnected();
-      result = true;
-
-      //noinspection CheckResult
-      wifiConnectionUtil.isTrackingWifiNetwork();
-      result = true;
-
-      service.save(anyString, anyString);
-      result = Observable.just((Void) null);
-      minTimes = 0;
-
-      service.getState();
-      returns(
-          Observable.<State>error(new SocketException()),
-          Observable.just(CONNECTED_STATE)
-      );
-
-      scheduler.computation();
-      result = computation;
-      minTimes = 0;
-    }};
-
-    // when
-    controller.onStart();
-    computation.advanceTimeBy(2, TimeUnit.SECONDS);
-
-    // then
-    new Verifications() {{
-      surface.proceedToNextTask();
-    }};
-  }
-
-  @Test
-  public void whenConnectedToEspAndEspIsConnectedToAnotherNetwork_doesNotProceedToNext() {
-    final TestScheduler computation = new TestScheduler();
-
-    // given
-    new Expectations() {{
-      //noinspection CheckResult
-      wifiConnectionUtil.isAlreadyConnected();
-      result = true;
-
-      //noinspection CheckResult
-      wifiConnectionUtil.isTrackingWifiNetwork();
-      result = true;
-
-      service.save(anyString, anyString);
-      result = Observable.just((Void) null);
-      minTimes = 0;
-
-      service.getState();
-      result = Observable.just(DISCONNECTED_STATE);
-
-      scheduler.computation();
-      result = computation;
-      minTimes = 0;
-    }};
-
-    // when
-    controller.onStart();
-    computation.advanceTimeBy(1, TimeUnit.SECONDS);
-
-    // then
-    new Verifications() {{
-      surface.proceedToNextTask();
-      times = 0;
-    }};
-  }
-
-  @Test
-  public void whenNotConnectedPastThreshold_showsError() {
-    final TestScheduler computation = new TestScheduler();
-
-    // given
-    new Expectations() {{
-      //noinspection CheckResult
-      wifiConnectionUtil.isAlreadyConnected();
-      result = true;
-
-      //noinspection CheckResult
-      wifiConnectionUtil.isTrackingWifiNetwork();
-      result = true;
-
-      service.save(anyString, anyString);
-      result = Observable.just((Void) null);
-      minTimes = 0;
-
-      service.getState();
-      result = Observable.just(DISCONNECTED_STATE);
-
-      scheduler.computation();
-      result = computation;
-      minTimes = 0;
-    }};
-
-    // when
-    controller.onStart();
-    computation.advanceTimeBy(ConfiguringController.TIMEOUT_SECONDS, TimeUnit.SECONDS);
-
-    // then
-    new Verifications() {{
-      surface.proceedToNextTask();
-      times = 0;
-
-      surface.showErrorMessage(anyInt);
-    }};
-  }
-
-  @Test
-  public void whenConnectedToEspAndEspConnectedToNetwork_proceedsToNext() {
-    final TestScheduler computation = new TestScheduler();
-
-    // given
-    new Expectations() {{
-      //noinspection CheckResult
-      wifiConnectionUtil.isAlreadyConnected();
-      result = true;
-
-      //noinspection CheckResult
-      wifiConnectionUtil.isTrackingWifiNetwork();
-      result = true;
-
-      service.save(anyString, anyString);
-      result = Observable.just((Void) null);
-      minTimes = 0;
-
-      service.getState();
-      result = Observable.just(CONNECTED_STATE);
-
-      scheduler.computation();
-      result = computation;
-      minTimes = 0;
-    }};
-
-    // when
-    controller.onStart();
-    computation.advanceTimeBy(1, TimeUnit.SECONDS);
-
-    // then
-    new Verifications() {{
-      surface.proceedToNextTask();
-    }};
-  }
-
   @Test
   public void whenDisconnected_triesToReconnect() throws WifiConnectionException {
+    final PublishSubject<WifiDisconnected> subject = PublishSubject.create();
+
     // given
+    new Expectations() {{
+      //noinspection CheckResult
+      wifiEvents.getDisconnected();
+      returns(subject.asObservable());
+    }};
 
     // when
     controller.onStart();
-    wifiEvents.emitEvent(WifiDisconnected.getInstance());
+    subject.onNext(WifiDisconnected.getInstance());
 
     // then
     new Verifications() {{
       wifiConnectionUtil.connectToNetwork();
+    }};
+  }
+
+  @Test
+  public void ifConnectThrowsError_showsErrorScreen() throws WifiConnectionException {
+    final PublishSubject<WifiDisconnected> subject = PublishSubject.create();
+
+    // given
+    new Expectations() {{
+      //noinspection CheckResult
+      wifiConnectionUtil.isAlreadyConnected();
+      returns(false);
+
+      wifiEvents.getDisconnected();
+      returns(subject.asObservable());
+
+      wifiConnectionUtil.connectToNetwork();
+      result = new WifiConnectionException(-1);
+    }};
+
+    // when
+    controller.onStart();
+    subject.onNext(WifiDisconnected.getInstance());
+
+    // then
+    new Verifications() {{
+      surface.showErrorScreen(anyInt, -1);
+    }};
+  }
+
+  @Test
+  public void afterFirstSave_ignoresSubsequentSaves() {
+    // given
+    new Expectations() {{
+      saveCall.call();
+      returns(Observable.just(null, null));
+    }};
+
+    // when
+    controller.onStart();
+
+    // then
+    new Verifications() {{
+      stateCall.call();
+      times = 1;
+    }};
+  }
+
+  @Test
+  public void ifSaveCallThrowsError_showsErrorMessage() {
+    // given
+    new Expectations() {{
+      saveCall.call();
+      returns(Observable.error(new RuntimeException()));
+    }};
+
+    // when
+    controller.onStart();
+
+    // then
+    new Verifications() {{
+      surface.showErrorScreen(anyInt, anyInt);
+      times = 1;
+    }};
+  }
+
+  @Test
+  public void ifStateCallThrowsError_showsErrorMessage() {
+    // given
+    new Expectations() {{
+      saveCall.call();
+      returns(Observable.just(null));
+
+      stateCall.call();
+      returns(Observable.error(new RuntimeException()));
+    }};
+
+    // when
+    controller.onStart();
+
+    // then
+    new Verifications() {{
+      surface.showErrorScreen(anyInt, anyInt);
+      times = 1;
+    }};
+  }
+
+  @Test
+  public void ifStateCallThrowsTimeoutError_showsTimeoutErrorMessage() {
+    // given
+    new Expectations() {{
+      saveCall.call();
+      returns(Observable.just(null));
+
+      stateCall.call();
+      returns(Observable.error(new NetworkPollingCall.MaxRetryException(new SocketException())));
+    }};
+
+    // when
+    controller.onStart();
+
+    // then
+    new Verifications() {{
+      surface.showErrorScreen(anyInt, R.string.configuring_connection_error_msg);
+      times = 1;
+    }};
+  }
+
+  @Test
+  public void afterDisconnectedState_ignoresDisconnectedStates() {
+    // given
+    new Expectations() {{
+      saveCall.call();
+      returns(Observable.just(null));
+
+      stateCall.call();
+      returns(Observable.just(DISCONNECTED_STATE));
+    }};
+
+    // when
+    controller.onStart();
+
+
+    // then
+    new Verifications() {{
+      surface.proceedToNextTask(anyString);
+      times = 0;
+    }};
+  }
+
+  @Test
+  public void afterConnectedState_proceedsToNext() {
+    // given
+    new Expectations() {{
+      saveCall.call();
+      returns(Observable.just(null));
+
+      stateCall.call();
+      returns(Observable.just(CONNECTED_STATE));
+    }};
+
+    // when
+    controller.onStart();
+
+
+    // then
+    new Verifications() {{
+      surface.proceedToNextTask(anyString);
     }};
   }
 

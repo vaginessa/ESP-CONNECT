@@ -46,11 +46,6 @@ public class ScannedAccessPoint implements Parcelable {
     return signalStrength;
   }
 
-  @Override
-  public String toString() {
-    return ssid;
-  }
-
   @SuppressWarnings("ForLoopReplaceableByForEach")
   private static long bssidToLong(String bssid) {
     // ensure that it matches XX:XX:XX:...:XX
@@ -72,28 +67,32 @@ public class ScannedAccessPoint implements Parcelable {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
 
-    ScannedAccessPoint point = (ScannedAccessPoint) o;
+    ScannedAccessPoint that = (ScannedAccessPoint) o;
 
-    if (id != point.id) {
-      return false;
-    }
-    return ssid.equals(point.ssid);
+    if (id != that.id) return false;
+    if (signalStrength != that.signalStrength) return false;
+    return ssid.equals(that.ssid);
 
   }
-
 
   @Override
   public int hashCode() {
     int result = (int) (id ^ (id >>> 32));
     result = 31 * result + ssid.hashCode();
+    result = 31 * result + signalStrength;
     return result;
+  }
+
+  @Override
+  public String toString() {
+    return "ScannedAccessPoint{" +
+        "id=" + id +
+        ", ssid='" + ssid + '\'' +
+        ", signalStrength=" + signalStrength +
+        '}';
   }
 
   @Override

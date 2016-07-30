@@ -16,6 +16,6 @@ public interface NodeMcuService {
   Observable<ReceivedAccessPoints> scan();
 
   @GET("/wifisave")
-  Observable<Void> save(@Query("s") String username, @Query("p") String password);
+  Observable<Void> save(@Query("s") String ssid, @Query("p") String password);
 
 }

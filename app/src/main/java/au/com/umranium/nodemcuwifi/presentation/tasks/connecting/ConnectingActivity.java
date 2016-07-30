@@ -62,12 +62,6 @@ public class ConnectingActivity extends BaseTaskActivity<ConnectingController> i
   }
 
   @Override
-  public void showErrorMessage(@StringRes int message) {
-    Toast.makeText(this, message, Toast.LENGTH_LONG)
-        .show();
-  }
-
-  @Override
   public void proceedToNextTask(List<ScannedAccessPoint> accessPoints) {
     Intent intent = ConfigureActivity.createIntent(this,
         getAccessPointFromIntent(), accessPoints);
