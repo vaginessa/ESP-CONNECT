@@ -63,9 +63,6 @@ public class AccessPointListActivity extends BaseActivity<AccessPointListControl
   @Override
   protected void initUi() {
     setContentView(R.layout.activity_access_point_list);
-    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-    setSupportActionBar(toolbar);
-
     list = (RecyclerView) findViewById(R.id.ap_list);
     assert list != null;
     list.setLayoutManager(new LinearLayoutManager(this));

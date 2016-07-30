@@ -101,6 +101,10 @@ abstract public class BaseActivity<BaseControllerType extends BaseController> ex
   @Override
   public void finish() {
     super.finish();
+    overrideFinishingTransition();
+  }
+
+  protected void overrideFinishingTransition() {
     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
   }
 }

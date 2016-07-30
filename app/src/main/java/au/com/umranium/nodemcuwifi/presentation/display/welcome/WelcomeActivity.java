@@ -45,4 +45,9 @@ public class WelcomeActivity extends BaseActivity<WelcomeController> implements 
     Intent intent = ScanningActivity.createIntent(this);
     startNextActivity(intent);
   }
+
+  @Override
+  protected void overrideFinishingTransition() {
+    // do nothing
+  }
 }
