@@ -18,6 +18,11 @@ public class WelcomeController extends BaseController<WelcomeController.Surface>
     surface.proceedToNextScreen();
   }
 
+  @Override
+  public void nextTaskCompleted() {
+    // do nothing
+  }
+
   public interface Surface extends BaseController.Surface {
     void proceedToNextScreen();
   }

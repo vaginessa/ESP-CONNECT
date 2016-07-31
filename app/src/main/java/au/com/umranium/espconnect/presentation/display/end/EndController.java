@@ -23,6 +23,11 @@ public class EndController extends BaseController<EndController.Surface> {
     surface.setDescription(ssid);
   }
 
+  @Override
+  public void backPressed() {
+    surface.finishTaskSuccessfully();
+  }
+
   public interface Surface extends BaseController.Surface {
     void setDescription(String ssid);
   }
