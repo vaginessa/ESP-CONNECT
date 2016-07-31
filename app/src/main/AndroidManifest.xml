@@ -16,7 +16,7 @@
                android:name="au.com.umranium.espconnect.presentation.app.App">
 
     <activity android:name="au.com.umranium.espconnect.presentation.display.welcome.WelcomeActivity"
-              android:label="@string/title_activity_welcome"
+              android:label="@string/app_name"
               android:theme="@style/AppTheme.NoActionBar">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>

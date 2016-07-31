@@ -8,7 +8,6 @@
   <string name="dialog_course_location_rationale_title">Permission to course location required</string>
   <string name="message_no_course_location_permission">App has not been granted course location permission. Please grant the permission to continue.</string>
 
-  <string name="title_activity_welcome">Configure ESP8266</string>
   <string name="welcome_btn_start">Find ESP8266</string>
   <string name="welcome_txt_title">Welcome</string>
   <string name="welcome_txt_description">Please turn on your ESP8266.\nWhen it is on, press the configure button.
