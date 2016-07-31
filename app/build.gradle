@@ -6,11 +6,11 @@ android {
   buildToolsVersion "23.0.3"
 
   defaultConfig {
-    applicationId "au.com.umranium.nodemcuwifi"
+    applicationId "au.com.umranium.espconnect"
     minSdkVersion 9
     targetSdkVersion 23
     versionCode 1
-    versionName "1.0"
+    versionName "0.0"
   }
   buildTypes {
     release {
