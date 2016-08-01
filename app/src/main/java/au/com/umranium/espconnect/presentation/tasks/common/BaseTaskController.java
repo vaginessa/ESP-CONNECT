@@ -2,6 +2,7 @@ package au.com.umranium.espconnect.presentation.tasks.common;
 
 import android.support.annotation.StringRes;
 
+import au.com.umranium.espconnect.analytics.ScreenTracker;
 import au.com.umranium.espconnect.presentation.common.BaseController;
 
 /**
@@ -9,8 +10,8 @@ import au.com.umranium.espconnect.presentation.common.BaseController;
  */
 public abstract class BaseTaskController<SurfaceType extends BaseTaskController.Surface> extends BaseController<SurfaceType> {
 
-  public BaseTaskController(SurfaceType surface) {
-    super(surface);
+  public BaseTaskController(SurfaceType surface, ScreenTracker screenTracker) {
+    super(surface, screenTracker);
   }
 
   public void onStart() {

@@ -1,14 +1,18 @@
 package au.com.umranium.espconnect.presentation.common;
 
+import au.com.umranium.espconnect.analytics.ScreenTracker;
+
 /**
  * A generic controller (containing logic) for all activity controllers to inherit from.
  */
 public abstract class BaseController<SurfaceType extends BaseController.Surface> {
 
   protected final SurfaceType surface;
+  protected final ScreenTracker screenTracker;
 
-  public BaseController(SurfaceType surface) {
+  public BaseController(SurfaceType surface, ScreenTracker screenTracker) {
     this.surface = surface;
+    this.screenTracker = screenTracker;
   }
 
   public void onCreate() {

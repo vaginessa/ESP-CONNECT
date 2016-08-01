@@ -3,6 +3,8 @@ package au.com.umranium.espconnect.presentation.tasks.scanning;
 import android.net.wifi.WifiManager;
 
 import au.com.umranium.espconnect.R;
+import au.com.umranium.espconnect.analytics.EventTracker;
+import au.com.umranium.espconnect.analytics.ScreenTracker;
 import au.com.umranium.espconnect.presentation.common.ScannedAccessPoint;
 import au.com.umranium.espconnect.presentation.common.ToastDispatcher;
 import au.com.umranium.espconnect.presentation.tasks.common.BaseTaskController;
@@ -24,28 +26,28 @@ import javax.inject.Inject;
  */
 public class ScanningController extends BaseTaskController<ScanningController.Surface> {
 
-  private static final String NODE_MCU_AP_FMT = ".*";
-//  private static final String NODE_MCU_AP_FMT = "ESP.*";
-
   private final WifiEvents wifiEvents;
   private final WifiManager wifiManager;
   private final ScannedAccessPointExtractor accessPointExtractor;
   private final ToastDispatcher toastDispatcher;
+  private final EventTracker eventTracker;
   private Subscription scanningTask;
   private long lastScanRequestTimestamp = -1;
 
   @Inject
-  public ScanningController(Surface surface, WifiEvents wifiEvents, WifiManager wifiManager, ToastDispatcher toastDispatcher) {
-    super(surface);
+  public ScanningController(Surface surface, ScreenTracker screenTracker, WifiEvents wifiEvents, WifiManager wifiManager, ToastDispatcher toastDispatcher, ScannedAccessPointExtractor accessPointExtractor, EventTracker eventTracker) {
+    super(surface, screenTracker);
     this.wifiEvents = wifiEvents;
     this.wifiManager = wifiManager;
-    this.accessPointExtractor = new ScannedAccessPointExtractor(wifiManager, NODE_MCU_AP_FMT);
     this.toastDispatcher = toastDispatcher;
+    this.accessPointExtractor = accessPointExtractor;
+    this.eventTracker = eventTracker;
   }
 
   @Override
   public void onCreate() {
     super.onCreate();
+    screenTracker.startScanning();
     surface.setTitle(R.string.scanning_title);
     surface.setMessage(R.string.scanning_description);
   }
@@ -56,14 +58,17 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
   }
 
   public void startScanning() {
+    eventTracker.locationPermissionGiven();
     scanningTask = startWifiScans();
   }
 
   public void handleDeniedLocationPermission() {
+    eventTracker.locationPermissionRejected();
     handleNoLocationPermission();
   }
 
   public void handlePermanentlyDeniedLocationPermission() {
+    eventTracker.locationPermissionDeniedPermanently();
     handleNoLocationPermission();
   }
 

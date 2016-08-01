@@ -5,6 +5,7 @@ import android.util.Log;
 import javax.inject.Inject;
 
 import au.com.umranium.espconnect.R;
+import au.com.umranium.espconnect.analytics.ScreenTracker;
 import au.com.umranium.espconnect.presentation.tasks.utils.NetworkPollingCall;
 import au.com.umranium.espconnect.api.State;
 import au.com.umranium.espconnect.presentation.common.ConfigDetails;
@@ -34,8 +35,8 @@ public class ConfiguringController extends BaseTaskController<ConfiguringControl
   private Subscription task;
 
   @Inject
-  public ConfiguringController(Surface surface, WifiConnectionUtil wifiConnectionUtil, ConfigDetails configDetails, Scheduler scheduler, WifiEvents wifiEvents, NetworkPollingCall<Void> saveCall, NetworkPollingCall<State> stateCall) {
-    super(surface);
+  public ConfiguringController(Surface surface, ScreenTracker screenTracker, WifiConnectionUtil wifiConnectionUtil, ConfigDetails configDetails, Scheduler scheduler, WifiEvents wifiEvents, NetworkPollingCall<Void> saveCall, NetworkPollingCall<State> stateCall) {
+    super(surface, screenTracker);
     this.wifiConnectionUtil = wifiConnectionUtil;
     this.configDetails = configDetails;
     this.scheduler = scheduler;
@@ -47,6 +48,7 @@ public class ConfiguringController extends BaseTaskController<ConfiguringControl
   @Override
   public void onCreate() {
     super.onCreate();
+    screenTracker.startConfiguring();
     surface.setTitle(R.string.configuring_title);
     surface.setMessage(configDetails.getSsid());
   }

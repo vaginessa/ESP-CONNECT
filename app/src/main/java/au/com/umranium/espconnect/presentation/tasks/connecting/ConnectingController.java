@@ -8,6 +8,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import au.com.umranium.espconnect.R;
+import au.com.umranium.espconnect.analytics.ScreenTracker;
 import au.com.umranium.espconnect.api.ReceivedAccessPoint;
 import au.com.umranium.espconnect.api.ReceivedAccessPoints;
 import au.com.umranium.espconnect.presentation.common.ScannedAccessPoint;
@@ -32,8 +33,8 @@ public class ConnectingController extends BaseTaskController<ConnectingControlle
   private Subscription task;
 
   @Inject
-  public ConnectingController(Surface surface, ScannedAccessPoint accessPoint, WifiConnectionUtil wifiConnectionUtil, Scheduler scheduler, NetworkPollingCall<ReceivedAccessPoints> scanCall) {
-    super(surface);
+  public ConnectingController(Surface surface, ScreenTracker screenTracker, ScannedAccessPoint accessPoint, WifiConnectionUtil wifiConnectionUtil, Scheduler scheduler, NetworkPollingCall<ReceivedAccessPoints> scanCall) {
+    super(surface, screenTracker);
     this.accessPoint = accessPoint;
     this.wifiConnectionUtil = wifiConnectionUtil;
     this.scheduler = scheduler;
@@ -43,6 +44,7 @@ public class ConnectingController extends BaseTaskController<ConnectingControlle
   @Override
   public void onCreate() {
     super.onCreate();
+    screenTracker.startConnecting();
     surface.setTitle(accessPoint.getSsid());
     surface.setMessage(accessPoint.getSsid());
   }

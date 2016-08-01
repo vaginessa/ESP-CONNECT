@@ -1,6 +1,8 @@
 package au.com.umranium.espconnect.di.app;
 
 import android.content.Context;
+
+import au.com.umranium.espconnect.analytics.Analytics;
 import au.com.umranium.espconnect.di.scope.AppScope;
 import au.com.umranium.espconnect.presentation.app.App;
 import au.com.umranium.espconnect.presentation.common.Scheduler;
@@ -23,5 +25,7 @@ public interface AppComponent {
   WifiEvents getWifiEvents();
 
   Scheduler getScheduler();
+
+  Analytics getAnalytics();
 
 }

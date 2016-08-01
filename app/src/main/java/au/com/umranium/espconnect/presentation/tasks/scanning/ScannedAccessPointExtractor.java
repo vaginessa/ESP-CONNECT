@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 /**
  * Extracts the results of scanned access points.
  */
@@ -19,7 +22,8 @@ public class ScannedAccessPointExtractor {
   private final WifiManager wifiManager;
   private final Pattern nodeAccessPointNameRegex;
 
-  public ScannedAccessPointExtractor(WifiManager wifiManager, String nodeAccessPointNameRegex) {
+  @Inject
+  public ScannedAccessPointExtractor(WifiManager wifiManager, @Named("nodeAccessPointRegex") String nodeAccessPointNameRegex) {
     this.wifiManager = wifiManager;
     this.nodeAccessPointNameRegex = Pattern.compile(nodeAccessPointNameRegex);
   }

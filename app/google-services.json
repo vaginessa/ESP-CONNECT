@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "896610596404",
+    "project_id": "esp-connect"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:896610596404:android:3814c58b148255a1",
+        "android_client_info": {
+          "package_name": "au.com.umranium.espconnect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASshYSsn30ejDKSjAP1xsiR2dH5mKZ63w"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-81633390-1"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

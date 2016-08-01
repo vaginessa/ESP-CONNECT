@@ -1,6 +1,8 @@
 package au.com.umranium.espconnect.presentation.display.aplist;
 
 import android.support.annotation.NonNull;
+
+import au.com.umranium.espconnect.analytics.ScreenTracker;
 import au.com.umranium.espconnect.presentation.common.BaseController;
 import au.com.umranium.espconnect.presentation.common.ScannedAccessPoint;
 import rx.Observer;
@@ -20,13 +22,16 @@ public class AccessPointListController extends BaseController<AccessPointListCon
   private final List<ScannedAccessPoint> accessPoints;
 
   @Inject
-  public AccessPointListController(AccessPointListController.Surface surface, List<ScannedAccessPoint> accessPoints) {
-    super(surface);
+  public AccessPointListController(Surface surface, ScreenTracker screenTracker, List<ScannedAccessPoint> accessPoints) {
+    super(surface, screenTracker);
     this.accessPoints = accessPoints;
   }
 
   @Override
   public void onCreate() {
+    super.onCreate();
+    screenTracker.startAccessPointList();
+
     surface.initListAdapter(accessPointClickEvents);
 
     accessPointClickEvents.subscribe(new Action1<ScannedAccessPoint>() {

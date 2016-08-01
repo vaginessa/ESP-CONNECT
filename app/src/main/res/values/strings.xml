@@ -58,4 +58,18 @@
   <string name="wificonn_error_msg_unable_to_disconnect">Unable to disconnect</string>
   <string name="wificonn_error_msg_unable_to_add_network">Unable to add the wifi network</string>
 
+  <string name="analytics_screen_welcome">welcome</string>
+  <string name="analytics_screen_scanning">scanning</string>
+  <string name="analytics_screen_access_point_list">access-point-list</string>
+  <string name="analytics_screen_connecting">connecting</string>
+  <string name="analytics_screen_configure">configure</string>
+  <string name="analytics_screen_configuring">configuring</string>
+  <string name="analytics_screen_end">end</string>
+  <string name="analytics_screen_error">error</string>
+
+  <string name="analytics_event_permission_location">permission-location</string>
+  <string name="analytics_event_permission_given">given</string>
+  <string name="analytics_event_permission_rejected">rejected</string>
+  <string name="analytics_event_permission_rejected_perm">rejected-permanently</string>
+
 </resources>

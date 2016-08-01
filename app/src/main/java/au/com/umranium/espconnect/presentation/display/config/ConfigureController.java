@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 
 import au.com.umranium.espconnect.R;
+import au.com.umranium.espconnect.analytics.ScreenTracker;
 import au.com.umranium.espconnect.presentation.common.BaseController;
 import au.com.umranium.espconnect.presentation.common.ConfigDetails;
 import au.com.umranium.espconnect.presentation.common.ScannedAccessPoint;
@@ -28,11 +29,12 @@ public class ConfigureController extends BaseController<ConfigureController.Surf
   private final WifiConnectionUtil wifiConnectionUtil;
 
   @Inject
-  public ConfigureController(ConfigureController.Surface surface,
+  public ConfigureController(Surface surface,
+                             ScreenTracker screenTracker,
                              ScannedAccessPoint accessPoint,
                              List<ScannedAccessPoint> ssids,
                              WifiConnectionUtil wifiConnectionUtil) {
-    super(surface);
+    super(surface, screenTracker);
     this.accessPoint = accessPoint;
     this.ssids = ssids;
     this.wifiConnectionUtil = wifiConnectionUtil;
@@ -40,6 +42,9 @@ public class ConfigureController extends BaseController<ConfigureController.Surf
 
   @Override
   public void onCreate() {
+    super.onCreate();
+    screenTracker.startConfigure();
+
     surface.initListAdapter(accessPointClickEvents);
 
     accessPointClickEvents.subscribe(new Action1<ScannedAccessPoint>() {
