@@ -14,6 +14,7 @@
       android:paddingLeft="@dimen/activity_horizontal_margin"
       android:paddingRight="@dimen/activity_horizontal_margin"
       android:paddingTop="@dimen/activity_vertical_margin"
+      android:gravity="center"
       android:text="@string/title_activity_access_point_list"
       android:textAppearance="@style/TextAppearance.AppCompat.Title"
       />

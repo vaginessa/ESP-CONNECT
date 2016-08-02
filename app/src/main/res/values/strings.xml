@@ -20,20 +20,20 @@
   <string name="scanning_error_noap_title">Unable to find any ESP8266 nodes</string>
   <string name="scanning_error_noap_description">We were unable to find any ESP8266 nodes.\nAre you sure your ESP8266 is turned on and in the configuration mode?</string>
 
-  <string name="title_activity_access_point_list">ESP8266 nodes found:</string>
+  <string name="title_activity_access_point_list">Please select your ESP8266 node from the nodes found:</string>
 
   <string name="title_activity_connecting">Connecting to ESP8266</string>
   <string name="connecting_title">Connecting to %s</string>
   <string name="connecting_description">Please hold on as we connect to %s</string>
-  <string name="connecting_generic_error_title">Error connecting to ESP8266.</string>
+  <string name="connecting_generic_error_title">Error connecting to ESP8266</string>
   <string name="connecting_generic_error_msg">An error occurred while connecting to your ESP8266.</string>
   <string name="connecting_connection_error_msg">Unable to maintain a connection to the ESP8266 long enough to check the WiFi networks it sees.</string>
 
   <string name="title_activity_configure">Configure your ESP8266</string>
   <string name="configure_hint_ssid">SSID</string>
   <string name="configure_hint_password">Password</string>
-  <string name="configure_title_details">Wi-Fi details to configure with:</string>
-  <string name="configure_title_ssids">SSIDs visible to the ESP8266:</string>
+  <string name="configure_title_details">Please enter the Wi-Fi details to configure your ESP8266 with:</string>
+  <string name="configure_title_ssids">SSIDs visible to your ESP8266:</string>
   <string name="configure_btn_submit">Submit</string>
   <string name="configure_error_blank_ssid">Please enter an SSID</string>
   <string name="configure_error_blank_password">Please enter a password</string>
@@ -52,7 +52,7 @@
 
   <string name="title_activity_end">ESP8266 Configured</string>
   <string name="end_txt_title">All done!</string>
-  <string name="end_txt_description">Your ESP8266 has been successfully configured to connect to %s.</string>
+  <string name="end_txt_description">Your ESP8266 has been successfully configured to connect to the WiFi network %s.</string>
 
   <string name="wificonn_error_msg_unable_to_enable">Unable to enable network</string>
   <string name="wificonn_error_msg_unable_to_disconnect">Unable to disconnect</string>
