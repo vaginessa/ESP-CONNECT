@@ -8,6 +8,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import au.com.umranium.espconnect.R;
+import au.com.umranium.espconnect.analytics.ErrorTracker;
 import au.com.umranium.espconnect.analytics.ScreenTracker;
 import au.com.umranium.espconnect.api.ReceivedAccessPoint;
 import au.com.umranium.espconnect.api.ReceivedAccessPoints;
@@ -30,15 +31,17 @@ public class ConnectingController extends BaseTaskController<ConnectingControlle
   private final WifiConnectionUtil wifiConnectionUtil;
   private final Scheduler scheduler;
   private final NetworkPollingCall<ReceivedAccessPoints> scanCall;
+  private final ErrorTracker errorTracker;
   private Subscription task;
 
   @Inject
-  public ConnectingController(Surface surface, ScreenTracker screenTracker, ScannedAccessPoint accessPoint, WifiConnectionUtil wifiConnectionUtil, Scheduler scheduler, NetworkPollingCall<ReceivedAccessPoints> scanCall) {
+  public ConnectingController(Surface surface, ScreenTracker screenTracker, ScannedAccessPoint accessPoint, WifiConnectionUtil wifiConnectionUtil, Scheduler scheduler, NetworkPollingCall<ReceivedAccessPoints> scanCall, ErrorTracker errorTracker) {
     super(surface, screenTracker);
     this.accessPoint = accessPoint;
     this.wifiConnectionUtil = wifiConnectionUtil;
     this.scheduler = scheduler;
     this.scanCall = scanCall;
+    this.errorTracker = errorTracker;
   }
 
   @Override
@@ -57,6 +60,7 @@ public class ConnectingController extends BaseTaskController<ConnectingControlle
       try {
         wifiConnectionUtil.connectToNetwork();
       } catch (WifiConnectionException e) {
+        errorTracker.onException(e);
         surface.showErrorScreen(R.string.connecting_generic_error_title, e.getMessageId());
       }
     }
@@ -80,6 +84,7 @@ public class ConnectingController extends BaseTaskController<ConnectingControlle
         }, new Action1<Throwable>() {
           @Override
           public void call(Throwable error) {
+            errorTracker.onException(error);
             if (!(error instanceof NetworkPollingCall.MaxRetryException)) {
               Log.e(ConnectingController.class.getSimpleName(), "Error while connecting to ESP8266", error);
               surface.showErrorScreen(R.string.connecting_generic_error_title, R.string.connecting_generic_error_msg);

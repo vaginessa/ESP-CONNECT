@@ -5,6 +5,7 @@ import android.support.annotation.StringRes;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.StandardExceptionParser;
 import com.google.android.gms.analytics.Tracker;
 
 import javax.inject.Inject;
@@ -26,7 +27,7 @@ public class Analytics {
   public Analytics(@Named("app") Context context) {
     this.context = context;
     GoogleAnalytics analytics = GoogleAnalytics.getInstance(context);
-    this.tracker = analytics.newTracker(R.xml.global_tracker);
+    this.tracker = analytics.newTracker(R.xml.app_tracker);
   }
 
   public void enterScreen(@StringRes int screenName) {
@@ -42,6 +43,14 @@ public class Analytics {
     tracker.send(new HitBuilders.EventBuilder()
         .setCategory(context.getString(category))
         .setAction(context.getString(actionIdentifier))
+        .build());
+  }
+
+  public void trackException(Throwable e) {
+    tracker.send(new HitBuilders.ExceptionBuilder()
+        .setFatal(false)
+        .setDescription(new StandardExceptionParser(context, null)
+            .getDescription(Thread.currentThread().getName(), e))
         .build());
   }
 

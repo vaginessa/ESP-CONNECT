@@ -3,6 +3,7 @@ package au.com.umranium.espconnect.presentation.tasks.scanning;
 import android.net.wifi.WifiManager;
 
 import au.com.umranium.espconnect.R;
+import au.com.umranium.espconnect.analytics.ErrorTracker;
 import au.com.umranium.espconnect.analytics.EventTracker;
 import au.com.umranium.espconnect.analytics.ScreenTracker;
 import au.com.umranium.espconnect.presentation.common.ScannedAccessPoint;
@@ -31,17 +32,19 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
   private final ScannedAccessPointExtractor accessPointExtractor;
   private final ToastDispatcher toastDispatcher;
   private final EventTracker eventTracker;
+  private final ErrorTracker errorTracker;
   private Subscription scanningTask;
   private long lastScanRequestTimestamp = -1;
 
   @Inject
-  public ScanningController(Surface surface, ScreenTracker screenTracker, WifiEvents wifiEvents, WifiManager wifiManager, ToastDispatcher toastDispatcher, ScannedAccessPointExtractor accessPointExtractor, EventTracker eventTracker) {
+  public ScanningController(Surface surface, ScreenTracker screenTracker, WifiEvents wifiEvents, WifiManager wifiManager, ToastDispatcher toastDispatcher, ScannedAccessPointExtractor accessPointExtractor, EventTracker eventTracker, ErrorTracker errorTracker) {
     super(surface, screenTracker);
     this.wifiEvents = wifiEvents;
     this.wifiManager = wifiManager;
     this.toastDispatcher = toastDispatcher;
     this.accessPointExtractor = accessPointExtractor;
     this.eventTracker = eventTracker;
+    this.errorTracker = errorTracker;
   }
 
   @Override
@@ -95,6 +98,12 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
             } else {
               surface.proceedWithAccessPoints(accessPoints);
             }
+          }
+        }, new Action1<Throwable>() {
+          @Override
+          public void call(Throwable e) {
+            errorTracker.onException(e);
+            showErrorScreen(R.string.scanning_generic_error_title, R.string.scanning_generic_error_msg);
           }
         });
   }

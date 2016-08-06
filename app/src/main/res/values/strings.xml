@@ -19,6 +19,8 @@
 
   <string name="scanning_error_noap_title">Unable to find any ESP8266 nodes</string>
   <string name="scanning_error_noap_description">We were unable to find any ESP8266 nodes.\nAre you sure your ESP8266 is turned on and in the configuration mode?</string>
+  <string name="scanning_generic_error_title">Error scanning for ESP8266 nodes</string>
+  <string name="scanning_generic_error_msg">An error occurred while scanning for ESP8266 nodes.\nPlease try again.</string>
 
   <string name="title_activity_access_point_list">Please select your ESP8266 node from the nodes found:</string>
 

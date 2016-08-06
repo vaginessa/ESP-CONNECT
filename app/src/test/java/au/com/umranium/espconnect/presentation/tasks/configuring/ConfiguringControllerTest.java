@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import java.net.SocketException;
 
 import au.com.umranium.espconnect.R;
+import au.com.umranium.espconnect.analytics.ErrorTracker;
 import au.com.umranium.espconnect.analytics.ScreenTracker;
 import au.com.umranium.espconnect.api.State;
 import au.com.umranium.espconnect.presentation.common.ConfigDetails;
@@ -41,6 +42,8 @@ public class ConfiguringControllerTest {
   ConfiguringController.Surface surface;
   @Injectable
   ScreenTracker screenTracker;
+  @Injectable
+  ErrorTracker errorTracker;
   @Injectable
   WifiConnectionUtil wifiConnectionUtil;
   @Injectable
@@ -147,6 +150,7 @@ public class ConfiguringControllerTest {
 
     // then
     new Verifications() {{
+      errorTracker.onException((Throwable) any);
       surface.showErrorScreen(anyInt, -1);
     }};
   }
@@ -182,6 +186,7 @@ public class ConfiguringControllerTest {
 
     // then
     new Verifications() {{
+      errorTracker.onException((Throwable) any);
       surface.showErrorScreen(anyInt, anyInt);
       times = 1;
     }};
@@ -203,6 +208,7 @@ public class ConfiguringControllerTest {
 
     // then
     new Verifications() {{
+      errorTracker.onException((Throwable) any);
       surface.showErrorScreen(anyInt, anyInt);
       times = 1;
     }};
@@ -224,6 +230,7 @@ public class ConfiguringControllerTest {
 
     // then
     new Verifications() {{
+      errorTracker.onException((Throwable) any);
       surface.showErrorScreen(anyInt, R.string.configuring_connection_error_msg);
       times = 1;
     }};

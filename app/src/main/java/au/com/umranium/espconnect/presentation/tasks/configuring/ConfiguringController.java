@@ -5,6 +5,8 @@ import android.util.Log;
 import javax.inject.Inject;
 
 import au.com.umranium.espconnect.R;
+import au.com.umranium.espconnect.analytics.ErrorTracker;
+import au.com.umranium.espconnect.analytics.LoggingErrorAction;
 import au.com.umranium.espconnect.analytics.ScreenTracker;
 import au.com.umranium.espconnect.presentation.tasks.utils.NetworkPollingCall;
 import au.com.umranium.espconnect.api.State;
@@ -32,10 +34,11 @@ public class ConfiguringController extends BaseTaskController<ConfiguringControl
   private final WifiEvents wifiEvents;
   private final NetworkPollingCall<Void> saveCall;
   private final NetworkPollingCall<State> stateCall;
+  private final ErrorTracker errorTracker;
   private Subscription task;
 
   @Inject
-  public ConfiguringController(Surface surface, ScreenTracker screenTracker, WifiConnectionUtil wifiConnectionUtil, ConfigDetails configDetails, Scheduler scheduler, WifiEvents wifiEvents, NetworkPollingCall<Void> saveCall, NetworkPollingCall<State> stateCall) {
+  public ConfiguringController(Surface surface, ScreenTracker screenTracker, WifiConnectionUtil wifiConnectionUtil, ConfigDetails configDetails, Scheduler scheduler, WifiEvents wifiEvents, NetworkPollingCall<Void> saveCall, NetworkPollingCall<State> stateCall, ErrorTracker errorTracker) {
     super(surface, screenTracker);
     this.wifiConnectionUtil = wifiConnectionUtil;
     this.configDetails = configDetails;
@@ -43,6 +46,7 @@ public class ConfiguringController extends BaseTaskController<ConfiguringControl
     this.wifiEvents = wifiEvents;
     this.saveCall = saveCall;
     this.stateCall = stateCall;
+    this.errorTracker = errorTracker;
   }
 
   @Override
@@ -72,10 +76,11 @@ public class ConfiguringController extends BaseTaskController<ConfiguringControl
             try {
               wifiConnectionUtil.connectToNetwork();
             } catch (WifiConnectionException e) {
+              errorTracker.onException(e);
               surface.showErrorScreen(R.string.configuring_generic_error_title, e.getMessageId());
             }
           }
-        });
+        }, new LoggingErrorAction(errorTracker));
 
     // configure and wait for ESP to connect or timeout
     Subscription configureAndWaitForConnect = saveCall
@@ -97,6 +102,7 @@ public class ConfiguringController extends BaseTaskController<ConfiguringControl
         }, new Action1<Throwable>() {
           @Override
           public void call(Throwable error) {
+            errorTracker.onException(error);
             if (!(error instanceof NetworkPollingCall.MaxRetryException)) {
               Log.e(ConfiguringController.class.getSimpleName(), "Error while configuring ESP8266", error);
               surface.showErrorScreen(R.string.configuring_generic_error_title, R.string.configuring_generic_error_msg);

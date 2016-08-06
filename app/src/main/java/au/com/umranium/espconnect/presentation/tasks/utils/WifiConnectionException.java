@@ -13,6 +13,7 @@ public class WifiConnectionException extends Exception {
   private int mMessageId;
 
   public WifiConnectionException(@StringRes int messageId) {
+    super("message-id=" + messageId);
     mMessageId = messageId;
   }
 
