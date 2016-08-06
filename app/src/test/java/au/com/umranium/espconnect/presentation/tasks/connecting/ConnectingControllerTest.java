@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import java.util.Arrays;
 import java.util.List;
 
+import au.com.umranium.espconnect.analytics.ScreenTracker;
 import au.com.umranium.espconnect.api.ReceivedAccessPoint;
 import au.com.umranium.espconnect.api.ReceivedAccessPoints;
 import au.com.umranium.espconnect.presentation.common.ScannedAccessPoint;
@@ -30,6 +31,8 @@ public class ConnectingControllerTest {
 
   @Injectable
   ConnectingController.Surface surface;
+  @Injectable
+  ScreenTracker screenTracker;
   @Injectable
   ScannedAccessPoint accessPoint;
   @Injectable

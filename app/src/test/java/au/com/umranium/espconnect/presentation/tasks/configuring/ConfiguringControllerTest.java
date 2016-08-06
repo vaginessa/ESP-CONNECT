@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import java.net.SocketException;
 
 import au.com.umranium.espconnect.R;
+import au.com.umranium.espconnect.analytics.ScreenTracker;
 import au.com.umranium.espconnect.api.State;
 import au.com.umranium.espconnect.presentation.common.ConfigDetails;
 import au.com.umranium.espconnect.presentation.common.Scheduler;
@@ -38,6 +39,8 @@ public class ConfiguringControllerTest {
 
   @Injectable
   ConfiguringController.Surface surface;
+  @Injectable
+  ScreenTracker screenTracker;
   @Injectable
   WifiConnectionUtil wifiConnectionUtil;
   @Injectable
