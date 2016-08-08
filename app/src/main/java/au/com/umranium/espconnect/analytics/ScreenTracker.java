@@ -48,7 +48,7 @@ public class ScreenTracker {
     analytics.enterScreen(R.string.analytics_screen_end);
   }
 
-  public void startError() {
-    analytics.enterScreen(R.string.analytics_screen_error);
+  public void startError(String title, String description) {
+    analytics.enterScreen(R.string.analytics_screen_error, "title='"+title+"', descr='"+description+"'");
   }
 }

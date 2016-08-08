@@ -35,6 +35,12 @@ public class Analytics {
     tracker.send(new HitBuilders.ScreenViewBuilder().build());
   }
 
+  public void enterScreen(@StringRes int screenName, String additionalParams) {
+    tracker.setScreenName(context.getString(screenName) + ":" + additionalParams);
+    tracker.send(new HitBuilders.ScreenViewBuilder()
+        .build());
+  }
+
   public void leaveScreen() {
     tracker.setScreenName(null);
   }

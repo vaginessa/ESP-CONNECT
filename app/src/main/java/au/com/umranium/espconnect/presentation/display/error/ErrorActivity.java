@@ -36,7 +36,7 @@ public class ErrorActivity extends BaseActivity<ErrorController> implements Erro
         .builder()
         .appComponent(getApp().getAppComponent())
         .activityModule(new ActivityModule(this))
-        .errorModule(new ErrorModule(this))
+        .errorModule(new ErrorModule(this, getParamTitle(), getParamDescription()))
         .build()
         .inject(this);
   }
@@ -44,10 +44,10 @@ public class ErrorActivity extends BaseActivity<ErrorController> implements Erro
   @Override
   protected void initUi() {
     setContentView(R.layout.activity_error);
+  }
 
-    String title = IntentExtras.getStringExtra(this, PARAM_TITLE);
-    String description = IntentExtras.getStringExtra(this, PARAM_DESCRIPTION);
-
+  @Override
+  public void showScreen(String title, String description) {
     TextView txtTitle = (TextView) findViewById(R.id.txt_title);
     TextView txtDescription = (TextView) findViewById(R.id.txt_description);
     Button btnOk = (Button) findViewById(R.id.btn_ok);
@@ -66,8 +66,13 @@ public class ErrorActivity extends BaseActivity<ErrorController> implements Erro
     });
   }
 
-  @Override
-  public void proceedToPrevScreen() {
-    ErrorActivity.this.finish();
+  private String getParamTitle() {
+    return IntentExtras.getStringExtra(this, PARAM_TITLE);
   }
+
+  private String getParamDescription() {
+    return IntentExtras.getStringExtra(this, PARAM_DESCRIPTION);
+  }
+
+
 }
