@@ -68,7 +68,7 @@ public class AccessPointListActivity extends BaseActivity<AccessPointListControl
 
   @Override
   public void initListAdapter(Observer<ScannedAccessPoint> accessPointClickObserver) {
-    adapter = new AccessPointArrayAdapter(this, accessPointClickObserver);
+    adapter = new AccessPointArrayAdapter(this, accessPointClickObserver, AccessPointArrayAdapter.SORT_BY_SIG_STRENGTH);
     list.setAdapter(adapter);
   }
 

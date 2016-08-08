@@ -2,25 +2,24 @@ package au.com.umranium.espconnect.presentation.tasks.scanning;
 
 import android.net.wifi.WifiManager;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
 import au.com.umranium.espconnect.R;
 import au.com.umranium.espconnect.analytics.ErrorTracker;
 import au.com.umranium.espconnect.analytics.EventTracker;
 import au.com.umranium.espconnect.analytics.ScreenTracker;
 import au.com.umranium.espconnect.presentation.common.ScannedAccessPoint;
+import au.com.umranium.espconnect.presentation.common.Scheduler;
 import au.com.umranium.espconnect.presentation.common.ToastDispatcher;
 import au.com.umranium.espconnect.presentation.tasks.common.BaseTaskController;
 import au.com.umranium.espconnect.wifievents.WifiEvents;
 import au.com.umranium.espconnect.wifievents.WifiScanComplete;
-import rx.Observable;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func1;
-
-import java.util.List;
-
-import javax.inject.Inject;
 
 /**
  * Controller for the scanning task screen.
@@ -29,19 +28,18 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
 
   private final WifiEvents wifiEvents;
   private final WifiManager wifiManager;
+  private final Scheduler scheduler;
   private final ScannedAccessPointExtractor accessPointExtractor;
-  private final ToastDispatcher toastDispatcher;
   private final EventTracker eventTracker;
   private final ErrorTracker errorTracker;
   private Subscription scanningTask;
-  private long lastScanRequestTimestamp = -1;
 
   @Inject
-  public ScanningController(Surface surface, ScreenTracker screenTracker, WifiEvents wifiEvents, WifiManager wifiManager, ToastDispatcher toastDispatcher, ScannedAccessPointExtractor accessPointExtractor, EventTracker eventTracker, ErrorTracker errorTracker) {
+  public ScanningController(Surface surface, ScreenTracker screenTracker, WifiEvents wifiEvents, WifiManager wifiManager, Scheduler scheduler, ScannedAccessPointExtractor accessPointExtractor, EventTracker eventTracker, ErrorTracker errorTracker) {
     super(surface, screenTracker);
     this.wifiEvents = wifiEvents;
     this.wifiManager = wifiManager;
-    this.toastDispatcher = toastDispatcher;
+    this.scheduler = scheduler;
     this.accessPointExtractor = accessPointExtractor;
     this.eventTracker = eventTracker;
     this.errorTracker = errorTracker;
@@ -77,19 +75,34 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
 
   private void handleNoLocationPermission() {
     surface.cancelTask();
-    toastDispatcher.showLongToast(R.string.message_no_course_location_permission);
+    showErrorScreen(R.string.no_course_location_permission_title, R.string.no_course_location_permission_msg);
   }
 
   @Override
   public void onStop() {
-    if (scanningTask!=null) {
+    if (scanningTask != null) {
       scanningTask.unsubscribe();
+      scanningTask = null;
     }
   }
 
   private Subscription startWifiScans() {
-    return getAccessPoints()
-        .observeOn(AndroidSchedulers.mainThread())
+    return wifiEvents
+        .getEvents()
+        .ofType(WifiScanComplete.class)
+        .doOnSubscribe(new Action0() {
+          @Override
+          public void call() {
+            wifiManager.startScan();
+          }
+        })
+        .map(new Func1<WifiScanComplete, List<ScannedAccessPoint>>() {
+          @Override
+          public List<ScannedAccessPoint> call(WifiScanComplete wifiScanComplete) {
+            return accessPointExtractor.extract();
+          }
+        })
+        .observeOn(scheduler.mainThread())
         .subscribe(new Action1<List<ScannedAccessPoint>>() {
           @Override
           public void call(List<ScannedAccessPoint> accessPoints) {
@@ -106,29 +119,6 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
             showErrorScreen(R.string.scanning_generic_error_title, R.string.scanning_generic_error_msg);
           }
         });
-  }
-
-  private Observable<List<ScannedAccessPoint>> getAccessPoints() {
-    return wifiEvents
-        .getEvents()
-        .ofType(WifiScanComplete.class)
-        .doOnSubscribe(new Action0() {
-          @Override
-          public void call() {
-            startScan();
-          }
-        })
-        .map(new Func1<WifiScanComplete, List<ScannedAccessPoint>>() {
-          @Override
-          public List<ScannedAccessPoint> call(WifiScanComplete wifiScanComplete) {
-            return accessPointExtractor.extract(lastScanRequestTimestamp);
-          }
-        });
-  }
-
-  private void startScan() {
-    wifiManager.startScan();
-    lastScanRequestTimestamp = System.currentTimeMillis();
   }
 
   public interface Surface extends BaseTaskController.Surface {

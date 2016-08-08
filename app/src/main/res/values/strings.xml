@@ -6,7 +6,8 @@
     Proceed to permission dialog box?
   </string>
   <string name="dialog_course_location_rationale_title">Permission to course location required</string>
-  <string name="message_no_course_location_permission">App has not been granted course location permission. Please grant the permission to continue.</string>
+  <string name="no_course_location_permission_title">Unable to continue</string>
+  <string name="no_course_location_permission_msg">App has not been granted course location permission. Please grant the permission to continue.</string>
 
   <string name="welcome_btn_start">Find ESP8266</string>
   <string name="welcome_txt_title">Welcome</string>

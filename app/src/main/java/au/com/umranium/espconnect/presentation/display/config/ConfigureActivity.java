@@ -76,8 +76,6 @@ public class ConfigureActivity extends BaseActivity<ConfigureController> impleme
   @Override
   protected void initUi() {
     setContentView(R.layout.activity_configure);
-//    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//    setSupportActionBar(toolbar);
 
     list = (RecyclerView) findViewById(R.id.ssid_list);
     assert list != null;
@@ -97,7 +95,7 @@ public class ConfigureActivity extends BaseActivity<ConfigureController> impleme
 
   @Override
   public void initListAdapter(Observer<ScannedAccessPoint> ssidClickObserver) {
-    adapter = new AccessPointArrayAdapter(this, ssidClickObserver);
+    adapter = new AccessPointArrayAdapter(this, ssidClickObserver, AccessPointArrayAdapter.SORT_BY_SSID);
     list.setAdapter(adapter);
   }
 

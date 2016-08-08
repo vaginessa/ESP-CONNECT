@@ -3,6 +3,7 @@ package au.com.umranium.espconnect.presentation.tasks.scanning;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+
 import au.com.umranium.espconnect.presentation.common.ScannedAccessPoint;
 import au.com.umranium.espconnect.utils.BootTimeUtils;
 
@@ -20,40 +21,18 @@ import javax.inject.Named;
 public class ScannedAccessPointExtractor {
 
   private final WifiManager wifiManager;
-  private final Pattern nodeAccessPointNameRegex;
 
   @Inject
-  public ScannedAccessPointExtractor(WifiManager wifiManager, @Named("nodeAccessPointRegex") String nodeAccessPointNameRegex) {
+  public ScannedAccessPointExtractor(WifiManager wifiManager) {
     this.wifiManager = wifiManager;
-    this.nodeAccessPointNameRegex = Pattern.compile(nodeAccessPointNameRegex);
   }
 
-  public List<ScannedAccessPoint> extract(long lastScanRequestTimestamp) {
-    long scanRequestBootTimeMicros = 0;
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-      scanRequestBootTimeMicros = TimeUnit.MILLISECONDS.toMicros(
-          BootTimeUtils.utcToTimeSinceBoot(lastScanRequestTimestamp,
-              BootTimeUtils.getDiffBootFromUtc()));
-    }
-
+  public List<ScannedAccessPoint> extract() {
     List<ScannedAccessPoint> accessPoints = new ArrayList<>();
 
     for (ScanResult scanResult : wifiManager.getScanResults()) {
-//            Log.d(TAG, "  scan-result: " + scanResult.SSID);
-
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-        if (scanResult.timestamp >= scanRequestBootTimeMicros) {
-          continue;
-        }
-      }
-
       String name = scanResult.SSID;
-      if (!nodeAccessPointNameRegex.matcher(name).matches()) {
-        continue;
-      }
-
       int level = WifiManager.calculateSignalLevel(scanResult.level, 100);
-
       accessPoints.add(new ScannedAccessPoint(scanResult.BSSID, name, level));
     }
 
