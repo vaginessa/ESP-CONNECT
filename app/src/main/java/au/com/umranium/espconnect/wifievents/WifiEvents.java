@@ -5,6 +5,8 @@ import javax.inject.Inject;
 import au.com.umranium.espconnect.di.scope.AppScope;
 import rx.Observable;
 import rx.subjects.PublishSubject;
+import rx.subjects.SerializedSubject;
+import rx.subjects.Subject;
 
 /**
  * @author umran
@@ -12,11 +14,11 @@ import rx.subjects.PublishSubject;
 @AppScope
 public final class WifiEvents {
 
-  private PublishSubject<WifiEvent> mEvents;
+  private Subject<WifiEvent, WifiEvent> mEvents;
 
   @Inject
   public WifiEvents() {
-    mEvents = PublishSubject.create();
+    mEvents = new SerializedSubject<>(PublishSubject.<WifiEvent>create());
   }
 
   public Observable<WifiEvent> getEvents() {
