@@ -16,6 +16,11 @@ public class EventTracker {
     this.analytics = analytics;
   }
 
+  public void accessPointsSeen(long count) {
+    analytics.trackAction(R.string.analytics_event_scanned_access_points,
+        R.string.analytics_event_scanned_access_points_results, count);
+  }
+
   public void locationPermissionGiven() {
     analytics.trackAction(R.string.analytics_event_permission_location,
         R.string.analytics_event_permission_given);

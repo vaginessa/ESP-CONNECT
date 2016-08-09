@@ -53,6 +53,14 @@ public class Analytics {
         .build());
   }
 
+  public void trackAction(@StringRes int category, @StringRes int actionIdentifier, long value) {
+    tracker.send(new HitBuilders.EventBuilder()
+        .setCategory(context.getString(category))
+        .setAction(context.getString(actionIdentifier))
+        .setValue(value)
+        .build());
+  }
+
   public void trackException(Throwable e) {
     tracker.send(new HitBuilders.ExceptionBuilder()
         .setFatal(false)

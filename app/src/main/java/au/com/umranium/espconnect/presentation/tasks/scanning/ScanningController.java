@@ -106,6 +106,7 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
         .subscribe(new Action1<List<ScannedAccessPoint>>() {
           @Override
           public void call(List<ScannedAccessPoint> accessPoints) {
+            eventTracker.accessPointsSeen(accessPoints.size());
             if (accessPoints.isEmpty()) {
               surface.proceedWithNoAccessPoints();
             } else {
