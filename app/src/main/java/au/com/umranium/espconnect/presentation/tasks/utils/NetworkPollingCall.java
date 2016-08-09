@@ -5,8 +5,6 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import au.com.umranium.espconnect.presentation.common.IsConnectedToEsp;
-import au.com.umranium.espconnect.presentation.common.IsTrackingWifiNetwork;
 import au.com.umranium.espconnect.presentation.common.Scheduler;
 import rx.Observable;
 import rx.functions.Action1;
@@ -58,8 +56,8 @@ public class NetworkPollingCall<R> implements Func0<Observable<R>> {
         .map(new ToTimerEventCount())
         .startWith(1)
         .doOnNext(new CheckMaxCallCount(prevCallCount))
-        .filter(new IsConnectedToEsp<Integer>(wifiConnectionUtil))
-        .filter(new IsTrackingWifiNetwork<Integer>(wifiConnectionUtil))
+        .filter(wifiConnectionUtil.new IsConnectedToEsp<>())
+        .filter(wifiConnectionUtil.new IsTrackingWifiNetwork<>())
         .take(1)
         .switchMap(new Func1<Integer, Observable<R>>() {
           @Override

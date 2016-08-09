@@ -23,6 +23,7 @@ import javax.inject.Inject;
 
 import au.com.umranium.espconnect.R;
 import au.com.umranium.espconnect.presentation.common.ScannedAccessPoint;
+import au.com.umranium.espconnect.utils.rx.Pred;
 
 /**
  * Utility class that helps connecting to a particular wifi access point.
@@ -149,4 +150,23 @@ public class WifiConnectionUtil {
     return mWifiManager.addNetwork(wifiConf);
   }
 
+  /**
+   * Returns true if the mobile device is connected to the ESP's hotspot.
+   */
+  public class IsConnectedToEsp<T> extends Pred<T> {
+    @Override
+    public Boolean call(T t) {
+      return isAlreadyConnected();
+    }
+  }
+
+  /**
+   * Return true if the mobile device is tracking a WiFi network.
+   */
+  public class IsTrackingWifiNetwork<T> extends Pred<T> {
+    @Override
+    public Boolean call(T ignored) {
+      return isTrackingWifiNetwork();
+    }
+  }
 }
