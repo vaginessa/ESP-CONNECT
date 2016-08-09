@@ -27,6 +27,7 @@ public class Analytics {
   public Analytics(@Named("app") Context context) {
     this.context = context;
     GoogleAnalytics analytics = GoogleAnalytics.getInstance(context);
+    analytics.enableAdvertisingIdCollection(true);
     this.tracker = analytics.newTracker(R.xml.app_tracker);
   }
 
