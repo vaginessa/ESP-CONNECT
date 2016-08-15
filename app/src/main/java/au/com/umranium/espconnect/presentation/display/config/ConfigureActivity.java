@@ -127,6 +127,9 @@ public class ConfigureActivity extends BaseActivity<ConfigureController> impleme
   @Override
   public void updateInputSsid(String ssid) {
     this.ssid.setText(ssid);
+    if (this.ssid.hasFocus()) {
+      this.password.requestFocus();
+    }
   }
 
   @Override

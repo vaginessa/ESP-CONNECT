@@ -33,12 +33,12 @@
   <string name="connecting_connection_error_msg">Unable to maintain a connection to the ESP8266 long enough to check the WiFi networks it sees.</string>
 
   <string name="title_activity_configure">Configure your ESP8266</string>
-  <string name="configure_hint_ssid">SSID</string>
+  <string name="configure_hint_ssid">WiFi access point</string>
   <string name="configure_hint_password">Password</string>
-  <string name="configure_title_details">Please enter the Wi-Fi details to configure your ESP8266 with:</string>
-  <string name="configure_title_ssids">SSIDs visible to your ESP8266:</string>
+  <string name="configure_title_details">Please enter the WiFi details to configure your ESP8266 with:</string>
+  <string name="configure_title_ssids">WiFi access points visible to your ESP8266:</string>
   <string name="configure_btn_submit">Submit</string>
-  <string name="configure_error_blank_ssid">Please enter an SSID</string>
+  <string name="configure_error_blank_ssid">Please enter a WiFi access point</string>
   <string name="configure_error_blank_password">Please enter a password</string>
 
   <string name="title_activity_configuring">Configuring ESP8266</string>
