@@ -3,10 +3,29 @@ package au.com.umranium.espconnect.presentation.common;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Comparator;
+
 /**
  * A record of a detected access point.
  */
 public class ScannedAccessPoint implements Parcelable {
+
+  public static Comparator<ScannedAccessPoint> SORT_BY_SSID =
+      new Comparator<ScannedAccessPoint>() {
+        @Override
+        public int compare(ScannedAccessPoint lhs, ScannedAccessPoint rhs) {
+          // by case-insensitive alphabetic order
+          return lhs.getSsid().toLowerCase().compareTo(rhs.getSsid().toLowerCase());
+        }
+      };
+
+  public static Comparator<ScannedAccessPoint> SORT_BY_SIG_STRENGTH =
+      new Comparator<ScannedAccessPoint>() {
+        @Override
+        public int compare(ScannedAccessPoint lhs, ScannedAccessPoint rhs) {
+          return rhs.getSignalStrength() - lhs.getSignalStrength();
+        }
+      };
 
   private final long id;
   private final String ssid;

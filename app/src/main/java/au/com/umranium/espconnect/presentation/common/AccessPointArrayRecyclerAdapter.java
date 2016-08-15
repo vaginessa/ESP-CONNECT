@@ -17,31 +17,14 @@ import java.util.List;
 /**
  * Recycler view list adapter for access point views.
  */
-public class AccessPointArrayAdapter extends RecyclerView.Adapter<AccessPointViewHolder> {
-
-  public static Comparator<ScannedAccessPoint> SORT_BY_SSID =
-      new Comparator<ScannedAccessPoint>() {
-        @Override
-        public int compare(ScannedAccessPoint lhs, ScannedAccessPoint rhs) {
-          // by case-insensitive alphabetic order
-          return lhs.getSsid().toLowerCase().compareTo(rhs.getSsid().toLowerCase());
-        }
-      };
-  public static Comparator<ScannedAccessPoint> SORT_BY_SIG_STRENGTH =
-      new Comparator<ScannedAccessPoint>() {
-        @Override
-        public int compare(ScannedAccessPoint lhs, ScannedAccessPoint rhs) {
-          return rhs.getSignalStrength() - lhs.getSignalStrength();
-        }
-      };
-
+public class AccessPointArrayRecyclerAdapter extends RecyclerView.Adapter<AccessPointViewHolder> {
 
   private final Context mContext;
   private final Observer<ScannedAccessPoint> mClickedEvents;
   private final Comparator<ScannedAccessPoint> mAccessPointComparator;
   private final List<ScannedAccessPoint> mAccessPoints = new ArrayList<>();
 
-  public AccessPointArrayAdapter(Context context, Observer<ScannedAccessPoint> clickedEvents, Comparator<ScannedAccessPoint> accessPointComparator) {
+  public AccessPointArrayRecyclerAdapter(Context context, Observer<ScannedAccessPoint> clickedEvents, Comparator<ScannedAccessPoint> accessPointComparator) {
     this.mContext = context;
     this.mClickedEvents = clickedEvents;
     this.mAccessPointComparator = accessPointComparator;

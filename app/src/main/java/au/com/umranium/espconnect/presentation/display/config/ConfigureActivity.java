@@ -5,15 +5,16 @@ import android.content.Intent;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.view.LayoutInflaterCompat;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import au.com.umranium.espconnect.R;
 import au.com.umranium.espconnect.di.activity.ActivityModule;
-import au.com.umranium.espconnect.presentation.common.AccessPointArrayAdapter;
 import au.com.umranium.espconnect.presentation.common.BaseActivity;
 import au.com.umranium.espconnect.presentation.common.ConfigDetails;
 import au.com.umranium.espconnect.presentation.common.ScannedAccessPoint;
@@ -23,6 +24,7 @@ import rx.Observer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * The activity that displays a list of ESP8266 access points for the user to pick one.
@@ -32,8 +34,8 @@ public class ConfigureActivity extends BaseActivity<ConfigureController> impleme
   private static final String PARAM_ACCESS_POINT = "access_point";
   private static final String PARAM_SSIDS = "ssids";
 
-  private RecyclerView list;
-  private AccessPointArrayAdapter adapter;
+  private LinearLayout list;
+  private Observer<ScannedAccessPoint> ssidClickObserver;
   private EditText ssid;
   private EditText password;
 
@@ -77,9 +79,8 @@ public class ConfigureActivity extends BaseActivity<ConfigureController> impleme
   protected void initUi() {
     setContentView(R.layout.activity_configure);
 
-    list = (RecyclerView) findViewById(R.id.ssid_list);
+    list = (LinearLayout) findViewById(R.id.ssid_list);
     assert list != null;
-    list.setLayoutManager(new LinearLayoutManager(this));
 
     ssid = (EditText) findViewById(R.id.edt_ssid);
     password = (EditText) findViewById(R.id.edt_password);
@@ -95,13 +96,32 @@ public class ConfigureActivity extends BaseActivity<ConfigureController> impleme
 
   @Override
   public void initListAdapter(Observer<ScannedAccessPoint> ssidClickObserver) {
-    adapter = new AccessPointArrayAdapter(this, ssidClickObserver, AccessPointArrayAdapter.SORT_BY_SSID);
-    list.setAdapter(adapter);
+    this.ssidClickObserver = ssidClickObserver;
   }
 
   @Override
   public void showSsids(List<ScannedAccessPoint> ssids) {
-    adapter.populate(ssids);
+    list.removeAllViews();
+    LayoutInflater layoutInflater = LayoutInflater.from(this);
+    for (int i = 0, l=ssids.size(); i < l; i++) {
+      View item = layoutInflater.inflate(R.layout.layout_scanned_access_point, list, false);
+
+      TextView name = (TextView) item.findViewById(R.id.txt_name);
+      TextView sigStrength = (TextView) item.findViewById(R.id.txt_sig_strength);
+      final ScannedAccessPoint accessPoint = ssids.get(i);
+
+      item.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          ssidClickObserver.onNext(accessPoint);
+        }
+      });
+
+      name.setText(accessPoint.getSsid());
+      sigStrength.setText(String.format(Locale.US, "%d%%", accessPoint.getSignalStrength()));
+
+      list.addView(item);
+    }
   }
 
   @Override

@@ -47,7 +47,8 @@
 
     <activity android:name="au.com.umranium.espconnect.presentation.display.config.ConfigureActivity"
               android:label="@string/title_activity_configure"
-              android:theme="@style/AppTheme.NoActionBar">
+              android:theme="@style/AppTheme.NoActionBar"
+              android:windowSoftInputMode="adjustResize">
     </activity>
 
     <activity android:name="au.com.umranium.espconnect.presentation.tasks.configuring.ConfiguringActivity"

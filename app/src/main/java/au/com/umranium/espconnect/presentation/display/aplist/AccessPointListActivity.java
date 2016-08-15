@@ -9,10 +9,9 @@ import android.support.v7.widget.RecyclerView;
 
 import au.com.umranium.espconnect.R;
 import au.com.umranium.espconnect.di.activity.ActivityModule;
-import au.com.umranium.espconnect.presentation.common.AccessPointArrayAdapter;
+import au.com.umranium.espconnect.presentation.common.AccessPointArrayRecyclerAdapter;
 import au.com.umranium.espconnect.presentation.common.BaseActivity;
 import au.com.umranium.espconnect.presentation.common.ScannedAccessPoint;
-import au.com.umranium.espconnect.presentation.display.end.DaggerEndComponent;
 import au.com.umranium.espconnect.presentation.tasks.connecting.ConnectingActivity;
 import au.com.umranium.espconnect.presentation.utils.IntentExtras;
 import rx.Observer;
@@ -27,7 +26,7 @@ public class AccessPointListActivity extends BaseActivity<AccessPointListControl
 
   private static final String PARAM_ACCESS_POINTS = "access_points";
   private RecyclerView list;
-  private AccessPointArrayAdapter adapter;
+  private AccessPointArrayRecyclerAdapter adapter;
 
   @NonNull
   public static Intent createIntent(@NonNull Context context,
@@ -68,7 +67,7 @@ public class AccessPointListActivity extends BaseActivity<AccessPointListControl
 
   @Override
   public void initListAdapter(Observer<ScannedAccessPoint> accessPointClickObserver) {
-    adapter = new AccessPointArrayAdapter(this, accessPointClickObserver, AccessPointArrayAdapter.SORT_BY_SIG_STRENGTH);
+    adapter = new AccessPointArrayRecyclerAdapter(this, accessPointClickObserver, ScannedAccessPoint.SORT_BY_SIG_STRENGTH);
     list.setAdapter(adapter);
   }
 
