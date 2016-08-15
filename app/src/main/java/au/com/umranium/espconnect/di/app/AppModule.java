@@ -2,6 +2,7 @@ package au.com.umranium.espconnect.di.app;
 
 import android.content.Context;
 
+import au.com.umranium.espconnect.di.qualifiers.AppInstance;
 import au.com.umranium.espconnect.di.scope.AppScope;
 import au.com.umranium.espconnect.presentation.app.App;
 import au.com.umranium.espconnect.presentation.common.Scheduler;
@@ -28,7 +29,7 @@ public class AppModule {
 
   @Provides
   @AppScope
-  @Named("app")
+  @AppInstance
   public Context provideAppContext() {
     return app;
   }

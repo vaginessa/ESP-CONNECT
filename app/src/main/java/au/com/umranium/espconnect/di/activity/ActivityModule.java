@@ -7,6 +7,7 @@ import android.net.wifi.WifiManager;
 
 import javax.inject.Named;
 
+import au.com.umranium.espconnect.di.qualifiers.ActivityInstance;
 import au.com.umranium.espconnect.presentation.common.BaseActivity;
 import au.com.umranium.espconnect.presentation.common.ToastDispatcher;
 import dagger.Module;
@@ -22,7 +23,7 @@ public class ActivityModule {
   }
 
   @Provides
-  @Named("activity")
+  @ActivityInstance
   public Context provideContext() {
     return activity;
   }

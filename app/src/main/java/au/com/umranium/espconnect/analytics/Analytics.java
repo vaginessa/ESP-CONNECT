@@ -9,9 +9,9 @@ import com.google.android.gms.analytics.StandardExceptionParser;
 import com.google.android.gms.analytics.Tracker;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import au.com.umranium.espconnect.R;
+import au.com.umranium.espconnect.di.qualifiers.AppInstance;
 import au.com.umranium.espconnect.di.scope.AppScope;
 
 /**
@@ -24,7 +24,7 @@ public class Analytics {
   private final Tracker tracker;
 
   @Inject
-  public Analytics(@Named("app") Context context) {
+  public Analytics(@AppInstance Context context) {
     this.context = context;
     GoogleAnalytics analytics = GoogleAnalytics.getInstance(context);
     analytics.enableAdvertisingIdCollection(true);
