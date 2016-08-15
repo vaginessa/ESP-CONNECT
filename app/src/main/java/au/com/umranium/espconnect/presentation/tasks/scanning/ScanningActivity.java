@@ -12,6 +12,7 @@ import au.com.umranium.espconnect.di.activity.ActivityModule;
 import au.com.umranium.espconnect.presentation.display.aplist.AccessPointListActivity;
 import au.com.umranium.espconnect.presentation.common.ScannedAccessPoint;
 import au.com.umranium.espconnect.presentation.tasks.common.BaseTaskActivity;
+import au.com.umranium.espconnect.presentation.tasks.connecting.ConnectingActivity;
 import au.com.umranium.espconnect.presentation.tasks.scanning.loc.CourseLocationRationaleDialogFragment;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.OnNeverAskAgain;
@@ -58,15 +59,20 @@ public class ScanningActivity extends BaseTaskActivity<ScanningController> imple
   }
 
   @Override
-  public void proceedWithAccessPoints(List<ScannedAccessPoint> accessPoints) {
-    Intent intent = AccessPointListActivity.createIntent(this, accessPoints);
-    startNextActivity(intent);
-  }
-
-  @Override
   public void proceedWithNoAccessPoints() {
     showErrorScreen(R.string.scanning_error_noap_title,
         R.string.scanning_error_noap_description);
+  }
+
+  @Override
+  public void proceedWithSingleAccessPoint(ScannedAccessPoint accessPoint) {
+    startNextActivity(ConnectingActivity.createIntent(this, accessPoint));
+  }
+
+  @Override
+  public void proceedWithAccessPoints(List<ScannedAccessPoint> accessPoints) {
+    Intent intent = AccessPointListActivity.createIntent(this, accessPoints);
+    startNextActivity(intent);
   }
 
   @NeedsPermission(Manifest.permission.ACCESS_COARSE_LOCATION)

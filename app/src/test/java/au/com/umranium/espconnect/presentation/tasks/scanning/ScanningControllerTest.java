@@ -122,6 +122,28 @@ public class ScanningControllerTest {
   }
 
   @Test
+  public void startScanning_whenUnmatchingAccessPoint2_filtersUnmatchingAccessPoints() {
+    final ScannedAccessPoint unmatchingAccessPoint1 = new ScannedAccessPoint(1, UNMATCHING_ESP_SSID, 0);
+    final ScannedAccessPoint unmatchingAccessPoint2 = new ScannedAccessPoint(2, UNMATCHING_ESP_SSID, 0);
+
+    // given:
+    new Expectations() {{
+      accessPointExtractor.extract();
+      returns(Arrays.asList(unmatchingAccessPoint1, unmatchingAccessPoint2));
+      times = 1;
+    }};
+
+    // when:
+    controller.startScanning();
+    wifiEventsSubject.onNext(WifiScanComplete.getInstance());
+
+    // then:
+    new Verifications() {{
+      surface.proceedWithNoAccessPoints();
+    }};
+  }
+
+  @Test
   public void startScanning_whenNoAccessPoints_proceedWithNoAccessPoints() {
     // given:
     new Expectations() {{
@@ -140,15 +162,15 @@ public class ScanningControllerTest {
     }};
   }
 
+
   @Test
-  public void startScanning_whenHasAccessPoints_proceedWithAccessPoints() {
+  public void startScanning_whenHasSingleAccessPoint_proceedWithAccessPoints() {
     // given:
-    final ScannedAccessPoint matchingAccessPoint = new ScannedAccessPoint(0, MATCHING_ESP_SSID, 0);
-    final ScannedAccessPoint unmatchingAccessPoint = new ScannedAccessPoint(1, UNMATCHING_ESP_SSID, 0);
+    final ScannedAccessPoint matchingAccessPoint1 = new ScannedAccessPoint(0, MATCHING_ESP_SSID, 0);
 
     new Expectations() {{
       accessPointExtractor.extract();
-      returns(Arrays.asList(matchingAccessPoint, unmatchingAccessPoint));
+      returns(Collections.singletonList(matchingAccessPoint1));
       times = 1;
     }};
 
@@ -158,7 +180,29 @@ public class ScanningControllerTest {
 
     // then:
     new Verifications() {{
-      surface.proceedWithAccessPoints(Collections.singletonList(matchingAccessPoint));
+      surface.proceedWithSingleAccessPoint(matchingAccessPoint1);
+    }};
+  }
+
+  @Test
+  public void startScanning_whenHasMultipleAccessPoints_proceedWithAccessPoints() {
+    // given:
+    final ScannedAccessPoint matchingAccessPoint1 = new ScannedAccessPoint(0, MATCHING_ESP_SSID, 0);
+    final ScannedAccessPoint matchingAccessPoint2 = new ScannedAccessPoint(1, MATCHING_ESP_SSID, 0);
+
+    new Expectations() {{
+      accessPointExtractor.extract();
+      returns(Arrays.asList(matchingAccessPoint1, matchingAccessPoint2));
+      times = 1;
+    }};
+
+    // when:
+    controller.startScanning();
+    wifiEventsSubject.onNext(WifiScanComplete.getInstance());
+
+    // then:
+    new Verifications() {{
+      surface.proceedWithAccessPoints(Arrays.asList(matchingAccessPoint1, matchingAccessPoint2));
     }};
   }
 

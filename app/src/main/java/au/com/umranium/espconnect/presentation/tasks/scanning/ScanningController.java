@@ -114,6 +114,8 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
             eventTracker.accessPointsSeen(accessPoints.size());
             if (accessPoints.isEmpty()) {
               surface.proceedWithNoAccessPoints();
+            } else if (accessPoints.size()==1) {
+              surface.proceedWithSingleAccessPoint(accessPoints.get(0));
             } else {
               surface.proceedWithAccessPoints(accessPoints);
             }
@@ -148,8 +150,10 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
   }
 
   public interface Surface extends BaseTaskController.Surface {
-    void proceedWithAccessPoints(List<ScannedAccessPoint> accessPoints);
-
     void proceedWithNoAccessPoints();
+
+    void proceedWithSingleAccessPoint(ScannedAccessPoint accessPoint);
+
+    void proceedWithAccessPoints(List<ScannedAccessPoint> accessPoints);
   }
 }
