@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import au.com.umranium.espconnect.analytics.ErrorTracker;
@@ -27,6 +28,9 @@ import rx.subjects.PublishSubject;
 @RunWith(JMockit.class)
 public class ScanningControllerTest {
 
+  public static final String ESP_SSID_PATTERN = "ABC.*";
+  public static final String MATCHING_ESP_SSID = "ABC1";
+  public static final String UNMATCHING_ESP_SSID = "XYZ1";
 
   @Injectable
   ScanningController.Surface surface;
@@ -45,6 +49,8 @@ public class ScanningControllerTest {
   EventTracker eventTracker;
   @Injectable
   ErrorTracker errorTracker;
+  @Injectable
+  String espSsidPattern = ESP_SSID_PATTERN;
   @Tested
   ScanningController controller;
 
@@ -137,10 +143,12 @@ public class ScanningControllerTest {
   @Test
   public void startScanning_whenHasAccessPoints_proceedWithAccessPoints() {
     // given:
-    final ScannedAccessPoint accessPoint = new ScannedAccessPoint(0, "", 0);
+    final ScannedAccessPoint matchingAccessPoint = new ScannedAccessPoint(0, MATCHING_ESP_SSID, 0);
+    final ScannedAccessPoint unmatchingAccessPoint = new ScannedAccessPoint(1, UNMATCHING_ESP_SSID, 0);
+
     new Expectations() {{
       accessPointExtractor.extract();
-      returns(Collections.singletonList(accessPoint));
+      returns(Arrays.asList(matchingAccessPoint, unmatchingAccessPoint));
       times = 1;
     }};
 
@@ -150,7 +158,7 @@ public class ScanningControllerTest {
 
     // then:
     new Verifications() {{
-      surface.proceedWithAccessPoints(Collections.singletonList(accessPoint));
+      surface.proceedWithAccessPoints(Collections.singletonList(matchingAccessPoint));
     }};
   }
 

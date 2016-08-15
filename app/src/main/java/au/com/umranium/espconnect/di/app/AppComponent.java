@@ -28,4 +28,7 @@ public interface AppComponent {
 
   Analytics getAnalytics();
 
+  @Named("EspSsidPattern")
+  String getEspSsidPattern();
+
 }

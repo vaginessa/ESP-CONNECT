@@ -45,4 +45,10 @@ public class AppModule {
     return new Scheduler();
   }
 
+  @Provides
+  @AppScope
+  @Named("EspSsidPattern")
+  public String provideEspSsidPattern() {
+    return "ESP.*";
+  }
 }

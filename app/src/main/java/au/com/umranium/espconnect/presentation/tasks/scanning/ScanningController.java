@@ -2,9 +2,11 @@ package au.com.umranium.espconnect.presentation.tasks.scanning;
 
 import android.net.wifi.WifiManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import au.com.umranium.espconnect.R;
 import au.com.umranium.espconnect.analytics.ErrorTracker;
@@ -32,10 +34,11 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
   private final ScannedAccessPointExtractor accessPointExtractor;
   private final EventTracker eventTracker;
   private final ErrorTracker errorTracker;
+  private final String espSsidPattern;
   private Subscription scanningTask;
 
   @Inject
-  public ScanningController(Surface surface, ScreenTracker screenTracker, WifiEvents wifiEvents, WifiManager wifiManager, Scheduler scheduler, ScannedAccessPointExtractor accessPointExtractor, EventTracker eventTracker, ErrorTracker errorTracker) {
+  public ScanningController(Surface surface, ScreenTracker screenTracker, WifiEvents wifiEvents, WifiManager wifiManager, Scheduler scheduler, ScannedAccessPointExtractor accessPointExtractor, EventTracker eventTracker, ErrorTracker errorTracker, @Named("EspSsidPattern") String espSsidPattern) {
     super(surface, screenTracker);
     this.wifiEvents = wifiEvents;
     this.wifiManager = wifiManager;
@@ -43,6 +46,7 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
     this.accessPointExtractor = accessPointExtractor;
     this.eventTracker = eventTracker;
     this.errorTracker = errorTracker;
+    this.espSsidPattern = espSsidPattern;
   }
 
   @Override
@@ -102,6 +106,7 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
             return accessPointExtractor.extract();
           }
         })
+        .map(new FilterNonEsp(espSsidPattern))
         .observeOn(scheduler.mainThread())
         .subscribe(new Action1<List<ScannedAccessPoint>>() {
           @Override
@@ -120,6 +125,26 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
             showErrorScreen(R.string.scanning_generic_error_title, R.string.scanning_generic_error_msg);
           }
         });
+  }
+
+  public static class FilterNonEsp implements Func1<List<ScannedAccessPoint>, List<ScannedAccessPoint>> {
+
+    private final String pattern;
+
+    public FilterNonEsp(String pattern) {
+      this.pattern = pattern;
+    }
+
+    @Override
+    public List<ScannedAccessPoint> call(List<ScannedAccessPoint> prevList) {
+      List<ScannedAccessPoint> newList = new ArrayList<>(prevList.size());
+      for (ScannedAccessPoint accessPoint : prevList) {
+        if (accessPoint.getSsid().matches(pattern)) {
+          newList.add(accessPoint);
+        }
+      }
+      return newList;
+    }
   }
 
   public interface Surface extends BaseTaskController.Surface {

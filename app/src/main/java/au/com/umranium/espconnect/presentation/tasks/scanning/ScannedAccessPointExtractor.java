@@ -2,18 +2,13 @@ package au.com.umranium.espconnect.presentation.tasks.scanning;
 
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
-import android.os.Build;
-
-import au.com.umranium.espconnect.presentation.common.ScannedAccessPoint;
-import au.com.umranium.espconnect.utils.BootTimeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 import javax.inject.Inject;
-import javax.inject.Named;
+
+import au.com.umranium.espconnect.presentation.common.ScannedAccessPoint;
 
 /**
  * Extracts the results of scanned access points.
