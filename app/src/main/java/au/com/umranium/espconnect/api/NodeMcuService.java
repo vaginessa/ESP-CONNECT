@@ -1,5 +1,7 @@
 package au.com.umranium.espconnect.api;
 
+import au.com.umranium.espconnect.api.data.ReceivedAccessPoints;
+import au.com.umranium.espconnect.api.data.State;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 import rx.Observable;

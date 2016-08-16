@@ -6,8 +6,8 @@ import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 
 import au.com.umranium.espconnect.di.qualifiers.ActivityInstance;
-import au.com.umranium.espconnect.common.BaseActivity;
-import au.com.umranium.espconnect.common.ToastDispatcher;
+import au.com.umranium.espconnect.app.BaseActivity;
+import au.com.umranium.espconnect.app.common.ToastDispatcher;
 import dagger.Module;
 import dagger.Provides;
 

@@ -4,7 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import au.com.umranium.espconnect.api.NodeMcuService;
-import au.com.umranium.espconnect.api.State;
+import au.com.umranium.espconnect.api.data.State;
 import rx.Observable;
 
 public class StateCall extends AbstractCall<State> {
