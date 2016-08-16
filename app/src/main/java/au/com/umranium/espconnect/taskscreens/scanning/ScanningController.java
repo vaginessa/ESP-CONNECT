@@ -13,7 +13,7 @@ import au.com.umranium.espconnect.analytics.ErrorTracker;
 import au.com.umranium.espconnect.analytics.EventTracker;
 import au.com.umranium.espconnect.analytics.ScreenTracker;
 import au.com.umranium.espconnect.common.ScannedAccessPoint;
-import au.com.umranium.espconnect.common.Scheduler;
+import au.com.umranium.espconnect.rx.Scheduler;
 import au.com.umranium.espconnect.taskscreens.common.BaseTaskController;
 import au.com.umranium.espconnect.wifievents.WifiEvents;
 import au.com.umranium.espconnect.wifievents.WifiScanComplete;

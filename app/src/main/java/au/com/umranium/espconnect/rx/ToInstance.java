@@ -1,4 +1,4 @@
-package au.com.umranium.espconnect.utils.rx;
+package au.com.umranium.espconnect.rx;
 
 import rx.functions.Func1;
 

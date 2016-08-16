@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import au.com.umranium.espconnect.common.Scheduler;
+import au.com.umranium.espconnect.rx.Scheduler;
 import rx.Observable;
 import rx.functions.Action1;
 import rx.functions.Func0;

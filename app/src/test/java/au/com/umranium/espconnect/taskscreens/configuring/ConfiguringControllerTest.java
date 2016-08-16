@@ -13,7 +13,7 @@ import au.com.umranium.espconnect.analytics.ErrorTracker;
 import au.com.umranium.espconnect.analytics.ScreenTracker;
 import au.com.umranium.espconnect.api.State;
 import au.com.umranium.espconnect.common.ConfigDetails;
-import au.com.umranium.espconnect.common.Scheduler;
+import au.com.umranium.espconnect.rx.Scheduler;
 import au.com.umranium.espconnect.taskscreens.utils.NetworkPollingCall;
 import au.com.umranium.espconnect.taskscreens.utils.WifiConnectionException;
 import au.com.umranium.espconnect.taskscreens.utils.WifiConnectionUtil;

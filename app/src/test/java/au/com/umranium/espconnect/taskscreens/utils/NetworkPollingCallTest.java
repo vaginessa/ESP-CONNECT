@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 
 import java.util.concurrent.TimeUnit;
 
-import au.com.umranium.espconnect.common.Scheduler;
+import au.com.umranium.espconnect.rx.Scheduler;
 import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Tested;
@@ -19,7 +19,7 @@ import rx.observers.TestSubscriber;
 import rx.schedulers.Schedulers;
 import rx.schedulers.TestScheduler;
 
-import static au.com.umranium.espconnect.utils.rx.ToInstance.instance;
+import static au.com.umranium.espconnect.rx.ToInstance.instance;
 import static rx.Observable.error;
 
 @RunWith(JMockit.class)

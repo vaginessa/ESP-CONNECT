@@ -5,7 +5,7 @@ import android.content.Context;
 import au.com.umranium.espconnect.di.qualifiers.AppInstance;
 import au.com.umranium.espconnect.di.scope.AppScope;
 import au.com.umranium.espconnect.app.App;
-import au.com.umranium.espconnect.common.Scheduler;
+import au.com.umranium.espconnect.rx.Scheduler;
 import au.com.umranium.espconnect.wifievents.WifiEvents;
 import dagger.Module;
 import dagger.Provides;

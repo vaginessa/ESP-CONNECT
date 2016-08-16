@@ -23,7 +23,7 @@ import javax.inject.Inject;
 
 import au.com.umranium.espconnect.R;
 import au.com.umranium.espconnect.common.ScannedAccessPoint;
-import au.com.umranium.espconnect.utils.rx.Pred;
+import au.com.umranium.espconnect.rx.Pred;
 
 /**
  * Utility class that helps connecting to a particular wifi access point.

@@ -1,4 +1,4 @@
-package au.com.umranium.espconnect.common;
+package au.com.umranium.espconnect.rx;
 
 import au.com.umranium.espconnect.di.scope.AppScope;
 import rx.android.schedulers.AndroidSchedulers;

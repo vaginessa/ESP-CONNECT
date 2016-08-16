@@ -14,7 +14,7 @@ import au.com.umranium.espconnect.analytics.ScreenTracker;
 import au.com.umranium.espconnect.api.ReceivedAccessPoint;
 import au.com.umranium.espconnect.api.ReceivedAccessPoints;
 import au.com.umranium.espconnect.common.ScannedAccessPoint;
-import au.com.umranium.espconnect.common.Scheduler;
+import au.com.umranium.espconnect.rx.Scheduler;
 import au.com.umranium.espconnect.taskscreens.utils.NetworkPollingCall;
 import au.com.umranium.espconnect.taskscreens.utils.WifiConnectionUtil;
 import mockit.Expectations;
