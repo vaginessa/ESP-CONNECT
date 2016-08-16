@@ -1,6 +1,8 @@
 package au.com.umranium.espconnect.di.app;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
 
 import au.com.umranium.espconnect.di.qualifiers.AppInstance;
 import au.com.umranium.espconnect.di.scope.AppScope;
@@ -15,7 +17,7 @@ import javax.inject.Named;
 @Module
 public class AppModule {
 
-  private App app;
+  private final App app;
 
   public AppModule(App app) {
     this.app = app;
@@ -36,20 +38,19 @@ public class AppModule {
 
   @Provides
   @AppScope
-  public WifiEvents provideWifiEvents() {
-    return new WifiEvents();
-  }
-
-  @Provides
-  @AppScope
-  public Scheduler provideScheduler() {
-    return new Scheduler();
-  }
-
-  @Provides
-  @AppScope
   @Named("EspSsidPattern")
   public String provideEspSsidPattern() {
     return "ESP.*";
   }
+
+  @Provides
+  public WifiManager provideWifiManager() {
+    return (WifiManager) app.getSystemService(Context.WIFI_SERVICE);
+  }
+
+  @Provides
+  public ConnectivityManager provideConnectivityManager() {
+    return (ConnectivityManager) app.getSystemService(Context.CONNECTIVITY_SERVICE);
+  }
+
 }

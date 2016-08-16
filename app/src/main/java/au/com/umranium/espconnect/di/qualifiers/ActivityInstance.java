@@ -8,7 +8,7 @@ import javax.inject.Qualifier;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Identifies an instance that needs to be injected once per the lifetime of an activity.
+ * Identifies an instance that needs to be injected once per the lifetime of an activity for a type that is used across multiple scopes.
  */
 @Qualifier
 @Documented

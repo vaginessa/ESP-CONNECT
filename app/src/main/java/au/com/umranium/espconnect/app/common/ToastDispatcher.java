@@ -6,12 +6,14 @@ import android.widget.Toast;
 
 import javax.inject.Inject;
 
+import au.com.umranium.espconnect.di.qualifiers.ActivityInstance;
+
 public class ToastDispatcher {
 
   private final Context context;
 
   @Inject
-  public ToastDispatcher(Context context) {
+  public ToastDispatcher(@ActivityInstance Context context) {
     this.context = context;
   }
 

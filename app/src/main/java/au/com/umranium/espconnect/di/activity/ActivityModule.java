@@ -36,19 +36,4 @@ public class ActivityModule {
     return activity;
   }
 
-  @Provides
-  public WifiManager provideWifiManager() {
-    return (WifiManager) activity.getSystemService(Context.WIFI_SERVICE);
-  }
-
-  @Provides
-  public ConnectivityManager provideConnectivityManager() {
-    return (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
-  }
-
-  @Provides
-  public ToastDispatcher provideToastDispatcher() {
-    return new ToastDispatcher(activity);
-  }
-
 }

@@ -1,6 +1,8 @@
 package au.com.umranium.espconnect.di.app;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
 
 import javax.inject.Named;
 
@@ -28,6 +30,10 @@ public interface AppComponent {
   Scheduler getScheduler();
 
   Analytics getAnalytics();
+
+  WifiManager getWifiManager();
+
+  ConnectivityManager getConnectivityManager();
 
   @Named("EspSsidPattern")
   String getEspSsidPattern();
