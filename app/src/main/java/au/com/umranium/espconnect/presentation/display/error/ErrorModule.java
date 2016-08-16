@@ -7,7 +7,7 @@ import au.com.umranium.espconnect.di.scope.ActivityScope;
 import dagger.Module;
 import dagger.Provides;
 
-@Module(includes = ActivityModule.class)
+@Module
 public class ErrorModule {
 
   private final ErrorActivity activity;

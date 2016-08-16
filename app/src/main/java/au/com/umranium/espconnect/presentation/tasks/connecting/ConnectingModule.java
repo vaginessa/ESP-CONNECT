@@ -7,7 +7,6 @@ import au.com.umranium.espconnect.api.IgnoreSocketErrorFunction;
 import au.com.umranium.espconnect.api.NodeMcuService;
 import au.com.umranium.espconnect.api.ReceivedAccessPoints;
 import au.com.umranium.espconnect.api.calls.ScanCall;
-import au.com.umranium.espconnect.di.activity.ActivityModule;
 import au.com.umranium.espconnect.presentation.common.ScannedAccessPoint;
 import dagger.Module;
 import dagger.Provides;
@@ -15,7 +14,7 @@ import rx.Observable;
 import rx.functions.Func0;
 import rx.functions.Func1;
 
-@Module(includes = ActivityModule.class)
+@Module
 public class ConnectingModule {
 
   private final ConnectingActivity activity;

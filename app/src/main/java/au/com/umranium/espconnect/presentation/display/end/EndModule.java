@@ -6,7 +6,7 @@ import au.com.umranium.espconnect.di.activity.ActivityModule;
 import dagger.Module;
 import dagger.Provides;
 
-@Module(includes = ActivityModule.class)
+@Module
 public class EndModule {
 
   private final EndActivity activity;

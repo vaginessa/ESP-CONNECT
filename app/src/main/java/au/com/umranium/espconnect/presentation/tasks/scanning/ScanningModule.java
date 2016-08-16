@@ -1,10 +1,9 @@
 package au.com.umranium.espconnect.presentation.tasks.scanning;
 
-import au.com.umranium.espconnect.di.activity.ActivityModule;
 import dagger.Module;
 import dagger.Provides;
 
-@Module(includes = ActivityModule.class)
+@Module
 public class ScanningModule {
 
   private final ScanningActivity activity;

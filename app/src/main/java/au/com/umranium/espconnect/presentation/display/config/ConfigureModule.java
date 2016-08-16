@@ -7,7 +7,7 @@ import dagger.Provides;
 
 import java.util.List;
 
-@Module(includes = ActivityModule.class)
+@Module
 public class ConfigureModule {
 
   private final ConfigureActivity activity;

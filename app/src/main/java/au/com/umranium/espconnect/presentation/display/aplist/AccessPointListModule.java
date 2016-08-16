@@ -1,13 +1,12 @@
 package au.com.umranium.espconnect.presentation.display.aplist;
 
-import au.com.umranium.espconnect.di.activity.ActivityModule;
+import java.util.List;
+
 import au.com.umranium.espconnect.presentation.common.ScannedAccessPoint;
 import dagger.Module;
 import dagger.Provides;
 
-import java.util.List;
-
-@Module(includes = ActivityModule.class)
+@Module
 public class AccessPointListModule {
 
   private final AccessPointListActivity activity;

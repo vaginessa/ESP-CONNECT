@@ -8,7 +8,6 @@ import au.com.umranium.espconnect.api.NodeMcuService;
 import au.com.umranium.espconnect.api.State;
 import au.com.umranium.espconnect.api.calls.SaveCall;
 import au.com.umranium.espconnect.api.calls.StateCall;
-import au.com.umranium.espconnect.di.activity.ActivityModule;
 import au.com.umranium.espconnect.presentation.common.ConfigDetails;
 import au.com.umranium.espconnect.presentation.common.ScannedAccessPoint;
 import dagger.Module;
@@ -17,7 +16,7 @@ import rx.Observable;
 import rx.functions.Func0;
 import rx.functions.Func1;
 
-@Module(includes = ActivityModule.class)
+@Module
 public class ConfiguringModule {
 
   private final ConfiguringActivity activity;
