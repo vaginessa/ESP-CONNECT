@@ -13,9 +13,9 @@
                android:label="@string/app_name"
                android:supportsRtl="true"
                android:theme="@style/AppTheme"
-               android:name="au.com.umranium.espconnect.presentation.app.App">
+               android:name=".app.App">
 
-    <activity android:name="au.com.umranium.espconnect.presentation.display.welcome.WelcomeActivity"
+    <activity android:name=".displayscreens.welcome.WelcomeActivity"
               android:label="@string/app_name"
               android:theme="@style/AppTheme.NoActionBar">
       <intent-filter>
@@ -25,38 +25,38 @@
       </intent-filter>
     </activity>
 
-    <activity android:name="au.com.umranium.espconnect.presentation.display.error.ErrorActivity"
+    <activity android:name=".displayscreens.error.ErrorActivity"
               android:label="@string/title_activity_error"
               android:theme="@style/AppTheme.NoActionBar">
     </activity>
 
-    <activity android:name="au.com.umranium.espconnect.presentation.tasks.scanning.ScanningActivity"
+    <activity android:name=".taskscreens.scanning.ScanningActivity"
               android:label="@string/title_activity_scanning"
               android:theme="@style/AppTheme.NoActionBar">
     </activity>
 
-    <activity android:name="au.com.umranium.espconnect.presentation.display.aplist.AccessPointListActivity"
+    <activity android:name=".displayscreens.aplist.AccessPointListActivity"
               android:label="@string/title_activity_access_point_list"
               android:theme="@style/AppTheme.NoActionBar">
     </activity>
 
-    <activity android:name="au.com.umranium.espconnect.presentation.tasks.connecting.ConnectingActivity"
+    <activity android:name=".taskscreens.connecting.ConnectingActivity"
               android:label="@string/title_activity_connecting"
               android:theme="@style/AppTheme.NoActionBar">
     </activity>
 
-    <activity android:name="au.com.umranium.espconnect.presentation.display.config.ConfigureActivity"
+    <activity android:name=".displayscreens.config.ConfigureActivity"
               android:label="@string/title_activity_configure"
               android:theme="@style/AppTheme.NoActionBar"
               android:windowSoftInputMode="adjustResize">
     </activity>
 
-    <activity android:name="au.com.umranium.espconnect.presentation.tasks.configuring.ConfiguringActivity"
+    <activity android:name=".taskscreens.configuring.ConfiguringActivity"
               android:label="@string/title_activity_configuring"
               android:theme="@style/AppTheme.NoActionBar">
     </activity>
 
-    <activity android:name="au.com.umranium.espconnect.presentation.display.end.EndActivity"
+    <activity android:name=".displayscreens.end.EndActivity"
               android:label="@string/title_activity_end"
               android:theme="@style/AppTheme.NoActionBar">
     </activity>

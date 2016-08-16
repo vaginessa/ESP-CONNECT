@@ -9,7 +9,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 
-import au.com.umranium.espconnect.presentation.app.App;
+import au.com.umranium.espconnect.app.App;
 import au.com.umranium.espconnect.wifievents.*;
 
 /**

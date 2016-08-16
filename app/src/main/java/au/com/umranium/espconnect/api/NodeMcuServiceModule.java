@@ -11,7 +11,7 @@ import java.net.InetAddress;
 import javax.net.SocketFactory;
 
 import au.com.umranium.espconnect.di.activity.ActivityModule;
-import au.com.umranium.espconnect.presentation.tasks.utils.WifiConnectionUtil;
+import au.com.umranium.espconnect.taskscreens.utils.WifiConnectionUtil;
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.HttpUrl;

@@ -5,11 +5,9 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 
-import javax.inject.Named;
-
 import au.com.umranium.espconnect.di.qualifiers.ActivityInstance;
-import au.com.umranium.espconnect.presentation.common.BaseActivity;
-import au.com.umranium.espconnect.presentation.common.ToastDispatcher;
+import au.com.umranium.espconnect.common.BaseActivity;
+import au.com.umranium.espconnect.common.ToastDispatcher;
 import dagger.Module;
 import dagger.Provides;
 
