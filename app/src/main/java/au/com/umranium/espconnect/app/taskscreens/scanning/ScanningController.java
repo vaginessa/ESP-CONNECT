@@ -4,6 +4,7 @@ import android.net.wifi.WifiManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -13,8 +14,9 @@ import au.com.umranium.espconnect.analytics.ErrorTracker;
 import au.com.umranium.espconnect.analytics.EventTracker;
 import au.com.umranium.espconnect.analytics.ScreenTracker;
 import au.com.umranium.espconnect.app.common.data.ScannedAccessPoint;
-import au.com.umranium.espconnect.rx.Scheduler;
 import au.com.umranium.espconnect.app.taskscreens.BaseTaskController;
+import au.com.umranium.espconnect.rx.Scheduler;
+import au.com.umranium.espconnect.rx.TimeOut;
 import au.com.umranium.espconnect.wifievents.WifiEvents;
 import au.com.umranium.espconnect.wifievents.WifiScanComplete;
 import rx.Subscription;
@@ -34,10 +36,11 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
   private final EventTracker eventTracker;
   private final ErrorTracker errorTracker;
   private final String espSsidPattern;
+  private final int scanTimeOutDurationMs;
   private Subscription scanningTask;
 
   @Inject
-  public ScanningController(Surface surface, ScreenTracker screenTracker, WifiEvents wifiEvents, WifiManager wifiManager, Scheduler scheduler, ScannedAccessPointExtractor accessPointExtractor, EventTracker eventTracker, ErrorTracker errorTracker, @Named("EspSsidPattern") String espSsidPattern) {
+  public ScanningController(Surface surface, ScreenTracker screenTracker, WifiEvents wifiEvents, WifiManager wifiManager, Scheduler scheduler, ScannedAccessPointExtractor accessPointExtractor, EventTracker eventTracker, ErrorTracker errorTracker, @Named("EspSsidPattern") String espSsidPattern, @Named("scanTimeOutDurationMs") int scanTimeOutDurationMs) {
     super(surface, screenTracker);
     this.wifiEvents = wifiEvents;
     this.wifiManager = wifiManager;
@@ -46,6 +49,7 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
     this.eventTracker = eventTracker;
     this.errorTracker = errorTracker;
     this.espSsidPattern = espSsidPattern;
+    this.scanTimeOutDurationMs = scanTimeOutDurationMs;
   }
 
   @Override
@@ -99,12 +103,8 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
             wifiManager.startScan();
           }
         })
-        .map(new Func1<WifiScanComplete, List<ScannedAccessPoint>>() {
-          @Override
-          public List<ScannedAccessPoint> call(WifiScanComplete wifiScanComplete) {
-            return accessPointExtractor.extract();
-          }
-        })
+        .compose(new TimeOut<WifiScanComplete>(scanTimeOutDurationMs, TimeUnit.MILLISECONDS, scheduler.computation()))
+        .map(new ExtractAccessPoints())
         .map(new FilterNonEsp(espSsidPattern))
         .observeOn(scheduler.mainThread())
         .subscribe(new Action1<List<ScannedAccessPoint>>() {
@@ -113,7 +113,7 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
             eventTracker.accessPointsSeen(accessPoints.size());
             if (accessPoints.isEmpty()) {
               surface.proceedWithNoAccessPoints();
-            } else if (accessPoints.size()==1) {
+            } else if (accessPoints.size() == 1) {
               surface.proceedWithSingleAccessPoint(accessPoints.get(0));
             } else {
               surface.proceedWithAccessPoints(accessPoints);
@@ -145,6 +145,13 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
         }
       }
       return newList;
+    }
+  }
+
+  private class ExtractAccessPoints implements Func1<WifiScanComplete, List<ScannedAccessPoint>> {
+    @Override
+    public List<ScannedAccessPoint> call(WifiScanComplete wifiScanComplete) {
+      return accessPointExtractor.extract();
     }
   }
 

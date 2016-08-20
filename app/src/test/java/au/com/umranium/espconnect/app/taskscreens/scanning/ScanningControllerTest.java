@@ -8,6 +8,8 @@ import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import au.com.umranium.espconnect.analytics.ErrorTracker;
 import au.com.umranium.espconnect.analytics.EventTracker;
@@ -23,15 +25,18 @@ import mockit.Tested;
 import mockit.Verifications;
 import mockit.integration.junit4.JMockit;
 import rx.schedulers.Schedulers;
+import rx.schedulers.TestScheduler;
 import rx.subjects.PublishSubject;
 
 @RunWith(JMockit.class)
 public class ScanningControllerTest {
 
+  public static final int SCAN_TIME_OUT = 10;
   public static final String ESP_SSID_PATTERN = "ABC.*";
   public static final String MATCHING_ESP_SSID = "ABC1";
   public static final String UNMATCHING_ESP_SSID = "XYZ1";
 
+  private final TestScheduler computation = new TestScheduler();
   @Injectable
   ScanningController.Surface surface;
   @Injectable
@@ -51,6 +56,8 @@ public class ScanningControllerTest {
   ErrorTracker errorTracker;
   @Injectable
   String espSsidPattern = ESP_SSID_PATTERN;
+  @Injectable
+  int scanTimeOutDurationMs = SCAN_TIME_OUT;
   @Tested
   ScanningController controller;
 
@@ -59,6 +66,10 @@ public class ScanningControllerTest {
     new Expectations() {{
       scheduler.mainThread();
       returns(Schedulers.immediate());
+      minTimes = 0;
+
+      scheduler.computation();
+      returns(computation);
       minTimes = 0;
 
       wifiEvents.getEvents();
@@ -103,6 +114,44 @@ public class ScanningControllerTest {
     // then:
     new Verifications() {{
       wifiManager.startScan();
+    }};
+  }
+
+  @Test
+  public void startScanning_ifScanDoesNotCompleteBeforeTimeOut_tracksException() {
+    // given:
+    new Expectations() {{
+      accessPointExtractor.extract();
+      times = 0;
+    }};
+
+    // when:
+    controller.startScanning();
+    computation.advanceTimeBy(SCAN_TIME_OUT, TimeUnit.MILLISECONDS);
+
+    // then:
+    new Verifications() {{
+      errorTracker.onException(withAny(new TimeoutException()));
+      times = 1;
+    }};
+  }
+
+  @Test
+  public void startScanning_ifScanDoesNotCompleteBeforeTimeOut_showsErrorScreen() {
+    // given:
+    new Expectations() {{
+      accessPointExtractor.extract();
+      times = 0;
+    }};
+
+    // when:
+    controller.startScanning();
+    computation.advanceTimeBy(SCAN_TIME_OUT, TimeUnit.MILLISECONDS);
+
+    // then:
+    new Verifications() {{
+      surface.showErrorScreen(anyInt, anyInt);
+      times = 1;
     }};
   }
 

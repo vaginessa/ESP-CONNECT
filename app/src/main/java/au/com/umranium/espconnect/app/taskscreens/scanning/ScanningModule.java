@@ -1,5 +1,7 @@
 package au.com.umranium.espconnect.app.taskscreens.scanning;
 
+import javax.inject.Named;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -15,6 +17,12 @@ public class ScanningModule {
   @Provides
   public ScanningController.Surface provideSurface() {
     return activity;
+  }
+
+  @Provides
+  @Named("scanTimeOutDurationMs")
+  public int provideScanTimeOutDurationMs() {
+    return 10000;
   }
 
 }
