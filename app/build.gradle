@@ -13,7 +13,11 @@ android {
     versionName "0.0-alpha-3"
   }
   buildTypes {
+    debug {
+      buildConfigField "boolean", "USE_ANALYTICS", "false"
+    }
     release {
+      buildConfigField "boolean", "USE_ANALYTICS", "true"
       minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }

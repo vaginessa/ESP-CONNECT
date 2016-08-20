@@ -5,11 +5,11 @@ import android.support.annotation.StringRes;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.StandardExceptionParser;
 import com.google.android.gms.analytics.Tracker;
 
 import javax.inject.Inject;
 
+import au.com.umranium.espconnect.BuildConfig;
 import au.com.umranium.espconnect.R;
 import au.com.umranium.espconnect.di.qualifiers.AppInstance;
 import au.com.umranium.espconnect.di.scope.AppScope;
@@ -28,6 +28,10 @@ public class Analytics {
     this.context = context;
     GoogleAnalytics analytics = GoogleAnalytics.getInstance(context);
     analytics.enableAdvertisingIdCollection(true);
+    //noinspection PointlessBooleanExpression
+    if (!BuildConfig.USE_ANALYTICS) {
+      analytics.setDryRun(true);
+    }
     this.tracker = analytics.newTracker(R.xml.app_tracker);
   }
 
@@ -64,7 +68,7 @@ public class Analytics {
   public void trackException(Throwable e) {
     tracker.send(new HitBuilders.ExceptionBuilder()
         .setFatal(false)
-        .setDescription(new StandardExceptionParser(context, null)
+        .setDescription(new FullExceptionParser()
             .getDescription(Thread.currentThread().getName(), e))
         .build());
   }
