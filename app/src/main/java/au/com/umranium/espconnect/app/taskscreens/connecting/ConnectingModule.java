@@ -44,7 +44,7 @@ public class ConnectingModule {
   @Provides
   @Named("maxCallCount")
   public int providePollingMaxCallCount() {
-    return 10;
+    return 60;
   }
 
   @Provides
