@@ -85,11 +85,11 @@ public class ConnectingController extends BaseTaskController<ConnectingControlle
           @Override
           public void call(Throwable error) {
             errorTracker.onException(error);
-            if (!(error instanceof NetworkPollingCall.MaxRetryException)) {
+            if (error instanceof NetworkPollingCall.MaxRetryException) {
+              surface.showErrorScreen(R.string.connecting_generic_error_title, R.string.connecting_connection_error_msg);
+            } else {
               Log.e(ConnectingController.class.getSimpleName(), "Error while connecting to ESP8266", error);
               surface.showErrorScreen(R.string.connecting_generic_error_title, R.string.connecting_generic_error_msg);
-            } else {
-              surface.showErrorScreen(R.string.connecting_generic_error_title, R.string.connecting_connection_error_msg);
             }
           }
         });
