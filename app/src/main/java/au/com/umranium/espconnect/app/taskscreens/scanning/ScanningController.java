@@ -65,7 +65,7 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
     // ignore
   }
 
-  public void startScanning() {
+  public void locationPermissionGranted() {
     eventTracker.locationPermissionGiven();
     scanningTask = startWifiScans();
   }

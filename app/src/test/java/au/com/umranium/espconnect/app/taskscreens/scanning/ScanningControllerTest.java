@@ -92,11 +92,11 @@ public class ScanningControllerTest {
   }
 
   @Test
-  public void startScanning_tracksPermissionGivenEvent() {
+  public void locationPermissionGranted_tracksPermissionGivenEvent() {
     // given:
 
     // when:
-    controller.startScanning();
+    controller.locationPermissionGranted();
 
     // then:
     new Verifications() {{
@@ -105,11 +105,11 @@ public class ScanningControllerTest {
   }
 
   @Test
-  public void startScanning_callsStartScan() {
+  public void locationPermissionGranted_callsStartScan() {
     // given:
 
     // when:
-    controller.startScanning();
+    controller.locationPermissionGranted();
 
     // then:
     new Verifications() {{
@@ -118,7 +118,7 @@ public class ScanningControllerTest {
   }
 
   @Test
-  public void startScanning_ifScanDoesNotCompleteBeforeTimeOut_tracksException() {
+  public void locationPermissionGranted_ifScanDoesNotCompleteBeforeTimeOut_tracksException() {
     // given:
     new Expectations() {{
       accessPointExtractor.extract();
@@ -126,7 +126,7 @@ public class ScanningControllerTest {
     }};
 
     // when:
-    controller.startScanning();
+    controller.locationPermissionGranted();
     computation.advanceTimeBy(SCAN_TIME_OUT, TimeUnit.MILLISECONDS);
 
     // then:
@@ -137,7 +137,7 @@ public class ScanningControllerTest {
   }
 
   @Test
-  public void startScanning_ifScanDoesNotCompleteBeforeTimeOut_showsErrorScreen() {
+  public void locationPermissionGranted_ifScanDoesNotCompleteBeforeTimeOut_showsErrorScreen() {
     // given:
     new Expectations() {{
       accessPointExtractor.extract();
@@ -145,7 +145,7 @@ public class ScanningControllerTest {
     }};
 
     // when:
-    controller.startScanning();
+    controller.locationPermissionGranted();
     computation.advanceTimeBy(SCAN_TIME_OUT, TimeUnit.MILLISECONDS);
 
     // then:
@@ -156,7 +156,7 @@ public class ScanningControllerTest {
   }
 
   @Test
-  public void startScanning_whenScanComplete_callsExtract() {
+  public void locationPermissionGranted_whenScanComplete_callsExtract() {
     // given:
     new Expectations() {{
       accessPointExtractor.extract();
@@ -164,14 +164,14 @@ public class ScanningControllerTest {
     }};
 
     // when:
-    controller.startScanning();
+    controller.locationPermissionGranted();
     wifiEventsSubject.onNext(WifiScanComplete.getInstance());
 
     // then:
   }
 
   @Test
-  public void startScanning_whenUnmatchingAccessPoint2_filtersUnmatchingAccessPoints() {
+  public void locationPermissionGranted_whenUnmatchingAccessPoint2_filtersUnmatchingAccessPoints() {
     final ScannedAccessPoint unmatchingAccessPoint1 = new ScannedAccessPoint(1, UNMATCHING_ESP_SSID, 0);
     final ScannedAccessPoint unmatchingAccessPoint2 = new ScannedAccessPoint(2, UNMATCHING_ESP_SSID, 0);
 
@@ -183,7 +183,7 @@ public class ScanningControllerTest {
     }};
 
     // when:
-    controller.startScanning();
+    controller.locationPermissionGranted();
     wifiEventsSubject.onNext(WifiScanComplete.getInstance());
 
     // then:
@@ -193,7 +193,7 @@ public class ScanningControllerTest {
   }
 
   @Test
-  public void startScanning_whenNoAccessPoints_proceedWithNoAccessPoints() {
+  public void locationPermissionGranted_whenNoAccessPoints_proceedWithNoAccessPoints() {
     // given:
     new Expectations() {{
       accessPointExtractor.extract();
@@ -202,7 +202,7 @@ public class ScanningControllerTest {
     }};
 
     // when:
-    controller.startScanning();
+    controller.locationPermissionGranted();
     wifiEventsSubject.onNext(WifiScanComplete.getInstance());
 
     // then:
@@ -213,7 +213,7 @@ public class ScanningControllerTest {
 
 
   @Test
-  public void startScanning_whenHasSingleAccessPoint_proceedWithAccessPoints() {
+  public void locationPermissionGranted_whenHasSingleAccessPoint_proceedWithAccessPoints() {
     // given:
     final ScannedAccessPoint matchingAccessPoint1 = new ScannedAccessPoint(0, MATCHING_ESP_SSID, 0);
 
@@ -224,7 +224,7 @@ public class ScanningControllerTest {
     }};
 
     // when:
-    controller.startScanning();
+    controller.locationPermissionGranted();
     wifiEventsSubject.onNext(WifiScanComplete.getInstance());
 
     // then:
@@ -234,7 +234,7 @@ public class ScanningControllerTest {
   }
 
   @Test
-  public void startScanning_whenHasMultipleAccessPoints_proceedWithAccessPoints() {
+  public void locationPermissionGranted_whenHasMultipleAccessPoints_proceedWithAccessPoints() {
     // given:
     final ScannedAccessPoint matchingAccessPoint1 = new ScannedAccessPoint(0, MATCHING_ESP_SSID, 0);
     final ScannedAccessPoint matchingAccessPoint2 = new ScannedAccessPoint(1, MATCHING_ESP_SSID, 0);
@@ -246,7 +246,7 @@ public class ScanningControllerTest {
     }};
 
     // when:
-    controller.startScanning();
+    controller.locationPermissionGranted();
     wifiEventsSubject.onNext(WifiScanComplete.getInstance());
 
     // then:
@@ -256,7 +256,7 @@ public class ScanningControllerTest {
   }
 
   @Test
-  public void startScanning_onError_tracksErrorEvent() {
+  public void locationPermissionGranted_onError_tracksErrorEvent() {
     // given:
     @SuppressWarnings("ThrowableInstanceNeverThrown")
     final RuntimeException exception = new RuntimeException();
@@ -266,7 +266,7 @@ public class ScanningControllerTest {
     }};
 
     // when:
-    controller.startScanning();
+    controller.locationPermissionGranted();
     wifiEventsSubject.onNext(WifiScanComplete.getInstance());
 
     // then:
@@ -276,7 +276,7 @@ public class ScanningControllerTest {
   }
 
   @Test
-  public void startScanning_onError_showsGenericErrorScreen() {
+  public void locationPermissionGranted_onError_showsGenericErrorScreen() {
     // given:
     @SuppressWarnings("ThrowableInstanceNeverThrown")
     final RuntimeException exception = new RuntimeException();
@@ -286,7 +286,7 @@ public class ScanningControllerTest {
     }};
 
     // when:
-    controller.startScanning();
+    controller.locationPermissionGranted();
     wifiEventsSubject.onNext(WifiScanComplete.getInstance());
 
     // then:

@@ -77,7 +77,7 @@ public class ScanningActivity extends BaseTaskActivity<ScanningController> imple
 
   @NeedsPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
   public void ensureHasLocationPermission() {
-    controller.startScanning();
+    controller.locationPermissionGranted();
   }
 
   @OnShowRationale(Manifest.permission.ACCESS_COARSE_LOCATION)
