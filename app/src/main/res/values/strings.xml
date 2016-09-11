@@ -59,7 +59,7 @@
 
   <string name="wificonn_error_msg_unable_to_enable">Unable to enable network</string>
   <string name="wificonn_error_msg_unable_to_disconnect">Unable to disconnect</string>
-  <string name="wificonn_error_msg_unable_to_add_network">Unable to add the wifi network</string>
+  <string name="wificonn_error_msg_unable_to_add_network">Unable to add the WiFi network</string>
 
   <string name="analytics_screen_welcome">welcome</string>
   <string name="analytics_screen_scanning">scanning</string>
@@ -76,5 +76,18 @@
   <string name="analytics_event_permission_given">given</string>
   <string name="analytics_event_permission_rejected">rejected</string>
   <string name="analytics_event_permission_rejected_perm">rejected-permanently</string>
+
+  <string name="turn_wifi_on_request_dlg_title">Your WiFi is turned off</string>
+  <string name="turn_wifi_on_request_dlg_msg">Your WiFi needs to be on to scan for ESP nodes. Turn WiFi on?</string>
+  <string name="turn_wifi_on_request_dlg_pos_btn">Turn WiFi On</string>
+  <string name="turn_wifi_on_request_dlg_neg_btn">Cancel scanning</string>
+
+  <string name="turn_access_point_off_request_dlg_title">WiFi access point is current on</string>
+  <string name="turn_access_point_off_request_dlg_msg">Your phone\'s access point can not be on while scanning for ESP nodes. Go to settings?</string>
+  <string name="turn_access_point_off_request_dlg_pos_btn">Go to settings</string>
+  <string name="turn_access_point_off_request_dlg_neg_btn">Cancel scanning</string>
+
+  <string name="wifi_turned_on">WiFi turned on</string>
+  <string name="wifi_could_not_be_turned_on">Unable to turn WiFi on</string>
 
 </resources>

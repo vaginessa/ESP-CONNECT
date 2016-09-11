@@ -32,7 +32,8 @@
 
     <activity android:name=".app.taskscreens.scanning.ScanningActivity"
               android:label="@string/title_activity_scanning"
-              android:theme="@style/AppTheme.NoActionBar">
+              android:theme="@style/AppTheme.NoActionBar"
+              android:configChanges="orientation|screenSize">
     </activity>
 
     <activity android:name=".app.displayscreens.aplist.AccessPointListActivity"

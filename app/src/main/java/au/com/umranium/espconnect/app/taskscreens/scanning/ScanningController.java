@@ -1,6 +1,7 @@
 package au.com.umranium.espconnect.app.taskscreens.scanning;
 
 import android.net.wifi.WifiManager;
+import android.support.annotation.VisibleForTesting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +14,11 @@ import au.com.umranium.espconnect.R;
 import au.com.umranium.espconnect.analytics.ErrorTracker;
 import au.com.umranium.espconnect.analytics.EventTracker;
 import au.com.umranium.espconnect.analytics.ScreenTracker;
+import au.com.umranium.espconnect.app.common.SerializableAction;
+import au.com.umranium.espconnect.app.common.ToastDispatcher;
 import au.com.umranium.espconnect.app.common.data.ScannedAccessPoint;
 import au.com.umranium.espconnect.app.taskscreens.BaseTaskController;
+import au.com.umranium.espconnect.app.taskscreens.utils.ScanAbilityUtil;
 import au.com.umranium.espconnect.rx.Scheduler;
 import au.com.umranium.espconnect.rx.TimeOut;
 import au.com.umranium.espconnect.wifievents.WifiEvents;
@@ -32,22 +36,37 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
   private final WifiEvents wifiEvents;
   private final WifiManager wifiManager;
   private final Scheduler scheduler;
+  private final ScanAbilityUtil scanAbilityUtil;
   private final ScannedAccessPointExtractor accessPointExtractor;
   private final EventTracker eventTracker;
   private final ErrorTracker errorTracker;
+  private final ToastDispatcher toastDispatcher;
   private final String espSsidPattern;
   private final int scanTimeOutDurationMs;
   private Subscription scanningTask;
 
   @Inject
-  public ScanningController(Surface surface, ScreenTracker screenTracker, WifiEvents wifiEvents, WifiManager wifiManager, Scheduler scheduler, ScannedAccessPointExtractor accessPointExtractor, EventTracker eventTracker, ErrorTracker errorTracker, @Named("EspSsidPattern") String espSsidPattern, @Named("scanTimeOutDurationMs") int scanTimeOutDurationMs) {
+  public ScanningController(Surface surface,
+                            ScreenTracker screenTracker,
+                            WifiEvents wifiEvents,
+                            WifiManager wifiManager,
+                            Scheduler scheduler,
+                            ScanAbilityUtil scanAbilityUtil,
+                            ScannedAccessPointExtractor accessPointExtractor,
+                            EventTracker eventTracker,
+                            ErrorTracker errorTracker,
+                            ToastDispatcher toastDispatcher,
+                            @Named("EspSsidPattern") String espSsidPattern,
+                            @Named("scanTimeOutDurationMs") int scanTimeOutDurationMs) {
     super(surface, screenTracker);
     this.wifiEvents = wifiEvents;
     this.wifiManager = wifiManager;
     this.scheduler = scheduler;
+    this.scanAbilityUtil = scanAbilityUtil;
     this.accessPointExtractor = accessPointExtractor;
     this.eventTracker = eventTracker;
     this.errorTracker = errorTracker;
+    this.toastDispatcher = toastDispatcher;
     this.espSsidPattern = espSsidPattern;
     this.scanTimeOutDurationMs = scanTimeOutDurationMs;
   }
@@ -62,20 +81,108 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
 
   @Override
   public void onStart() {
-    // ignore
+    surface.ensureLocationPermissions(
+        new UserGaveLocationPermissionAction(),
+        new UserDeniedLocationPermissionAction(),
+        new UserPermDeniedLocationPermissionAction());
   }
 
-  public void locationPermissionGranted() {
-    eventTracker.locationPermissionGiven();
+  public static class UserGaveLocationPermissionAction extends SerializableAction<ScanningController> {
+    @Override
+    public void run(ScanningController controller) {
+      controller.locationPermissionGranted();
+    }
+  }
+
+  public static class UserDeniedLocationPermissionAction extends SerializableAction<ScanningController> {
+    @Override
+    public void run(ScanningController controller) {
+      controller.handleDeniedLocationPermission();
+    }
+  }
+
+  public static class UserPermDeniedLocationPermissionAction extends SerializableAction<ScanningController> {
+    @Override
+    public void run(ScanningController controller) {
+      controller.handlePermanentlyDeniedLocationPermission();
+    }
+  }
+
+  public static class UserAcceptedTurnWifiOnAction extends SerializableAction<ScanningController> {
+    @Override
+    public void run(ScanningController controller) {
+      // TODO: Log to analytics
+      if (controller.scanAbilityUtil.turnWifiOn()) {
+        controller.toastDispatcher.showShortToast(R.string.wifi_turned_on);
+        controller.wifiIsOn();
+      } else {
+        controller.toastDispatcher.showShortToast(R.string.wifi_could_not_be_turned_on);
+      }
+    }
+  }
+
+  public static class UserRejectedTurnWifiOnAction extends SerializableAction<ScanningController> {
+    @Override
+    public void run(ScanningController controller) {
+      // TODO: Log to analytics
+      controller.surface.cancelTask();
+    }
+  }
+
+  private void wifiIsOn() {
+    // TODO: Log to analytics
+    if (!scanAbilityUtil.isAccessPointOff()) {
+      surface.askUserToTurnOffAccessPoint(
+          new UserAcceptedTurnOffApAction(),
+          new UserRejectedTurnOffApAction());
+    } else {
+      accessPointIsOff();
+    }
+  }
+
+  public static class UserAcceptedTurnOffApAction extends SerializableAction<ScanningController> {
+    @Override
+    public void run(ScanningController controller) {
+      // TODO: Log to analytics
+      controller.surface.sendUserToWifiSettings();
+    }
+  }
+
+  public static class UserRejectedTurnOffApAction extends SerializableAction<ScanningController> {
+    @Override
+    public void run(ScanningController controller) {
+      // TODO: Log to analytics
+      controller.surface.cancelTask();
+    }
+  }
+
+  private void accessPointIsOff() {
+    // TODO: Log to analytics
+    startScanning();
+  }
+
+  @VisibleForTesting
+  public void startScanning() {
     scanningTask = startWifiScans();
   }
 
-  public void handleDeniedLocationPermission() {
+  private void locationPermissionGranted() {
+    eventTracker.locationPermissionGiven();
+    if (!scanAbilityUtil.isWifiOn()) {
+      surface.requestUserToTurnWifiOn(
+          new UserAcceptedTurnWifiOnAction(),
+          new UserRejectedTurnWifiOnAction());
+    } else {
+      wifiIsOn();
+    }
+  }
+
+  private void handleDeniedLocationPermission() {
     eventTracker.locationPermissionRejected();
     handleNoLocationPermission();
   }
 
-  public void handlePermanentlyDeniedLocationPermission() {
+  private void handlePermanentlyDeniedLocationPermission() {
     eventTracker.locationPermissionDeniedPermanently();
     handleNoLocationPermission();
   }
@@ -156,6 +263,19 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
   }
 
   public interface Surface extends BaseTaskController.Surface {
+
+    void ensureLocationPermissions(SerializableAction<ScanningController> onAcceptAction,
+                                   SerializableAction<ScanningController> onDenyAction,
+                                   SerializableAction<ScanningController> onPermDenyAction);
+
+    void sendUserToWifiSettings();
+
+    void requestUserToTurnWifiOn(SerializableAction<ScanningController> onAcceptAction,
+                                 SerializableAction<ScanningController> onRejectAction);
+
+    void askUserToTurnOffAccessPoint(SerializableAction<ScanningController> onAcceptAction,
+                                     SerializableAction<ScanningController> onRejectAction);
+
     void proceedWithNoAccessPoints();
 
     void proceedWithSingleAccessPoint(ScannedAccessPoint accessPoint);

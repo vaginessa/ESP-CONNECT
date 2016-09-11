@@ -105,4 +105,8 @@ abstract public class BaseActivity<BaseControllerType extends BaseController> ex
   protected void overrideFinishingTransition() {
     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
   }
+
+  public BaseControllerType getController() {
+    return controller;
+  }
 }
