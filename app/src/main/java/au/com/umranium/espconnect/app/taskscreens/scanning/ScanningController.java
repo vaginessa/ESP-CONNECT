@@ -130,6 +130,7 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
     if (scanAbilityUtil.isAccessPointOff()) {
       accessPointIsOff();
     } else {
+      eventTracker.userAccessPointIsOn();
       surface.requestUserToTurnOffAccessPoint(
           new UserAcceptedTurnOffApAction(),
           new UserRejectedTurnOffApAction());
@@ -151,21 +152,22 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
   }
 
   void userAgreedToTurnOffAp() {
-    // TODO: Log to analytics
+    eventTracker.userAgreedToTurnOffAccessPoint();
     surface.sendUserToWifiSettings();
   }
 
   void userDisagreedToTurnOffAp() {
-    // TODO: Log to analytics
+    eventTracker.userDisagreedToTurnOffAccessPoint();
     surface.cancelTask();
   }
 
   @VisibleForTesting
   void accessPointIsOff() {
-    // TODO: Log to analytics
+    eventTracker.userAccessPointIsOff();
     if (scanAbilityUtil.isWifiOn()) {
       wifiIsOn();
     } else {
+      eventTracker.userWifiOff();
       surface.requestUserToTurnWifiOn(
           new UserAcceptedTurnWifiOnAction(),
           new UserRejectedTurnWifiOnAction());
@@ -187,23 +189,25 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
   }
 
   void userAgreedToTurnWifiOn() {
-    // TODO: Log to analytics
+    eventTracker.userAgreedToTurnWifiOn();
     if (scanAbilityUtil.turnWifiOn()) {
+      eventTracker.wifiCouldTurnOn();
       toastDispatcher.showShortToast(R.string.wifi_turned_on);
       wifiIsOn();
     } else {
+      eventTracker.wifiCouldNotTurnOn();
       toastDispatcher.showShortToast(R.string.wifi_could_not_be_turned_on);
     }
   }
 
   void userDisagreedToTurnWifiOn() {
-    // TODO: Log to analytics
+    eventTracker.userDisgreedToTurnWifiOn();
     surface.cancelTask();
   }
 
   @VisibleForTesting
   void wifiIsOn() {
-    // TODO: Log to analytics
+    eventTracker.userWifiOn();
     startScanning();
   }
 
