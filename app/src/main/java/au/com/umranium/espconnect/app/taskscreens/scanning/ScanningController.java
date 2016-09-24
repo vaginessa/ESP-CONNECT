@@ -87,13 +87,6 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
         new UserPermDeniedLocationPermissionAction());
   }
 
-  public static class UserGaveLocationPermissionAction extends SerializableAction<ScanningController> {
-    @Override
-    public void run(ScanningController controller) {
-      controller.locationPermissionGranted();
-    }
-  }
-
   public static class UserDeniedLocationPermissionAction extends SerializableAction<ScanningController> {
     @Override
     public void run(ScanningController controller) {
@@ -108,55 +101,108 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
     }
   }
 
-  public static class UserAcceptedTurnWifiOnAction extends SerializableAction<ScanningController> {
+  void handleDeniedLocationPermission() {
+    eventTracker.locationPermissionRejected();
+    handleNoLocationPermission();
+  }
+
+  void handlePermanentlyDeniedLocationPermission() {
+    eventTracker.locationPermissionDeniedPermanently();
+    handleNoLocationPermission();
+  }
+
+  void handleNoLocationPermission() {
+    surface.cancelTask();
+    showErrorScreen(R.string.no_course_location_permission_title, R.string.no_course_location_permission_msg);
+  }
+
+  public static class UserGaveLocationPermissionAction extends SerializableAction<ScanningController> {
     @Override
     public void run(ScanningController controller) {
-      // TODO: Log to analytics
-      if (controller.scanAbilityUtil.turnWifiOn()) {
-        controller.toastDispatcher.showShortToast(R.string.wifi_turned_on);
-        controller.wifiIsOn();
-      } else {
-        controller.toastDispatcher.showShortToast(R.string.wifi_could_not_be_turned_on);
-      }
+      controller.locationPermissionGranted();
     }
   }
 
-  public static class UserRejectedTurnWifiOnAction extends SerializableAction<ScanningController> {
-    @Override
-    public void run(ScanningController controller) {
-      // TODO: Log to analytics
-      controller.surface.cancelTask();
-    }
-  }
+  @VisibleForTesting
+  void locationPermissionGranted() {
+    eventTracker.locationPermissionGiven();
 
-  private void wifiIsOn() {
-    // TODO: Log to analytics
-    if (!scanAbilityUtil.isAccessPointOff()) {
-      surface.askUserToTurnOffAccessPoint(
+    if (scanAbilityUtil.isAccessPointOff()) {
+      accessPointIsOff();
+    } else {
+      surface.requestUserToTurnOffAccessPoint(
           new UserAcceptedTurnOffApAction(),
           new UserRejectedTurnOffApAction());
-    } else {
-      accessPointIsOff();
     }
   }
 
   public static class UserAcceptedTurnOffApAction extends SerializableAction<ScanningController> {
     @Override
     public void run(ScanningController controller) {
-      // TODO: Log to analytics
-      controller.surface.sendUserToWifiSettings();
+      controller.userAgreedToTurnOffAp();
     }
   }
 
   public static class UserRejectedTurnOffApAction extends SerializableAction<ScanningController> {
     @Override
     public void run(ScanningController controller) {
-      // TODO: Log to analytics
-      controller.surface.cancelTask();
+      controller.userDisagreedToTurnOffAp();
     }
   }
 
-  private void accessPointIsOff() {
+  void userAgreedToTurnOffAp() {
+    // TODO: Log to analytics
+    surface.sendUserToWifiSettings();
+  }
+
+  void userDisagreedToTurnOffAp() {
+    // TODO: Log to analytics
+    surface.cancelTask();
+  }
+
+  @VisibleForTesting
+  void accessPointIsOff() {
+    // TODO: Log to analytics
+    if (scanAbilityUtil.isWifiOn()) {
+      wifiIsOn();
+    } else {
+      surface.requestUserToTurnWifiOn(
+          new UserAcceptedTurnWifiOnAction(),
+          new UserRejectedTurnWifiOnAction());
+    }
+  }
+
+  public static class UserAcceptedTurnWifiOnAction extends SerializableAction<ScanningController> {
+    @Override
+    public void run(ScanningController controller) {
+      controller.userAgreedToTurnWifiOn();
+    }
+  }
+
+  public static class UserRejectedTurnWifiOnAction extends SerializableAction<ScanningController> {
+    @Override
+    public void run(ScanningController controller) {
+      controller.userDisagreedToTurnWifiOn();
+    }
+  }
+
+  void userAgreedToTurnWifiOn() {
+    // TODO: Log to analytics
+    if (scanAbilityUtil.turnWifiOn()) {
+      toastDispatcher.showShortToast(R.string.wifi_turned_on);
+      wifiIsOn();
+    } else {
+      toastDispatcher.showShortToast(R.string.wifi_could_not_be_turned_on);
+    }
+  }
+
+  void userDisagreedToTurnWifiOn() {
+    // TODO: Log to analytics
+    surface.cancelTask();
+  }
+
+  @VisibleForTesting
+  void wifiIsOn() {
     // TODO: Log to analytics
     startScanning();
   }
@@ -164,32 +210,6 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
   @VisibleForTesting
   public void startScanning() {
     scanningTask = startWifiScans();
-  }
-
-  private void locationPermissionGranted() {
-    eventTracker.locationPermissionGiven();
-    if (!scanAbilityUtil.isWifiOn()) {
-      surface.requestUserToTurnWifiOn(
-          new UserAcceptedTurnWifiOnAction(),
-          new UserRejectedTurnWifiOnAction());
-    } else {
-      wifiIsOn();
-    }
-  }
-
-  private void handleDeniedLocationPermission() {
-    eventTracker.locationPermissionRejected();
-    handleNoLocationPermission();
-  }
-
-  private void handlePermanentlyDeniedLocationPermission() {
-    eventTracker.locationPermissionDeniedPermanently();
-    handleNoLocationPermission();
-  }
-
-  private void handleNoLocationPermission() {
-    surface.cancelTask();
-    showErrorScreen(R.string.no_course_location_permission_title, R.string.no_course_location_permission_msg);
   }
 
   @Override
@@ -273,8 +293,8 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
     void requestUserToTurnWifiOn(SerializableAction<ScanningController> onAcceptAction,
                                  SerializableAction<ScanningController> onRejectAction);
 
-    void askUserToTurnOffAccessPoint(SerializableAction<ScanningController> onAcceptAction,
-                                     SerializableAction<ScanningController> onRejectAction);
+    void requestUserToTurnOffAccessPoint(SerializableAction<ScanningController> onAcceptAction,
+                                         SerializableAction<ScanningController> onRejectAction);
 
     void proceedWithNoAccessPoints();
 

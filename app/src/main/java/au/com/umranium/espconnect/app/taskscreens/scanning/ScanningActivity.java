@@ -127,8 +127,8 @@ public class ScanningActivity extends BaseTaskActivity<ScanningController> imple
   }
 
   @Override
-  public void askUserToTurnOffAccessPoint(SerializableAction<ScanningController> onAcceptAction,
-                                          SerializableAction<ScanningController> onRejectAction) {
+  public void requestUserToTurnOffAccessPoint(SerializableAction<ScanningController> onAcceptAction,
+                                              SerializableAction<ScanningController> onRejectAction) {
     GenericAlertDialogFragment fragment = (GenericAlertDialogFragment) getSupportFragmentManager().findFragmentByTag(TURN_AP_OFF_REQUEST_DIALOG);
     if (fragment == null) {
       fragment =

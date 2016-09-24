@@ -83,7 +83,7 @@
   <string name="turn_wifi_on_request_dlg_neg_btn">Cancel scanning</string>
 
   <string name="turn_access_point_off_request_dlg_title">WiFi access point is current on</string>
-  <string name="turn_access_point_off_request_dlg_msg">Your phone\'s access point can not be on while scanning for ESP nodes. Go to settings?</string>
+  <string name="turn_access_point_off_request_dlg_msg">Your phone\'s access point can not be on while scanning for ESP nodes. Go to settings to turn off access point?</string>
   <string name="turn_access_point_off_request_dlg_pos_btn">Go to settings</string>
   <string name="turn_access_point_off_request_dlg_neg_btn">Cancel scanning</string>
 
