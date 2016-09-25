@@ -2,6 +2,7 @@ package au.com.umranium.espconnect.app.taskscreens.connecting;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import au.com.umranium.espconnect.R;
@@ -40,6 +41,12 @@ public class ConnectingActivity extends BaseTaskActivity<ConnectingController> i
         .connectingModule(new ConnectingModule(this, getAccessPointFromIntent()))
         .build()
         .inject(this);
+  }
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setAnimation(R.drawable.connecting_animation);
   }
 
   @Override

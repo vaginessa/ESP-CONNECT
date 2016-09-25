@@ -26,7 +26,8 @@
       android:layout_height="@dimen/task_animation_image_height"
       android:layout_below="@id/txt_title"
       android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/standard_item_spacing"
+      android:layout_marginBottom="24dp"
+      android:layout_marginTop="24dp"
       android:scaleType="fitCenter"
       tools:src="@drawable/scanning_animation"/>
 
@@ -36,7 +37,6 @@
       android:layout_height="wrap_content"
       android:layout_below="@id/img_animation"
       android:layout_centerHorizontal="true"
-      android:layout_marginTop="@dimen/standard_item_spacing"
       android:gravity="center"
       android:textAppearance="@style/TextAppearance.AppCompat.Body1"
       tools:text="To make bread everyday"/>

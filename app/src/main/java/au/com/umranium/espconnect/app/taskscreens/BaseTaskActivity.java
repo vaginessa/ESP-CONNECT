@@ -56,7 +56,7 @@ abstract public class BaseTaskActivity<BaseControllerType extends BaseController
 
   public void setAnimation(@DrawableRes int animationRes) {
     ImageView animationImage = (ImageView) findViewById(R.id.img_animation);
-    animationImage.setImageResource(R.drawable.scanning_animation);
+    animationImage.setImageResource(animationRes);
     AnimationDrawable animationDrawable = (AnimationDrawable) animationImage.getDrawable();
     animationDrawable.start();
   }
