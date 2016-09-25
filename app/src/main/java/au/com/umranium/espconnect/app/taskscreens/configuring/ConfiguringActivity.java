@@ -2,6 +2,7 @@ package au.com.umranium.espconnect.app.taskscreens.configuring;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import au.com.umranium.espconnect.R;
@@ -46,6 +47,12 @@ public class ConfiguringActivity extends BaseTaskActivity<ConfiguringController>
         .configuringModule(new ConfiguringModule(this, getAccessPointFromIntent(), getConfigDetailsFromIntent()))
         .build()
         .inject(this);
+  }
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setAnimation(R.drawable.scanning_animation);
   }
 
   @Override
