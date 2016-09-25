@@ -9,8 +9,8 @@ android {
     applicationId "au.com.umranium.espconnect"
     minSdkVersion 9
     targetSdkVersion 23
-    versionCode 3
-    versionName "0.0-alpha-3"
+    versionCode 4
+    versionName "0.0-alpha-4"
   }
   buildTypes {
     debug {
