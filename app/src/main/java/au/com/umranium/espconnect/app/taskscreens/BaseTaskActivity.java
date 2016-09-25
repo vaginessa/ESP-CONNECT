@@ -1,7 +1,10 @@
 package au.com.umranium.espconnect.app.taskscreens;
 
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import au.com.umranium.espconnect.R;
@@ -50,4 +53,12 @@ abstract public class BaseTaskActivity<BaseControllerType extends BaseController
   public void showErrorScreen(String title, String message) {
     ErrorActivity.createIntent(this, title, message);
   }
+
+  public void setAnimation(@DrawableRes int animationRes) {
+    ImageView animationImage = (ImageView) findViewById(R.id.img_animation);
+    animationImage.setImageResource(R.drawable.scanning_animation);
+    AnimationDrawable animationDrawable = (AnimationDrawable) animationImage.getDrawable();
+    animationDrawable.start();
+  }
+
 }

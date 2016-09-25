@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.widget.ImageView;
 
 import java.util.List;
 
@@ -65,6 +66,7 @@ public class ScanningActivity extends BaseTaskActivity<ScanningController> imple
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    setAnimation(R.drawable.scanning_animation);
   }
 
   @Override
