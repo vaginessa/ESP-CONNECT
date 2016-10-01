@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'android-apt'
 
 android {
-  compileSdkVersion 23
+  compileSdkVersion 24
   buildToolsVersion "23.0.3"
 
   defaultConfig {
     applicationId "au.com.umranium.espconnect"
     minSdkVersion 9
-    targetSdkVersion 23
+    targetSdkVersion 24
     versionCode 4
     versionName "0.0-alpha-4"
   }
@@ -25,10 +25,10 @@ android {
 }
 
 def permissionDispatcherVersion = '2.1.2';
-def androidSupportVersion = '23.0.0';
+def androidSupportVersion = '24.2.0';
 def rxVersion = '1.1.0';
 def retrofitVersion = '2.0.1';
-def analyticsVersion = '9.2.1';
+def analyticsVersion = '9.4.0';
 
 dependencies {
   compile fileTree(dir: 'libs', include: ['*.jar'])
