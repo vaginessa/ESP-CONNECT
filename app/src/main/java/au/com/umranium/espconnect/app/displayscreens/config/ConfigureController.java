@@ -2,6 +2,7 @@ package au.com.umranium.espconnect.app.displayscreens.config;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 
 import au.com.umranium.espconnect.R;
@@ -33,11 +34,11 @@ class ConfigureController extends BaseController<ConfigureController.Surface> {
 
   @Inject
   ConfigureController(Surface surface,
-                             ScreenTracker screenTracker,
-                             ScannedAccessPoint accessPoint,
-                             List<ScannedAccessPoint> ssids,
-                             WifiConnectionUtil wifiConnectionUtil,
-                             EventTracker eventTracker) {
+                      ScreenTracker screenTracker,
+                      ScannedAccessPoint accessPoint,
+                      List<ScannedAccessPoint> ssids,
+                      WifiConnectionUtil wifiConnectionUtil,
+                      EventTracker eventTracker) {
     super(surface, screenTracker);
     this.accessPoint = accessPoint;
     this.ssids = ssids;
@@ -70,17 +71,21 @@ class ConfigureController extends BaseController<ConfigureController.Surface> {
     }
   }
 
-  void onSubmit(String ssid, String password) {
+  void onSubmit(@NonNull String ssid, @NonNull String password, boolean sendPassword) {
     surface.clearErrors();
     if (ssid.isEmpty()) {
       surface.showSsidError(R.string.configure_error_blank_ssid);
       return;
     }
-    if (password.isEmpty()) {
-      surface.showPasswordError(R.string.configure_error_blank_password);
-      return;
+    if (sendPassword) {
+      if (password.isEmpty()) {
+        surface.showPasswordError(R.string.configure_error_blank_password);
+        return;
+      }
+      surface.proceedToNextTask(new ConfigDetails(ssid, password));
+    } else {
+      surface.proceedToNextTask(new ConfigDetails(ssid, password));
     }
-    surface.proceedToNextTask(new ConfigDetails(ssid, password));
   }
 
   private void onAccessPointClicked(ScannedAccessPoint accessPoint) {

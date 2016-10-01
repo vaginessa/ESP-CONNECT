@@ -2,13 +2,15 @@ package au.com.umranium.espconnect.app.common.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
 public class ConfigDetails implements Parcelable {
 
   private final String ssid;
+  @Nullable
   private final String password;
 
-  public ConfigDetails(String ssid, String password) {
+  public ConfigDetails(String ssid, @Nullable String password) {
     this.ssid = ssid;
     this.password = password;
   }
@@ -22,6 +24,7 @@ public class ConfigDetails implements Parcelable {
     return ssid;
   }
 
+  @Nullable
   public String getPassword() {
     return password;
   }

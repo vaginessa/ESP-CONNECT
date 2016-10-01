@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.support.design.widget.TextInputLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -35,8 +37,10 @@ public class ConfigureActivity extends BaseActivity<ConfigureController> impleme
 
   private LinearLayout list;
   private Observer<ScannedAccessPoint> ssidClickObserver;
-  private EditText ssid;
-  private EditText password;
+  private EditText edtSsid;
+  private TextInputLayout layoutPassword;
+  private EditText edtPassword;
+  private CheckBox chkPassword;
 
 
   @NonNull
@@ -81,14 +85,14 @@ public class ConfigureActivity extends BaseActivity<ConfigureController> impleme
     list = (LinearLayout) findViewById(R.id.ssid_list);
     assert list != null;
 
-    ssid = (EditText) findViewById(R.id.edt_ssid);
-    password = (EditText) findViewById(R.id.edt_password);
+    edtSsid = (EditText) findViewById(R.id.edt_ssid);
+    edtPassword = (EditText) findViewById(R.id.edt_password);
     Button submit = (Button) findViewById(R.id.btn_submit);
 
     submit.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        controller.onSubmit(ssid.getText().toString(), password.getText().toString());
+        controller.onSubmit(edtSsid.getText().toString(), edtPassword.getText().toString(), chkPassword.isChecked());
       }
     });
 
@@ -100,6 +104,29 @@ public class ConfigureActivity extends BaseActivity<ConfigureController> impleme
         controller.onMoreEspInfoTxtClicked();
       }
     });
+
+    layoutPassword = (TextInputLayout) findViewById(R.id.layout_txt_password);
+    assert layoutPassword != null;
+
+    chkPassword = (CheckBox) findViewById(R.id.chk_password);
+    assert chkPassword != null;
+    chkPassword.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        updatePasswordEnabledState();
+      }
+    });
+    updatePasswordEnabledState();
+  }
+
+  private void updatePasswordEnabledState() {
+    boolean checked = chkPassword.isChecked();
+    layoutPassword.setEnabled(checked);
+    if (checked) {
+      layoutPassword.setHint(getString(R.string.configure_hint_password));
+    } else {
+      layoutPassword.setHint(getString(R.string.configure_hint_no_password));
+    }
   }
 
   @Override
@@ -111,7 +138,7 @@ public class ConfigureActivity extends BaseActivity<ConfigureController> impleme
   public void showSsids(List<ScannedAccessPoint> ssids) {
     list.removeAllViews();
     LayoutInflater layoutInflater = LayoutInflater.from(this);
-    for (int i = 0, l=ssids.size(); i < l; i++) {
+    for (int i = 0, l = ssids.size(); i < l; i++) {
       View item = layoutInflater.inflate(R.layout.layout_scanned_access_point, list, false);
 
       TextView name = (TextView) item.findViewById(R.id.txt_name);
@@ -134,26 +161,26 @@ public class ConfigureActivity extends BaseActivity<ConfigureController> impleme
 
   @Override
   public void updateInputSsid(String ssid) {
-    this.ssid.setText(ssid);
-    if (this.ssid.hasFocus()) {
-      this.password.requestFocus();
+    this.edtSsid.setText(ssid);
+    if (this.edtSsid.hasFocus()) {
+      this.edtPassword.requestFocus();
     }
   }
 
   @Override
   public void showSsidError(@StringRes int errorMsg) {
-    ssid.setError(getString(errorMsg));
+    edtSsid.setError(getString(errorMsg));
   }
 
   @Override
   public void showPasswordError(@StringRes int errorMsg) {
-    password.setError(getString(errorMsg));
+    edtPassword.setError(getString(errorMsg));
   }
 
   @Override
   public void clearErrors() {
-    ssid.setError(null);
-    password.setError(null);
+    edtSsid.setError(null);
+    edtPassword.setError(null);
   }
 
   @Override
