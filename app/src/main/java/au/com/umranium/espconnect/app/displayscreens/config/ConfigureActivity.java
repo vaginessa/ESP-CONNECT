@@ -91,6 +91,15 @@ public class ConfigureActivity extends BaseActivity<ConfigureController> impleme
         controller.onSubmit(ssid.getText().toString(), password.getText().toString());
       }
     });
+
+    TextView moreInfo = (TextView) findViewById(R.id.txt_link_to_more_info_about_esp);
+    assert moreInfo != null;
+    moreInfo.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        controller.onMoreEspInfoTxtClicked();
+      }
+    });
   }
 
   @Override

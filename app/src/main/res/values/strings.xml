@@ -42,6 +42,7 @@
   <string name="configure_btn_submit">Submit</string>
   <string name="configure_error_blank_ssid">Please enter a WiFi access point</string>
   <string name="configure_error_blank_password">Please enter a password</string>
+  <string name="configure_link_to_more_info"><a href=''>Find out more about this ESP8266</a></string>
 
   <string name="title_activity_configuring">Configuring ESP8266</string>
   <string name="configuring_title">Configuring your ESP8266</string>
@@ -99,6 +100,8 @@
   <string name="analytics_event_wifi_state_disagreed_to_turn_on">disagreed</string>
   <string name="analytics_event_wifi_state_could_turn_on">could-turn-on</string>
   <string name="analytics_event_wifi_state_could_not_turn_on">could-not-turn-on</string>
+  <string name="analytics_event_configure">configure</string>
+  <string name="analytics_event_configure_find_out_more">find-out-more</string>
   <string name="analytics_event_configuration">configuration</string>
   <string name="analytics_event_configuration_save_success">save-success</string>
   <string name="analytics_event_configuration_state_connected">state-connected</string>

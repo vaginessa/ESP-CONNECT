@@ -81,6 +81,16 @@
     </android.support.v7.widget.CardView>
 
     <TextView
+        android:id="@+id/txt_link_to_more_info_about_esp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginBottom="@dimen/standard_item_spacing"
+        android:clickable="true"
+        android:text="@string/configure_link_to_more_info"/>
+
+    <TextView
         android:id="@+id/txt_title_ssids"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

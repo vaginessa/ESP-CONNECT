@@ -91,6 +91,11 @@ public class EventTracker {
         R.string.analytics_event_wifi_state_could_not_turn_on);
   }
 
+  public void configureFindMoreEspInfo() {
+    analytics.trackAction(R.string.analytics_event_configure,
+        R.string.analytics_event_configure_find_out_more);
+  }
+
   public void configureSaveSuccess() {
     analytics.trackAction(R.string.analytics_event_configuration,
         R.string.analytics_event_configuration_save_success);
