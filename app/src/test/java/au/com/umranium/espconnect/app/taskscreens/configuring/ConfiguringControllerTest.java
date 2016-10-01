@@ -20,6 +20,7 @@ import java.util.List;
 
 import au.com.umranium.espconnect.R;
 import au.com.umranium.espconnect.analytics.ErrorTracker;
+import au.com.umranium.espconnect.analytics.EventTracker;
 import au.com.umranium.espconnect.analytics.ScreenTracker;
 import au.com.umranium.espconnect.api.data.State;
 import au.com.umranium.espconnect.app.common.DisplayableError;
@@ -78,6 +79,8 @@ public class ConfiguringControllerTest {
   NetworkPollingCall<Void> closeCall;
   @Injectable
   StringProvider stringProvider;
+  @Injectable
+  EventTracker eventTracker;
   @Tested
   ConfiguringController controller;
 
@@ -219,7 +222,7 @@ public class ConfiguringControllerTest {
   }
 
   @Test
-  public void getConfigureWaitForConnectAndClose_onSave_ignoresSubsequentSaves_emitsShowCheckingEsp() {
+  public void getConfigureWaitForConnectAndClose_onSave_ignoresSubsequentSaves$EmitsShowCheckingEsp$TracksEvent() {
     // given
     TestSubscriber<UpdateViewState> subscriber = new TestSubscriber<>();
     new Expectations() {{
@@ -237,6 +240,9 @@ public class ConfiguringControllerTest {
     subscriber.awaitTerminalEvent();
     subscriber.assertNoErrors();
     assertOnNextEventsOfType(subscriber.getOnNextEvents(), ShowSavingCredentials.class, ShowCheckingEspState.class);
+    new Verifications() {{
+      eventTracker.configureSaveSuccess();
+    }};
   }
 
   @Test
@@ -262,7 +268,7 @@ public class ConfiguringControllerTest {
   }
 
   @Test
-  public void getConfigureWaitForConnectAndClose_onStateDisconnected_ignoresSubsequentStates_emitsDisplayableError() {
+  public void getConfigureWaitForConnectAndClose_onStateDisconnected_ignoresSubsequentStates$EmitsDisplayableError() {
     // given
     TestSubscriber<UpdateViewState> subscriber = new TestSubscriber<>();
     new Expectations() {{
@@ -284,7 +290,7 @@ public class ConfiguringControllerTest {
 
 
   @Test
-  public void getConfigureWaitForConnectAndClose_onStateConnected_ignoresSubsequentStates_emitsShowTurnOffEspConfigMode() {
+  public void getConfigureWaitForConnectAndClose_onStateConnected_ignoresSubsequentStates$EmitsShowTurnOffEspConfigMode$TracksEvent() {
     // given
     TestSubscriber<UpdateViewState> subscriber = new TestSubscriber<>();
     new Expectations() {{
@@ -305,6 +311,9 @@ public class ConfiguringControllerTest {
     subscriber.awaitTerminalEvent();
     subscriber.assertNoErrors();
     assertOnNextEventsOfType(subscriber.getOnNextEvents(), ShowSavingCredentials.class, ShowCheckingEspState.class, ShowTurnOffEspConfigMode.class);
+    new Verifications() {{
+      eventTracker.configureStateConnected();
+    }};
   }
 
   @Test
@@ -331,7 +340,7 @@ public class ConfiguringControllerTest {
   }
 
   @Test
-  public void getConfigureWaitForConnectAndClose_onClose_emitsShowDone() {
+  public void getConfigureWaitForConnectAndClose_onClose_emitsShowDone$TracksEvent() {
     // given
     TestSubscriber<UpdateViewState> subscriber = new TestSubscriber<>();
     new Expectations() {{
@@ -352,18 +361,21 @@ public class ConfiguringControllerTest {
     subscriber.awaitTerminalEvent();
     subscriber.assertNoErrors();
     assertOnNextEventsOfType(subscriber.getOnNextEvents(), ShowSavingCredentials.class, ShowCheckingEspState.class, ShowTurnOffEspConfigMode.class, ShowDone.class);
+    new Verifications() {{
+      eventTracker.configureCloseSuccess();
+    }};
   }
 
-  private static void assertOnNextEventsOfType(List<UpdateViewState> events, Class<? extends UpdateViewState> ... classes) {
-    if (events.size()<classes.length) {
-      throw new AssertionError("Too few events ("+events.size()+"<"+classes.length+")");
+  private static void assertOnNextEventsOfType(List<UpdateViewState> events, Class<? extends UpdateViewState>... classes) {
+    if (events.size() < classes.length) {
+      throw new AssertionError("Too few events (" + events.size() + "<" + classes.length + ")");
     }
-    if (events.size()>classes.length) {
-      throw new AssertionError("Too many events ("+events.size()+">"+classes.length+")");
+    if (events.size() > classes.length) {
+      throw new AssertionError("Too many events (" + events.size() + ">" + classes.length + ")");
     }
     for (int i = 0; i < events.size() && i < classes.length; i++) {
-      if (events.get(i)==null) {
-        throw new AssertionError("Event "+i+" is null");
+      if (events.get(i) == null) {
+        throw new AssertionError("Event " + i + " is null");
       }
       if (!events.get(i).getClass().isAssignableFrom(classes[i])) {
         throw new AssertionError("Event " + i + " (" + events.get(i).getClass().getSimpleName() + ") is not assignable from " + classes[i].getSimpleName());

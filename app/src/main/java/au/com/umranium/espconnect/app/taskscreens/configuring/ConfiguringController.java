@@ -8,6 +8,7 @@ import javax.inject.Named;
 
 import au.com.umranium.espconnect.R;
 import au.com.umranium.espconnect.analytics.ErrorTracker;
+import au.com.umranium.espconnect.analytics.EventTracker;
 import au.com.umranium.espconnect.analytics.LoggingErrorAction;
 import au.com.umranium.espconnect.analytics.ScreenTracker;
 import au.com.umranium.espconnect.api.data.State;
@@ -48,16 +49,19 @@ public class ConfiguringController extends BaseTaskController<ConfiguringControl
   private final NetworkPollingCall<Void> closeCall;
   private final ErrorTracker errorTracker;
   private final StringProvider stringProvider;
+  private final EventTracker eventTracker;
   private Subscription task;
 
   @Inject
-  public ConfiguringController(Surface surface, ScreenTracker screenTracker, WifiConnectionUtil wifiConnectionUtil,
+  public ConfiguringController(Surface surface, ScreenTracker screenTracker,
+                               WifiConnectionUtil wifiConnectionUtil,
                                ConfigDetails configDetails, Scheduler scheduler, WifiEvents wifiEvents,
                                @Named("save") NetworkPollingCall<Void> saveCall,
                                @Named("state") NetworkPollingCall<State> stateCall,
                                @Named("close") NetworkPollingCall<Void> closeCall,
                                ErrorTracker errorTracker,
-                               StringProvider stringProvider) {
+                               StringProvider stringProvider,
+                               EventTracker eventTracker) {
     super(surface, screenTracker);
     this.wifiConnectionUtil = wifiConnectionUtil;
     this.configDetails = configDetails;
@@ -68,6 +72,7 @@ public class ConfiguringController extends BaseTaskController<ConfiguringControl
     this.closeCall = closeCall;
     this.stringProvider = stringProvider;
     this.errorTracker = errorTracker;
+    this.eventTracker = eventTracker;
   }
 
   @Override
@@ -139,6 +144,12 @@ public class ConfiguringController extends BaseTaskController<ConfiguringControl
         .mergeWith(
             save
                 .onErrorResumeNext(ThrowableToDisplayableError.<Void>create(stringProvider.getString(R.string.configuring_esp_save_failed)))
+                .doOnNext(new Action1<Void>() {
+                  @Override
+                  public void call(Void aVoid) {
+                    eventTracker.configureSaveSuccess();
+                  }
+                })
                 .map(ToInstance.instance((UpdateViewState) (new ShowCheckingEspState(stringProvider))))
                 .mergeWith(
                     state
@@ -148,14 +159,22 @@ public class ConfiguringController extends BaseTaskController<ConfiguringControl
                           public Observable<UpdateViewState> call(State state) {
                             boolean connected = configDetails.getSsid().equals(state.mSsid) && !state.isStationIpBlank();
                             if (connected) {
+                              eventTracker.configureStateConnected();
                               Observable<Void> close = closeCall.call().take(1);
                               return Observable.just((UpdateViewState) (new ShowTurnOffEspConfigMode(stringProvider)))
                                   .mergeWith(
                                       close
                                           .onErrorResumeNext(ThrowableToDisplayableError.<Void>create(stringProvider.getString(R.string.configuring_esp_close_failed)))
+                                          .doOnNext(new Action1<Void>() {
+                                            @Override
+                                            public void call(Void aVoid) {
+                                              eventTracker.configureCloseSuccess();
+                                            }
+                                          })
                                           .map(ToInstance.instance((new ShowDone(configDetails))))
                                   );
                             } else {
+                              eventTracker.configureStateDisconnected();
                               return Observable.error(new DisplayableError(stringProvider.getString(R.string.configuring_esp_unable_to_connect)));
                             }
                           }

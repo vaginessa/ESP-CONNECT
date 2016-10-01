@@ -93,6 +93,11 @@
   <string name="analytics_event_wifi_state_disagreed_to_turn_on">disagreed</string>
   <string name="analytics_event_wifi_state_could_turn_on">could-turn-on</string>
   <string name="analytics_event_wifi_state_could_not_turn_on">could-not-turn-on</string>
+  <string name="analytics_event_configuration">configuration</string>
+  <string name="analytics_event_configuration_save_success">save-success</string>
+  <string name="analytics_event_configuration_state_connected">state-connected</string>
+  <string name="analytics_event_configuration_state_disconnected">state-disconnected</string>
+  <string name="analytics_event_configuration_close_success">close-success</string>
 
   <string name="turn_wifi_on_request_dlg_title">Your WiFi is turned off</string>
   <string name="turn_wifi_on_request_dlg_msg">Your WiFi needs to be on to scan for ESP nodes. Turn WiFi on?</string>

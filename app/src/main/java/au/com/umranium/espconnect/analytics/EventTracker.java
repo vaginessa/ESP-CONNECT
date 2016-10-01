@@ -86,4 +86,24 @@ public class EventTracker {
         R.string.analytics_event_wifi_state_could_not_turn_on);
   }
 
+  public void configureSaveSuccess() {
+    analytics.trackAction(R.string.analytics_event_configuration,
+        R.string.analytics_event_configuration_save_success);
+  }
+
+  public void configureStateConnected() {
+    analytics.trackAction(R.string.analytics_event_configuration,
+        R.string.analytics_event_configuration_state_connected);
+  }
+
+  public void configureStateDisconnected() {
+    analytics.trackAction(R.string.analytics_event_configuration,
+        R.string.analytics_event_configuration_state_disconnected);
+  }
+
+  public void configureCloseSuccess() {
+    analytics.trackAction(R.string.analytics_event_configuration,
+        R.string.analytics_event_configuration_close_success);
+  }
+
 }
