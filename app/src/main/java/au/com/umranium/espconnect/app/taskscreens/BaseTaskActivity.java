@@ -51,7 +51,8 @@ abstract public class BaseTaskActivity<BaseControllerType extends BaseController
   }
 
   public void showErrorScreen(String title, String message) {
-    ErrorActivity.createIntent(this, title, message);
+    Intent intent = ErrorActivity.createIntent(this, title, message);
+    startNextActivity(intent);
   }
 
   public void setAnimation(@DrawableRes int animationRes) {

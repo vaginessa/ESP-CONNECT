@@ -122,7 +122,12 @@ public class ConfiguringController extends BaseTaskController<ConfiguringControl
             Log.e(ConfiguringController.class.getSimpleName(), "Error while configuring ESP8266", throwable);
             if (throwable instanceof DisplayableError) {
               DisplayableError displayableError = (DisplayableError) throwable;
-              errorTracker.onException(displayableError.getCause());
+              Throwable cause = displayableError.getCause();
+              if (cause != null) {
+                errorTracker.onException(cause);
+              } else {
+                errorTracker.onException(displayableError);
+              }
               surface.showErrorScreen(stringProvider.getString(R.string.configuring_generic_error_title),
                   displayableError.getMessage());
             } else {

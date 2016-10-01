@@ -48,7 +48,7 @@
   <string name="configuring_connection_error_msg">Unable to maintain a connection to the ESP8266 long enough to configure it.</string>
   <string name="configuring_esp_save">Sending credentials to your ESP8266…</string>
   <string name="configuring_esp_save_failed">Configuring your ESP8266 has failed.\nPlease try again.</string>
-  <string name="configuring_esp_state_check">Verifying your ESP8266 is configured…</string>
+  <string name="configuring_esp_state_check">Please hold on as we configure your ESP8266…</string>
   <string name="configuring_esp_state_check_failed">Your ESP8266 was configured successfully but verifying it\'s state failed.</string>
   <string name="configuring_esp_close">Turning off your ESP8266\'s configuration mode…</string>
   <string name="configuring_esp_close_failed">Your ESP8266 was configured successfully but turning off it\'s configuration mode failed.</string>
