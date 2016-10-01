@@ -16,10 +16,10 @@
 
   <string name="title_activity_scanning">Finding ESP8266</string>
   <string name="scanning_title">Searching for ESP8266</string>
-  <string name="scanning_description">Please hold on as we search for your ESP8266</string>
+  <string name="scanning_description">Please hold on as we search for your ESP8266…</string>
 
   <string name="scanning_error_noap_title">Unable to find any ESP8266 nodes</string>
-  <string name="scanning_error_noap_description">We were unable to find any ESP8266 nodes.\nAre you sure your ESP8266 is turned on and in the configuration mode?</string>
+  <string name="scanning_error_noap_description">Unable to find any ESP8266 nodes.\nAre you sure your ESP8266 is turned on and in the configuration mode?</string>
   <string name="scanning_generic_error_title">Error scanning for ESP8266 nodes</string>
   <string name="scanning_generic_error_msg">An error occurred while scanning for ESP8266 nodes.\nPlease try again.</string>
 
@@ -27,7 +27,7 @@
 
   <string name="title_activity_connecting">Connecting to ESP8266</string>
   <string name="connecting_title">Connecting to %s</string>
-  <string name="connecting_description">Please hold on as we connect to %s</string>
+  <string name="connecting_description">Please hold on as we connect to %s…</string>
   <string name="connecting_generic_error_title">Error connecting to ESP8266</string>
   <string name="connecting_generic_error_msg">An error occurred while connecting to your ESP8266.</string>
   <string name="connecting_connection_error_msg">Unable to maintain a connection to the ESP8266 long enough to check the WiFi networks it sees.</string>
@@ -52,7 +52,7 @@
   <string name="configuring_esp_state_check_failed">Your ESP8266 was configured successfully but verifying it\'s state failed.</string>
   <string name="configuring_esp_close">Turning off your ESP8266\'s configuration mode…</string>
   <string name="configuring_esp_close_failed">Your ESP8266 was configured successfully but turning off it\'s configuration mode failed.</string>
-  <string name="configuring_esp_unable_to_connect">Your ESP8266 was configured successfully but it was unable to connect to the network you specified.</string>
+  <string name="configuring_esp_unable_to_connect">Your ESP8266 was unable to connect to %s.\nAre you sure the password was correct?</string>
 
   <string name="title_activity_scan">Find ESP8266</string>
   <string name="title_activity_configurer">Configure ESP8266</string>
