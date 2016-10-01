@@ -20,4 +20,7 @@ public interface NodeMcuService {
   @GET("/wifisave")
   Observable<Void> save(@Query("s") String ssid, @Query("p") String password);
 
+  @GET("/close")
+  Observable<Void> close();
+
 }

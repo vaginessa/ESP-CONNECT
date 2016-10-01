@@ -2,17 +2,34 @@ package au.com.umranium.espconnect.app.taskscreens.configuring;
 
 import android.util.Log;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.core.Is;
+import org.hamcrest.core.IsCollectionContaining;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.matchers.JUnitMatchers;
+import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import java.net.SocketException;
+import java.util.List;
 
 import au.com.umranium.espconnect.R;
 import au.com.umranium.espconnect.analytics.ErrorTracker;
 import au.com.umranium.espconnect.analytics.ScreenTracker;
 import au.com.umranium.espconnect.api.data.State;
+import au.com.umranium.espconnect.app.common.DisplayableError;
+import au.com.umranium.espconnect.app.common.StringProvider;
 import au.com.umranium.espconnect.app.common.data.ConfigDetails;
+import au.com.umranium.espconnect.app.taskscreens.configuring.viewstate.ShowCheckingEspState;
+import au.com.umranium.espconnect.app.taskscreens.configuring.viewstate.ShowDone;
+import au.com.umranium.espconnect.app.taskscreens.configuring.viewstate.ShowSavingCredentials;
+import au.com.umranium.espconnect.app.taskscreens.configuring.viewstate.ShowTurnOffEspConfigMode;
+import au.com.umranium.espconnect.app.taskscreens.configuring.viewstate.UpdateViewState;
 import au.com.umranium.espconnect.rx.Scheduler;
 import au.com.umranium.espconnect.app.taskscreens.utils.NetworkPollingCall;
 import au.com.umranium.espconnect.app.taskscreens.utils.WifiConnectionException;
@@ -27,6 +44,7 @@ import mockit.Tested;
 import mockit.Verifications;
 import mockit.integration.junit4.JMockit;
 import rx.Observable;
+import rx.observers.TestSubscriber;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -56,6 +74,10 @@ public class ConfiguringControllerTest {
   NetworkPollingCall<Void> saveCall;
   @Injectable
   NetworkPollingCall<State> stateCall;
+  @Injectable
+  NetworkPollingCall<Void> closeCall;
+  @Injectable
+  StringProvider stringProvider;
   @Tested
   ConfiguringController controller;
 
@@ -156,127 +178,197 @@ public class ConfiguringControllerTest {
   }
 
   @Test
-  public void afterFirstSave_ignoresSubsequentSaves() {
+  public void getConfigureWaitForConnectAndClose_firstEmitsShowSavingCredentials() {
     // given
+    TestSubscriber<UpdateViewState> subscriber = new TestSubscriber<>();
+    new Expectations() {{
+      saveCall.call();
+      returns(Observable.empty());
+
+      stateCall.call();
+      returns(Observable.empty());
+    }};
+
+    // when
+    controller.getConfigureWaitForConnectAndClose().subscribe(subscriber);
+
+    // then
+    subscriber.awaitTerminalEvent();
+    subscriber.assertNoErrors();
+    assertOnNextEventsOfType(subscriber.getOnNextEvents(), ShowSavingCredentials.class);
+  }
+
+  @Test
+  public void getConfigureWaitForConnectAndClose_onSaveError_emitsDisplayableError() {
+    // given
+    TestSubscriber<UpdateViewState> subscriber = new TestSubscriber<>();
+    new Expectations() {{
+      saveCall.call();
+      returns(Observable.error(new RuntimeException()));
+
+      stateCall.call();
+      returns(Observable.empty());
+    }};
+
+    // when
+    controller.getConfigureWaitForConnectAndClose().subscribe(subscriber);
+
+    // then
+    subscriber.awaitTerminalEvent();
+    subscriber.assertError(DisplayableError.class);
+  }
+
+  @Test
+  public void getConfigureWaitForConnectAndClose_onSave_ignoresSubsequentSaves_emitsShowCheckingEsp() {
+    // given
+    TestSubscriber<UpdateViewState> subscriber = new TestSubscriber<>();
     new Expectations() {{
       saveCall.call();
       returns(Observable.just(null, null));
-    }};
 
-    // when
-    controller.onStart();
-
-    // then
-    new Verifications() {{
       stateCall.call();
-      times = 1;
-    }};
-  }
-
-  @Test
-  public void ifSaveCallThrowsError_showsErrorMessage() {
-    // given
-    new Expectations() {{
-      saveCall.call();
-      returns(Observable.error(new RuntimeException()));
+      returns(Observable.empty());
     }};
 
     // when
-    controller.onStart();
+    controller.getConfigureWaitForConnectAndClose().subscribe(subscriber);
 
     // then
-    new Verifications() {{
-      errorTracker.onException((Throwable) any);
-      surface.showErrorScreen(anyInt, anyInt);
-      times = 1;
-    }};
+    subscriber.awaitTerminalEvent();
+    subscriber.assertNoErrors();
+    assertOnNextEventsOfType(subscriber.getOnNextEvents(), ShowSavingCredentials.class, ShowCheckingEspState.class);
   }
 
   @Test
-  public void ifStateCallThrowsError_showsErrorMessage() {
+  public void getConfigureWaitForConnectAndClose_onStateError_emitsDisplayableError() {
     // given
+    TestSubscriber<UpdateViewState> subscriber = new TestSubscriber<>();
     new Expectations() {{
       saveCall.call();
       returns(Observable.just(null));
 
       stateCall.call();
       returns(Observable.error(new RuntimeException()));
+      minTimes = 0;
     }};
 
     // when
-    controller.onStart();
+    controller.getConfigureWaitForConnectAndClose().subscribe(subscriber);
 
     // then
-    new Verifications() {{
-      errorTracker.onException((Throwable) any);
-      surface.showErrorScreen(anyInt, anyInt);
-      times = 1;
-    }};
+    subscriber.awaitTerminalEvent();
+    assertOnNextEventsOfType(subscriber.getOnNextEvents(), ShowSavingCredentials.class, ShowCheckingEspState.class);
+    subscriber.assertError(DisplayableError.class);
   }
 
   @Test
-  public void ifStateCallThrowsTimeoutError_showsTimeoutErrorMessage() {
+  public void getConfigureWaitForConnectAndClose_onStateDisconnected_ignoresSubsequentStates_emitsDisplayableError() {
     // given
+    TestSubscriber<UpdateViewState> subscriber = new TestSubscriber<>();
     new Expectations() {{
       saveCall.call();
       returns(Observable.just(null));
 
       stateCall.call();
-      returns(Observable.error(new NetworkPollingCall.MaxRetryException(new SocketException())));
+      returns(Observable.just(DISCONNECTED_STATE, CONNECTED_STATE));
     }};
 
     // when
-    controller.onStart();
+    controller.getConfigureWaitForConnectAndClose().subscribe(subscriber);
 
     // then
-    new Verifications() {{
-      errorTracker.onException((Throwable) any);
-      surface.showErrorScreen(anyInt, R.string.configuring_connection_error_msg);
-      times = 1;
-    }};
+    subscriber.awaitTerminalEvent();
+    subscriber.assertError(DisplayableError.class);
+    assertOnNextEventsOfType(subscriber.getOnNextEvents(), ShowSavingCredentials.class, ShowCheckingEspState.class);
   }
 
+
   @Test
-  public void afterDisconnectedState_ignoresDisconnectedStates() {
+  public void getConfigureWaitForConnectAndClose_onStateConnected_ignoresSubsequentStates_emitsShowTurnOffEspConfigMode() {
     // given
+    TestSubscriber<UpdateViewState> subscriber = new TestSubscriber<>();
     new Expectations() {{
       saveCall.call();
       returns(Observable.just(null));
 
       stateCall.call();
-      returns(Observable.just(DISCONNECTED_STATE));
+      returns(Observable.just(CONNECTED_STATE, DISCONNECTED_STATE));
+
+      closeCall.call();
+      returns(Observable.empty());
     }};
 
     // when
-    controller.onStart();
-
+    controller.getConfigureWaitForConnectAndClose().subscribe(subscriber);
 
     // then
-    new Verifications() {{
-      surface.proceedToNextTask(anyString);
-      times = 0;
-    }};
+    subscriber.awaitTerminalEvent();
+    subscriber.assertNoErrors();
+    assertOnNextEventsOfType(subscriber.getOnNextEvents(), ShowSavingCredentials.class, ShowCheckingEspState.class, ShowTurnOffEspConfigMode.class);
   }
 
   @Test
-  public void afterConnectedState_proceedsToNext() {
+  public void getConfigureWaitForConnectAndClose_onCloseError_emitsDisplayableError() {
     // given
+    TestSubscriber<UpdateViewState> subscriber = new TestSubscriber<>();
     new Expectations() {{
       saveCall.call();
       returns(Observable.just(null));
 
       stateCall.call();
       returns(Observable.just(CONNECTED_STATE));
+
+      closeCall.call();
+      returns(Observable.error(new RuntimeException()));
     }};
 
     // when
-    controller.onStart();
-
+    controller.getConfigureWaitForConnectAndClose().subscribe(subscriber);
 
     // then
-    new Verifications() {{
-      surface.proceedToNextTask(anyString);
+    subscriber.awaitTerminalEvent();
+    subscriber.assertError(DisplayableError.class);
+  }
+
+  @Test
+  public void getConfigureWaitForConnectAndClose_onClose_emitsShowDone() {
+    // given
+    TestSubscriber<UpdateViewState> subscriber = new TestSubscriber<>();
+    new Expectations() {{
+      saveCall.call();
+      returns(Observable.just(null));
+
+      stateCall.call();
+      returns(Observable.just(CONNECTED_STATE));
+
+      closeCall.call();
+      returns(Observable.just(null));
     }};
+
+    // when
+    controller.getConfigureWaitForConnectAndClose().subscribe(subscriber);
+
+    // then
+    subscriber.awaitTerminalEvent();
+    subscriber.assertNoErrors();
+    assertOnNextEventsOfType(subscriber.getOnNextEvents(), ShowSavingCredentials.class, ShowCheckingEspState.class, ShowTurnOffEspConfigMode.class, ShowDone.class);
+  }
+
+  private static void assertOnNextEventsOfType(List<UpdateViewState> events, Class<? extends UpdateViewState> ... classes) {
+    if (events.size()<classes.length) {
+      throw new AssertionError("Too few events ("+events.size()+"<"+classes.length+")");
+    }
+    if (events.size()>classes.length) {
+      throw new AssertionError("Too many events ("+events.size()+">"+classes.length+")");
+    }
+    for (int i = 0; i < events.size() && i < classes.length; i++) {
+      if (events.get(i)==null) {
+        throw new AssertionError("Event "+i+" is null");
+      }
+      if (!events.get(i).getClass().isAssignableFrom(classes[i])) {
+        throw new AssertionError("Event " + i + " (" + events.get(i).getClass().getSimpleName() + ") is not assignable from " + classes[i].getSimpleName());
+      }
+    }
   }
 
 }

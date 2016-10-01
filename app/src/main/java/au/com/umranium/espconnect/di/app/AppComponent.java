@@ -7,6 +7,7 @@ import android.net.wifi.WifiManager;
 import javax.inject.Named;
 
 import au.com.umranium.espconnect.analytics.Analytics;
+import au.com.umranium.espconnect.app.common.StringProvider;
 import au.com.umranium.espconnect.di.qualifiers.AppInstance;
 import au.com.umranium.espconnect.di.scope.AppScope;
 import au.com.umranium.espconnect.app.App;
@@ -37,5 +38,7 @@ public interface AppComponent {
 
   @Named("EspSsidPattern")
   String getEspSsidPattern();
+
+  StringProvider getStringProvider();
 
 }

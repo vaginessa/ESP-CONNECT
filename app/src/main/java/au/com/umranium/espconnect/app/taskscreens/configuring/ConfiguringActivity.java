@@ -56,11 +56,6 @@ public class ConfiguringActivity extends BaseTaskActivity<ConfiguringController>
   }
 
   @Override
-  public void setMessage(String networkName) {
-    super.setMessage(getString(R.string.configuring_description, networkName));
-  }
-
-  @Override
   public void proceedToNextTask(String ssid) {
     startNextActivity(EndActivity.createIntent(this, ssid));
   }

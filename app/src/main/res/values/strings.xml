@@ -43,14 +43,19 @@
 
   <string name="title_activity_configuring">Configuring ESP8266</string>
   <string name="configuring_title">Configuring your ESP8266</string>
-  <string name="configuring_description">Please hold on as we configure your ESP8266 to connect to %s.</string>
   <string name="configuring_generic_error_title">Error configuring ESP8266</string>
   <string name="configuring_generic_error_msg">An error occurred while configuring your ESP8266.\nPlease try again.</string>
   <string name="configuring_connection_error_msg">Unable to maintain a connection to the ESP8266 long enough to configure it.</string>
+  <string name="configuring_esp_save">Sending credentials to your ESP8266…</string>
+  <string name="configuring_esp_save_failed">Configuring your ESP8266 has failed.\nPlease try again.</string>
+  <string name="configuring_esp_state_check">Verifying your ESP8266 is configured…</string>
+  <string name="configuring_esp_state_check_failed">Your ESP8266 was configured successfully but verifying it\'s state failed.</string>
+  <string name="configuring_esp_close">Turning off your ESP8266\'s configuration mode…</string>
+  <string name="configuring_esp_close_failed">Your ESP8266 was configured successfully but turning off it\'s configuration mode failed.</string>
   <string name="configuring_esp_unable_to_connect">Your ESP8266 was configured successfully but it was unable to connect to the network you specified.</string>
 
-  <string name="title_activity_scan">Find NodeMCU</string>
-  <string name="title_activity_configurer">Configure NodeMCU</string>
+  <string name="title_activity_scan">Find ESP8266</string>
+  <string name="title_activity_configurer">Configure ESP8266</string>
   <string name="title_activity_error">Oops!</string>
 
   <string name="title_activity_end">ESP8266 Configured</string>
