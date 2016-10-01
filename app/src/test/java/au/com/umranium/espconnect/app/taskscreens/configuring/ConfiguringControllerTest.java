@@ -28,6 +28,7 @@ import au.com.umranium.espconnect.app.common.StringProvider;
 import au.com.umranium.espconnect.app.common.data.ConfigDetails;
 import au.com.umranium.espconnect.app.taskscreens.configuring.viewstate.ShowCheckingEspState;
 import au.com.umranium.espconnect.app.taskscreens.configuring.viewstate.ShowDone;
+import au.com.umranium.espconnect.app.taskscreens.configuring.viewstate.ShowError;
 import au.com.umranium.espconnect.app.taskscreens.configuring.viewstate.ShowSavingCredentials;
 import au.com.umranium.espconnect.app.taskscreens.configuring.viewstate.ShowTurnOffEspConfigMode;
 import au.com.umranium.espconnect.app.taskscreens.configuring.viewstate.UpdateViewState;
@@ -268,7 +269,7 @@ public class ConfiguringControllerTest {
   }
 
   @Test
-  public void getConfigureWaitForConnectAndClose_onStateDisconnected_ignoresSubsequentStates$EmitsDisplayableError() {
+  public void getConfigureWaitForConnectAndClose_onStateDisconnected_ignoresSubsequentStates$EmitsShowError$TracksEvent() {
     // given
     TestSubscriber<UpdateViewState> subscriber = new TestSubscriber<>();
     new Expectations() {{
@@ -284,8 +285,11 @@ public class ConfiguringControllerTest {
 
     // then
     subscriber.awaitTerminalEvent();
-    subscriber.assertError(DisplayableError.class);
-    assertOnNextEventsOfType(subscriber.getOnNextEvents(), ShowSavingCredentials.class, ShowCheckingEspState.class);
+    subscriber.assertNoErrors();
+    assertOnNextEventsOfType(subscriber.getOnNextEvents(), ShowSavingCredentials.class, ShowCheckingEspState.class, ShowError.class);
+    new Verifications() {{
+      eventTracker.configureStateDisconnected();
+    }};
   }
 
 

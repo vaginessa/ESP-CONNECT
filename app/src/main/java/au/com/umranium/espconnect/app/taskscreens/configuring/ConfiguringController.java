@@ -19,6 +19,7 @@ import au.com.umranium.espconnect.app.common.data.ConfigDetails;
 import au.com.umranium.espconnect.app.taskscreens.BaseTaskController;
 import au.com.umranium.espconnect.app.taskscreens.configuring.viewstate.ShowCheckingEspState;
 import au.com.umranium.espconnect.app.taskscreens.configuring.viewstate.ShowDone;
+import au.com.umranium.espconnect.app.taskscreens.configuring.viewstate.ShowError;
 import au.com.umranium.espconnect.app.taskscreens.configuring.viewstate.ShowSavingCredentials;
 import au.com.umranium.espconnect.app.taskscreens.configuring.viewstate.ShowTurnOffEspConfigMode;
 import au.com.umranium.espconnect.app.taskscreens.configuring.viewstate.UpdateViewState;
@@ -180,7 +181,10 @@ public class ConfiguringController extends BaseTaskController<ConfiguringControl
                                   );
                             } else {
                               eventTracker.configureStateDisconnected();
-                              return Observable.error(new DisplayableError(stringProvider.getString(R.string.configuring_esp_unable_to_connect)));
+                              return Observable.just((UpdateViewState) new ShowError(
+                                  stringProvider.getString(R.string.configuring_generic_error_title),
+                                  stringProvider.getString(R.string.configuring_esp_unable_to_connect, configDetails.getSsid())
+                              ));
                             }
                           }
                         })
