@@ -1,5 +1,7 @@
 package au.com.umranium.espconnect.app;
 
+import android.net.Uri;
+
 import au.com.umranium.espconnect.analytics.ScreenTracker;
 
 /**
@@ -47,5 +49,8 @@ public abstract class BaseController<SurfaceType extends BaseController.Surface>
     void cancelTask();
 
     void closeApp();
+
+    void openUriInBrowser(Uri uri);
+
   }
 }

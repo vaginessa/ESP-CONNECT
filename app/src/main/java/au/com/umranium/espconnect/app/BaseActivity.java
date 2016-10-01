@@ -2,6 +2,7 @@ package au.com.umranium.espconnect.app;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import au.com.umranium.espconnect.R;
@@ -104,6 +105,11 @@ abstract public class BaseActivity<BaseControllerType extends BaseController> ex
   public void closeApp() {
     setResult(RESULT_EXIT_APP);
     finish();
+  }
+
+  public void openUriInBrowser(Uri uri) {
+    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+    startActivity(intent);
   }
 
   @Override

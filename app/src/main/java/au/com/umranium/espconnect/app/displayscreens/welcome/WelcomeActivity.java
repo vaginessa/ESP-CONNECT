@@ -1,8 +1,13 @@
 package au.com.umranium.espconnect.app.displayscreens.welcome;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+
 import au.com.umranium.espconnect.R;
 import au.com.umranium.espconnect.di.activity.ActivityModule;
 import au.com.umranium.espconnect.app.BaseActivity;
@@ -36,6 +41,15 @@ public class WelcomeActivity extends BaseActivity<WelcomeController> implements 
       @Override
       public void onClick(View v) {
         controller.onStartBtnClicked();
+      }
+    });
+
+    TextView moreInfo = (TextView) findViewById(R.id.txt_link_to_more_info_about_app);
+    assert moreInfo != null;
+    moreInfo.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        controller.onMoreAppInfoTxtClicked();
       }
     });
   }
