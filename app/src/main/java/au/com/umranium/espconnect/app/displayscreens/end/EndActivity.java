@@ -3,11 +3,13 @@ package au.com.umranium.espconnect.app.displayscreens.end;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import au.com.umranium.espconnect.R;
-import au.com.umranium.espconnect.di.activity.ActivityModule;
 import au.com.umranium.espconnect.app.BaseActivity;
+import au.com.umranium.espconnect.di.activity.ActivityModule;
 
 /**
  * The activity that displays the end message.
@@ -42,6 +44,24 @@ public class EndActivity extends BaseActivity<EndController> implements EndContr
     setContentView(R.layout.activity_end);
 
     mTxtDescription = (TextView) findViewById(R.id.txt_description);
+
+    Button anotherButton = (Button) findViewById(R.id.btn_another);
+    assert anotherButton != null;
+    anotherButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        controller.onConfigureAnotherButtonPressed();
+      }
+    });
+
+    Button exitButton = (Button) findViewById(R.id.btn_exit);
+    assert exitButton != null;
+    exitButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        controller.onExitButtonPressed();
+      }
+    });
 
     setResult(RESULT_OK);
   }

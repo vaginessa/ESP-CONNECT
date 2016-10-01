@@ -61,6 +61,8 @@
   <string name="title_activity_end">ESP8266 Configured</string>
   <string name="end_txt_title">All done!</string>
   <string name="end_txt_description">Your ESP8266 has been successfully configured to connect to the WiFi network %s.</string>
+  <string name="end_btn_another">Configure another</string>
+  <string name="end_btn_exit">Exit</string>
 
   <string name="wificonn_error_msg_unable_to_enable">Unable to enable network</string>
   <string name="wificonn_error_msg_unable_to_disconnect">Unable to disconnect</string>

@@ -15,6 +15,7 @@ import javax.inject.Inject;
 abstract public class BaseActivity<BaseControllerType extends BaseController> extends AppCompatActivity {
 
   private static final int NEXT_TASK_REQUEST_CODE = 1;
+  private static final int RESULT_EXIT_APP = 2;
 
   @Inject
   @ActivityScope
@@ -73,6 +74,9 @@ abstract public class BaseActivity<BaseControllerType extends BaseController> ex
         case Activity.RESULT_CANCELED:
           controller.nextTaskWasCancelled();
           break;
+        case RESULT_EXIT_APP:
+          closeApp();
+          break;
       }
       return;
     }
@@ -93,6 +97,12 @@ abstract public class BaseActivity<BaseControllerType extends BaseController> ex
   @SuppressWarnings("unused")
   public void cancelTask() {
     setResult(RESULT_CANCELED);
+    finish();
+  }
+
+  @SuppressWarnings("unused")
+  public void closeApp() {
+    setResult(RESULT_EXIT_APP);
     finish();
   }
 

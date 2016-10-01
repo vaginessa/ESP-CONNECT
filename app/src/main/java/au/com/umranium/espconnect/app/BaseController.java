@@ -45,5 +45,7 @@ public abstract class BaseController<SurfaceType extends BaseController.Surface>
     void finishTaskSuccessfully();
 
     void cancelTask();
+
+    void closeApp();
   }
 }

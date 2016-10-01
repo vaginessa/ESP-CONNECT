@@ -35,6 +35,14 @@ public class EndController extends BaseController<EndController.Surface> {
     surface.finishTaskSuccessfully();
   }
 
+  void onConfigureAnotherButtonPressed() {
+    surface.finishTaskSuccessfully();
+  }
+
+  void onExitButtonPressed() {
+    surface.closeApp();
+  }
+
   public interface Surface extends BaseController.Surface {
     void setDescription(String ssid);
   }
