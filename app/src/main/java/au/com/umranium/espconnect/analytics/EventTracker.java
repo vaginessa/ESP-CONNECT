@@ -106,4 +106,19 @@ public class EventTracker {
         R.string.analytics_event_configuration_close_success);
   }
 
+  public void endBackPressed() {
+    analytics.trackAction(R.string.analytics_event_end,
+        R.string.analytics_event_end_back_pressed);
+  }
+
+  public void endConfigureAnother() {
+    analytics.trackAction(R.string.analytics_event_end,
+        R.string.analytics_event_end_configure_another);
+  }
+
+  public void endExit() {
+    analytics.trackAction(R.string.analytics_event_end,
+        R.string.analytics_event_end_exit);
+  }
+
 }
