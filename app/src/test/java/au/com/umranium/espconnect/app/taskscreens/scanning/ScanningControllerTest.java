@@ -31,6 +31,7 @@ import mockit.Injectable;
 import mockit.Tested;
 import mockit.Verifications;
 import mockit.integration.junit4.JMockit;
+import rx.Observable;
 import rx.schedulers.Schedulers;
 import rx.schedulers.TestScheduler;
 import rx.subjects.PublishSubject;
@@ -83,7 +84,6 @@ public class ScanningControllerTest {
   List<SerializableAction<ScanningController>> apAcceptActions = new ArrayList<>();
   List<SerializableAction<ScanningController>> apRejectActions = new ArrayList<>();
 
-
   @Before
   public void setUp() throws Exception {
     new Expectations() {{
@@ -115,281 +115,86 @@ public class ScanningControllerTest {
   }
 
   @Test
-  public void onStart_callsEnsureLocationPermissionGiven() {
+  public void onStart_ensuresLocationPermission() {
     // given:
-    new Expectations() {{
-      surface.ensureLocationPermissions(withCapture(permAcceptActions), withCapture(permDenyActions), withCapture(permPermDenyActions));
-    }};
 
     // when:
     controller.onStart();
-
-    // then:
-    Assert.assertEquals("Number of permission accepted actions", permAcceptActions.size(), 1);
-    Assert.assertEquals("Number of permission denied actions", permDenyActions.size(), 1);
-    Assert.assertEquals("Number of permission permanently denied actions", permPermDenyActions.size(), 1);
-  }
-
-  @Test
-  public void locationPermissionGranted_tracksPermissionGivenEvent() {
-    // given:
-    new Expectations() {{
-      surface.ensureLocationPermissions(withCapture(permAcceptActions), withCapture(permDenyActions), withCapture(permPermDenyActions));
-    }};
-
-    // when:
-    controller.onStart();
-    permAcceptActions.get(0).run(controller);
 
     // then:
     new Verifications() {{
-      eventTracker.locationPermissionGiven();
+      surface.ensureLocationPermissions(
+          (SerializableAction<ScanningController>) any,
+          (SerializableAction<ScanningController>) any,
+          (SerializableAction<ScanningController>) any
+      );
     }};
   }
 
   @Test
-  public void locationPermissionGranted_checksWhetherWifiIsOn() {
-    // given:
-    new Expectations() {{
-      //noinspection unchecked
-      surface.ensureLocationPermissions(withCapture(permAcceptActions), withCapture(permDenyActions), withCapture(permPermDenyActions));
-    }};
+  public void startScanning() throws Exception {
 
-    // when:
-    controller.onStart();
-    permAcceptActions.get(0).run(controller);
-
-    // then:
-    new Verifications() {{
-      scanAbilityUtil.isWifiOn();
-      times = 1;
-    }};
   }
 
   @Test
-  public void locationPermissionGranted_ifWifiIsNotOn_requestsUserToTurnWifiOn() {
+  public void handleDeniedLocationPermission_showsErrorScreen() {
     // given:
-    new Expectations() {{
-      scanAbilityUtil.isWifiOn();
-      returns(false);
-
-      surface.ensureLocationPermissions(withCapture(permAcceptActions), withCapture(permDenyActions), withCapture(permPermDenyActions));
-    }};
 
     // when:
-    controller.onStart();
-    permAcceptActions.get(0).run(controller);
-
-    // then:
-    new Verifications() {{
-      //noinspection ConstantConditions
-      surface.requestUserToTurnWifiOn(
-          (ScanningController.UserAcceptedTurnWifiOnAction) any,
-          (ScanningController.UserRejectedTurnWifiOnAction) any);
-    }};
-  }
-
-  @Test
-  public void locationPermissionGranted_ifWifiIsNotOnAndUserRejectsToTurnOn_cancelsTask() {
-    // given:
-    new Expectations() {{
-      surface.ensureLocationPermissions(withCapture(permAcceptActions), withCapture(permDenyActions), withCapture(permPermDenyActions));
-
-      scanAbilityUtil.isWifiOn();
-      returns(false);
-
-      surface.requestUserToTurnWifiOn(withCapture(wifiAcceptActions), withCapture(wifiRejectActions));
-    }};
-
-    // when:
-    controller.onStart();
-    permAcceptActions.get(0).run(controller);
-    wifiRejectActions.get(0).run(controller);
-
-    // then:
-    new Verifications() {{
-      surface.cancelTask();
-    }};
-  }
-
-  @Test
-  public void locationPermissionGranted_ifWifiIsNotOnAndUserAcceptsToTurnOn_triesToTurnOnWifi() {
-    // given:
-    new Expectations() {{
-      surface.ensureLocationPermissions(withCapture(permAcceptActions), withCapture(permDenyActions), withCapture(permPermDenyActions));
-
-      scanAbilityUtil.isWifiOn();
-      returns(false);
-
-      surface.requestUserToTurnWifiOn(withCapture(wifiAcceptActions), withCapture(wifiRejectActions));
-    }};
-
-    // when:
-    controller.onStart();
-    permAcceptActions.get(0).run(controller);
-    wifiAcceptActions.get(0).run(controller);
-
-    // then:
-    new Verifications() {{
-      scanAbilityUtil.turnWifiOn();
-    }};
-  }
-
-  @Test
-  public void locationPermissionGranted_ifWifiIsNotOnAndSuccessfullyTurnsOn_showsShortToast() {
-    // given:
-    new Expectations() {{
-      surface.ensureLocationPermissions(withCapture(permAcceptActions), withCapture(permDenyActions), withCapture(permPermDenyActions));
-
-      scanAbilityUtil.isWifiOn();
-      returns(false);
-
-      surface.requestUserToTurnWifiOn(withCapture(wifiAcceptActions), withCapture(wifiRejectActions));
-
-      scanAbilityUtil.turnWifiOn();
-      returns(true);
-    }};
-
-    // when:
-    controller.onStart();
-    permAcceptActions.get(0).run(controller);
-    wifiAcceptActions.get(0).run(controller);
-
-    // then:
-    new Verifications() {{
-      toastDispatcher.showShortToast(R.string.wifi_turned_on);
-    }};
-  }
-
-  @Test
-  public void locationPermissionGranted_ifWifiIsNotOnAndFailsToTurnsOn_showsShortToast() {
-    // given:
-    new Expectations() {{
-      surface.ensureLocationPermissions(withCapture(permAcceptActions), withCapture(permDenyActions), withCapture(permPermDenyActions));
-
-      scanAbilityUtil.isWifiOn();
-      returns(false);
-
-      surface.requestUserToTurnWifiOn(withCapture(wifiAcceptActions), withCapture(wifiRejectActions));
-
-      scanAbilityUtil.turnWifiOn();
-      returns(false);
-    }};
-
-    // when:
-    controller.onStart();
-    permAcceptActions.get(0).run(controller);
-    wifiAcceptActions.get(0).run(controller);
-
-    // then:
-    new Verifications() {{
-      toastDispatcher.showShortToast(R.string.wifi_could_not_be_turned_on);
-    }};
-  }
-
-  @Test
-  public void locationPermissionGranted_ifWifiIsNotOnAndSuccessfullyTurnsOn_checksWhetherAccessPointIsOff() {
-    // given:
-    new Expectations() {{
-      surface.ensureLocationPermissions(withCapture(permAcceptActions), withCapture(permDenyActions), withCapture(permPermDenyActions));
-
-      scanAbilityUtil.isWifiOn();
-      returns(false);
-
-      surface.requestUserToTurnWifiOn(withCapture(wifiAcceptActions), withCapture(wifiRejectActions));
-
-      scanAbilityUtil.turnWifiOn();
-      returns(true);
-    }};
-
-    // when:
-    controller.onStart();
-    permAcceptActions.get(0).run(controller);
-    wifiAcceptActions.get(0).run(controller);
-
-    // then:
-    new Verifications() {{
-      scanAbilityUtil.isAccessPointOff();
-    }};
-  }
-
-  @Test
-  public void locationPermissionGranted_ifWifiIsOn_checksWhetherAccessPointIsOff() {
-    // given:
-    new Expectations() {{
-      surface.ensureLocationPermissions(withCapture(permAcceptActions), withCapture(permDenyActions), withCapture(permPermDenyActions));
-
-      scanAbilityUtil.isWifiOn();
-      returns(true);
-    }};
-
-    // when:
-    controller.onStart();
-    permAcceptActions.get(0).run(controller);
-
-    // then:
-    new Verifications() {{
-      scanAbilityUtil.isAccessPointOff();
-    }};
-  }
-
-  @Test
-  public void permissionDenied_showsErrorScreenAndTracksPermissionRejectedEvent() {
-    // given:
-    new Expectations() {{
-      //noinspection unchecked
-      surface.ensureLocationPermissions(withCapture(permAcceptActions), withCapture(permDenyActions), withCapture(permPermDenyActions));
-    }};
-
-    // when:
-    controller.onStart();
-    permDenyActions.get(0).run(controller);
+    controller.handleDeniedLocationPermission();
 
     // then:
     new Verifications() {{
       surface.showErrorScreen(anyInt, anyInt);
-      eventTracker.locationPermissionRejected();
     }};
   }
 
   @Test
-  public void permanentlyDeniedLocationPermission_showsErrorScreenAndLocationPermissionDeniedPermanently() {
+  public void permanentlyDeniedLocationPermission_showsErrorScreen() {
     // given:
-    new Expectations() {{
-      //noinspection unchecked
-      surface.ensureLocationPermissions(withCapture(permAcceptActions), withCapture(permDenyActions), withCapture(permPermDenyActions));
-    }};
 
     // when:
-    controller.onStart();
-    permPermDenyActions.get(0).run(controller);
+    controller.handlePermanentlyDeniedLocationPermission();
 
     // then:
     new Verifications() {{
       surface.showErrorScreen(anyInt, anyInt);
-      eventTracker.locationPermissionDeniedPermanently();
     }};
   }
 
   @Test
-  public void wifiIsOn_ifAccessPointIsOnAndUserAcceptsToTurnItOff_sendUserToWifiSettings() {
+  public void locationPermissionGranted_checksAccessPointIsOff() throws Exception {
     // given:
-    new Expectations() {{
-      surface.ensureLocationPermissions(withCapture(permAcceptActions), withCapture(permDenyActions), withCapture(permPermDenyActions));
-
-      scanAbilityUtil.isWifiOn();
-      returns(true);
-
-      scanAbilityUtil.isAccessPointOff();
-      returns(false);
-
-      surface.askUserToTurnOffAccessPoint(withCapture(apAcceptActions), withCapture(apRejectActions));
-    }};
 
     // when:
-    controller.onStart();
-    permAcceptActions.get(0).run(controller);
-    apAcceptActions.get(0).run(controller);
+    controller.locationPermissionGranted();
+
+    // then:
+    new Verifications() {{
+      scanAbilityUtil.isAccessPointOff();
+    }};
+  }
+
+  @Test
+  public void accessPointIsOn_requestUserToTurnOffAccessPoint() throws Exception {
+    // given:
+
+    // when:
+    controller.accessPointIsOn();
+
+    // then:
+    new Verifications() {{
+      surface.requestUserToTurnOffAccessPoint((SerializableAction<ScanningController>) any,
+          (SerializableAction<ScanningController>) any);
+    }};
+  }
+
+  @Test
+  public void userAgreedToTurnOffAp_sendUserToWifiSettings() throws Exception {
+    // given:
+
+    // when:
+    controller.userAgreedToTurnOffAp();
 
     // then:
     new Verifications() {{
@@ -398,24 +203,11 @@ public class ScanningControllerTest {
   }
 
   @Test
-  public void wifiIsOn_ifAccessPointIsOnAndUserAcceptsToTurnItOff_cancelsTask() {
+  public void userDisagreedToTurnOffAp_cancelTask() throws Exception {
     // given:
-    new Expectations() {{
-      surface.ensureLocationPermissions(withCapture(permAcceptActions), withCapture(permDenyActions), withCapture(permPermDenyActions));
-
-      scanAbilityUtil.isWifiOn();
-      returns(true);
-
-      scanAbilityUtil.isAccessPointOff();
-      returns(false);
-
-      surface.askUserToTurnOffAccessPoint(withCapture(apAcceptActions), withCapture(apRejectActions));
-    }};
 
     // when:
-    controller.onStart();
-    permAcceptActions.get(0).run(controller);
-    apRejectActions.get(0).run(controller);
+    controller.userDisagreedToTurnOffAp();
 
     // then:
     new Verifications() {{
@@ -424,7 +216,110 @@ public class ScanningControllerTest {
   }
 
   @Test
-  public void startScanning_callsStartScan() {
+  public void accessPointIsOff_isWifiOn() throws Exception {
+    // given:
+
+    // when:
+    controller.accessPointIsOff();
+
+    // then:
+    new Verifications() {{
+      scanAbilityUtil.isWifiOn();
+    }};
+  }
+
+  @Test
+  public void wifiIsOff_requestUserToTurnWifiOn() throws Exception {
+    // given:
+
+    // when:
+    controller.wifiIsOff();
+
+    // then:
+    new Verifications() {{
+      surface.requestUserToTurnWifiOn((SerializableAction<ScanningController>) any,
+          (SerializableAction<ScanningController>) any);
+    }};
+  }
+
+  @Test
+  public void userAgreedToTurnWifiOn_triesToTurnWifiOn() throws Exception {
+    // given:
+
+    // when:
+    controller.userAgreedToTurnWifiOn();
+
+    // then:
+    new Verifications() {{
+      scanAbilityUtil.turnWifiOn();
+    }};
+  }
+
+  @Test
+  public void userAgreedToTurnWifiOn_wiFiTurnsOn_showsToast$TracksEvent() throws Exception {
+    // given:
+    new Expectations() {{
+      scanAbilityUtil.turnWifiOn();
+      returns(true);
+    }};
+
+    // when:
+    controller.userAgreedToTurnWifiOn();
+
+    // then:
+    new Verifications() {{
+      eventTracker.wifiCouldTurnOn();
+      toastDispatcher.showShortToast(anyInt);
+    }};
+  }
+
+  @Test
+  public void userDisagreedToTurnWifiOn_cancelTask() throws Exception {
+    // given:
+
+    // when:
+    controller.userDisagreedToTurnWifiOn();
+
+    // then:
+    new Verifications() {{
+      surface.cancelTask();
+    }};
+  }
+
+  @Test
+  public void userAgreedToTurnWifiOn_wiFiDoesNotTurnsOn_showsToast$TracksEvent() throws Exception {
+    // given:
+    new Expectations() {{
+      scanAbilityUtil.turnWifiOn();
+      returns(false);
+    }};
+
+    // when:
+    controller.userAgreedToTurnWifiOn();
+
+    // then:
+    new Verifications() {{
+      eventTracker.wifiCouldNotTurnOn();
+      toastDispatcher.showShortToast(anyInt);
+    }};
+  }
+
+  @Test
+  public void wifiIsOn_startsWifiScans() throws Exception {
+    // given:
+
+    // when:
+    controller.wifiIsOn();
+
+    // then:
+    new Verifications() {{
+      wifiEvents.getEvents();
+    }};
+
+  }
+
+  @Test
+  public void startScanning_startWifiScan() throws Exception {
     // given:
 
     // when:
@@ -437,12 +332,8 @@ public class ScanningControllerTest {
   }
 
   @Test
-  public void startScanning_ifScanDoesNotCompleteBeforeTimeOut_showsErrorScreenAndTracksException() {
+  public void startScanning_ifNoAccessPointsByTimeout_showsError() throws Exception {
     // given:
-    new Expectations() {{
-      accessPointExtractor.extract();
-      times = 0;
-    }};
 
     // when:
     controller.startScanning();
@@ -450,39 +341,31 @@ public class ScanningControllerTest {
 
     // then:
     new Verifications() {{
-      errorTracker.onException(withAny(new TimeoutException()));
-      times = 1;
-
       surface.showErrorScreen(anyInt, anyInt);
-      times = 1;
     }};
   }
 
   @Test
-  public void startScanning_whenScanComplete_callsExtract() {
+  public void startScanning_ifNoAccessPointsBeforeTimeout_doesNotShowError() throws Exception {
     // given:
-    new Expectations() {{
-      accessPointExtractor.extract();
-      times = 1;
-    }};
 
     // when:
     controller.startScanning();
-    wifiEventsSubject.onNext(WifiScanComplete.getInstance());
+    computation.advanceTimeBy(SCAN_TIME_OUT - 1, TimeUnit.MILLISECONDS);
 
     // then:
+    new Verifications() {{
+      surface.showErrorScreen(anyInt, anyInt);
+      times = 0;
+    }};
   }
 
   @Test
-  public void startScanning_whenUnmatchingAccessPoint2_filtersUnmatchingAccessPoints() {
-    final ScannedAccessPoint unmatchingAccessPoint1 = new ScannedAccessPoint(1, UNMATCHING_ESP_SSID, 0);
-    final ScannedAccessPoint unmatchingAccessPoint2 = new ScannedAccessPoint(2, UNMATCHING_ESP_SSID, 0);
-
+  public void startScanning_ifNoMatchingAccessPointsFound_proceedWithNoAccessPoint() throws Exception {
     // given:
     new Expectations() {{
       accessPointExtractor.extract();
-      returns(Arrays.asList(unmatchingAccessPoint1, unmatchingAccessPoint2));
-      times = 1;
+      returns(Arrays.asList(new ScannedAccessPoint(0, UNMATCHING_ESP_SSID, 0)));
     }};
 
     // when:
@@ -496,12 +379,12 @@ public class ScanningControllerTest {
   }
 
   @Test
-  public void startScanning_whenNoAccessPoints_proceedWithNoAccessPoints() {
+  public void startScanning_ifSingleAccessPointIsFound_proceedWithSingleAccessPoint() throws Exception {
     // given:
+    final ScannedAccessPoint accessPoint = new ScannedAccessPoint(0, MATCHING_ESP_SSID, 0);
     new Expectations() {{
       accessPointExtractor.extract();
-      returns(Collections.emptyList());
-      times = 1;
+      returns(Arrays.asList(accessPoint));
     }};
 
     // when:
@@ -510,42 +393,18 @@ public class ScanningControllerTest {
 
     // then:
     new Verifications() {{
-      surface.proceedWithNoAccessPoints();
-    }};
-  }
-
-
-  @Test
-  public void startScanning_whenHasSingleAccessPoint_proceedWithAccessPoints() {
-    // given:
-    final ScannedAccessPoint matchingAccessPoint1 = new ScannedAccessPoint(0, MATCHING_ESP_SSID, 0);
-
-    new Expectations() {{
-      accessPointExtractor.extract();
-      returns(Collections.singletonList(matchingAccessPoint1));
-      times = 1;
-    }};
-
-    // when:
-    controller.startScanning();
-    wifiEventsSubject.onNext(WifiScanComplete.getInstance());
-
-    // then:
-    new Verifications() {{
-      surface.proceedWithSingleAccessPoint(matchingAccessPoint1);
+      surface.proceedWithSingleAccessPoint(accessPoint);
     }};
   }
 
   @Test
-  public void startScanning_whenHasMultipleAccessPoints_proceedWithAccessPoints() {
+  public void startScanning_ifMultipleAccessPointsAreFound_proceedWithMultipleAccessPoints() throws Exception {
     // given:
-    final ScannedAccessPoint matchingAccessPoint1 = new ScannedAccessPoint(0, MATCHING_ESP_SSID, 0);
-    final ScannedAccessPoint matchingAccessPoint2 = new ScannedAccessPoint(1, MATCHING_ESP_SSID, 0);
-
+    final ScannedAccessPoint accessPoint1 = new ScannedAccessPoint(0, MATCHING_ESP_SSID, 0);
+    final ScannedAccessPoint accessPoint2 = new ScannedAccessPoint(1, MATCHING_ESP_SSID, 0);
     new Expectations() {{
       accessPointExtractor.extract();
-      returns(Arrays.asList(matchingAccessPoint1, matchingAccessPoint2));
-      times = 1;
+      returns(Arrays.asList(accessPoint1, accessPoint2));
     }};
 
     // when:
@@ -554,28 +413,7 @@ public class ScanningControllerTest {
 
     // then:
     new Verifications() {{
-      surface.proceedWithAccessPoints(Arrays.asList(matchingAccessPoint1, matchingAccessPoint2));
-    }};
-  }
-
-  @Test
-  public void startScanning_onError_showsGenericErrorScreenAndTracksErrorEvent() {
-    // given:
-    @SuppressWarnings("ThrowableInstanceNeverThrown")
-    final RuntimeException exception = new RuntimeException();
-    new Expectations() {{
-      wifiManager.startScan();
-      returns(exception);
-    }};
-
-    // when:
-    controller.startScanning();
-    wifiEventsSubject.onNext(WifiScanComplete.getInstance());
-
-    // then:
-    new Verifications() {{
-      errorTracker.onException(withAny(exception));
-      surface.showErrorScreen(anyInt, anyInt);
+      surface.proceedWithAccessPoints(Arrays.asList(accessPoint1, accessPoint2));
     }};
   }
 

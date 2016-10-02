@@ -31,7 +31,7 @@ import rx.functions.Func1;
 /**
  * Controller for the scanning task screen.
  */
-public class ScanningController extends BaseTaskController<ScanningController.Surface> {
+class ScanningController extends BaseTaskController<ScanningController.Surface> {
 
   private final WifiEvents wifiEvents;
   private final WifiManager wifiManager;
@@ -46,18 +46,18 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
   private Subscription scanningTask;
 
   @Inject
-  public ScanningController(Surface surface,
-                            ScreenTracker screenTracker,
-                            WifiEvents wifiEvents,
-                            WifiManager wifiManager,
-                            Scheduler scheduler,
-                            ScanAbilityUtil scanAbilityUtil,
-                            ScannedAccessPointExtractor accessPointExtractor,
-                            EventTracker eventTracker,
-                            ErrorTracker errorTracker,
-                            ToastDispatcher toastDispatcher,
-                            @Named("EspSsidPattern") String espSsidPattern,
-                            @Named("scanTimeOutDurationMs") int scanTimeOutDurationMs) {
+  ScanningController(Surface surface,
+                     ScreenTracker screenTracker,
+                     WifiEvents wifiEvents,
+                     WifiManager wifiManager,
+                     Scheduler scheduler,
+                     ScanAbilityUtil scanAbilityUtil,
+                     ScannedAccessPointExtractor accessPointExtractor,
+                     EventTracker eventTracker,
+                     ErrorTracker errorTracker,
+                     ToastDispatcher toastDispatcher,
+                     @Named("EspSsidPattern") String espSsidPattern,
+                     @Named("scanTimeOutDurationMs") int scanTimeOutDurationMs) {
     super(surface, screenTracker);
     this.wifiEvents = wifiEvents;
     this.wifiManager = wifiManager;
@@ -87,36 +87,38 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
         new UserPermDeniedLocationPermissionAction());
   }
 
-  public static class UserDeniedLocationPermissionAction extends SerializableAction<ScanningController> {
+  private static class UserDeniedLocationPermissionAction extends SerializableAction<ScanningController> {
     @Override
     public void run(ScanningController controller) {
       controller.handleDeniedLocationPermission();
     }
   }
 
-  public static class UserPermDeniedLocationPermissionAction extends SerializableAction<ScanningController> {
+  private static class UserPermDeniedLocationPermissionAction extends SerializableAction<ScanningController> {
     @Override
     public void run(ScanningController controller) {
       controller.handlePermanentlyDeniedLocationPermission();
     }
   }
 
+  @VisibleForTesting
   void handleDeniedLocationPermission() {
     eventTracker.locationPermissionRejected();
     handleNoLocationPermission();
   }
 
+  @VisibleForTesting
   void handlePermanentlyDeniedLocationPermission() {
     eventTracker.locationPermissionDeniedPermanently();
     handleNoLocationPermission();
   }
 
-  void handleNoLocationPermission() {
+  private void handleNoLocationPermission() {
     surface.cancelTask();
     showErrorScreen(R.string.no_course_location_permission_title, R.string.no_course_location_permission_msg);
   }
 
-  public static class UserGaveLocationPermissionAction extends SerializableAction<ScanningController> {
+  private static class UserGaveLocationPermissionAction extends SerializableAction<ScanningController> {
     @Override
     public void run(ScanningController controller) {
       controller.locationPermissionGranted();
@@ -130,32 +132,39 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
     if (scanAbilityUtil.isAccessPointOff()) {
       accessPointIsOff();
     } else {
-      eventTracker.userAccessPointIsOn();
-      surface.requestUserToTurnOffAccessPoint(
-          new UserAcceptedTurnOffApAction(),
-          new UserRejectedTurnOffApAction());
+      accessPointIsOn();
     }
   }
 
-  public static class UserAcceptedTurnOffApAction extends SerializableAction<ScanningController> {
+  @VisibleForTesting
+  void accessPointIsOn() {
+    eventTracker.userAccessPointIsOn();
+    surface.requestUserToTurnOffAccessPoint(
+        new UserAcceptedTurnOffApAction(),
+        new UserRejectedTurnOffApAction());
+  }
+
+  private static class UserAcceptedTurnOffApAction extends SerializableAction<ScanningController> {
     @Override
     public void run(ScanningController controller) {
       controller.userAgreedToTurnOffAp();
     }
   }
 
-  public static class UserRejectedTurnOffApAction extends SerializableAction<ScanningController> {
+  private static class UserRejectedTurnOffApAction extends SerializableAction<ScanningController> {
     @Override
     public void run(ScanningController controller) {
       controller.userDisagreedToTurnOffAp();
     }
   }
 
+  @VisibleForTesting
   void userAgreedToTurnOffAp() {
     eventTracker.userAgreedToTurnOffAccessPoint();
     surface.sendUserToWifiSettings();
   }
 
+  @VisibleForTesting
   void userDisagreedToTurnOffAp() {
     eventTracker.userDisagreedToTurnOffAccessPoint();
     surface.cancelTask();
@@ -167,27 +176,39 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
     if (scanAbilityUtil.isWifiOn()) {
       wifiIsOn();
     } else {
-      eventTracker.userWifiOff();
-      surface.requestUserToTurnWifiOn(
-          new UserAcceptedTurnWifiOnAction(),
-          new UserRejectedTurnWifiOnAction());
+      wifiIsOff();
     }
   }
 
-  public static class UserAcceptedTurnWifiOnAction extends SerializableAction<ScanningController> {
+  @VisibleForTesting
+  void wifiIsOff() {
+    eventTracker.userWifiOff();
+    surface.requestUserToTurnWifiOn(
+        new UserAcceptedTurnWifiOnAction(),
+        new UserRejectedTurnWifiOnAction());
+  }
+
+  private static class UserAcceptedTurnWifiOnAction extends SerializableAction<ScanningController> {
     @Override
     public void run(ScanningController controller) {
       controller.userAgreedToTurnWifiOn();
     }
   }
 
-  public static class UserRejectedTurnWifiOnAction extends SerializableAction<ScanningController> {
+  private static class UserRejectedTurnWifiOnAction extends SerializableAction<ScanningController> {
     @Override
     public void run(ScanningController controller) {
       controller.userDisagreedToTurnWifiOn();
     }
   }
 
+  @VisibleForTesting
+  void userDisagreedToTurnWifiOn() {
+    eventTracker.userDisgreedToTurnWifiOn();
+    surface.cancelTask();
+  }
+
+  @VisibleForTesting
   void userAgreedToTurnWifiOn() {
     eventTracker.userAgreedToTurnWifiOn();
     if (scanAbilityUtil.turnWifiOn()) {
@@ -200,11 +221,6 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
     }
   }
 
-  void userDisagreedToTurnWifiOn() {
-    eventTracker.userDisgreedToTurnWifiOn();
-    surface.cancelTask();
-  }
-
   @VisibleForTesting
   void wifiIsOn() {
     eventTracker.userWifiOn();
@@ -212,7 +228,7 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
   }
 
   @VisibleForTesting
-  public void startScanning() {
+  void startScanning() {
     scanningTask = startWifiScans();
   }
 
@@ -234,9 +250,9 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
             wifiManager.startScan();
           }
         })
-        .compose(new TimeOut<WifiScanComplete>(scanTimeOutDurationMs, TimeUnit.MILLISECONDS, scheduler.computation()))
         .map(new ExtractAccessPoints())
         .map(new FilterNonEsp(espSsidPattern))
+        .compose(new TimeOut<List<ScannedAccessPoint>>(scanTimeOutDurationMs, TimeUnit.MILLISECONDS, scheduler.computation()))
         .observeOn(scheduler.mainThread())
         .subscribe(new Action1<List<ScannedAccessPoint>>() {
           @Override
@@ -259,11 +275,11 @@ public class ScanningController extends BaseTaskController<ScanningController.Su
         });
   }
 
-  public static class FilterNonEsp implements Func1<List<ScannedAccessPoint>, List<ScannedAccessPoint>> {
+  private static class FilterNonEsp implements Func1<List<ScannedAccessPoint>, List<ScannedAccessPoint>> {
 
     private final String pattern;
 
-    public FilterNonEsp(String pattern) {
+    FilterNonEsp(String pattern) {
       this.pattern = pattern;
     }
 
