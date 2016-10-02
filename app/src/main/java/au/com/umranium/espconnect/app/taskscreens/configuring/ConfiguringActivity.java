@@ -53,6 +53,7 @@ public class ConfiguringActivity extends BaseTaskActivity<ConfiguringController>
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setAnimation(R.drawable.scanning_animation);
+    setProgressCurrentStep(5);
   }
 
   @Override

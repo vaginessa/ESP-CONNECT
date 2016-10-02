@@ -67,6 +67,7 @@ public class ScanningActivity extends BaseTaskActivity<ScanningController> imple
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setAnimation(R.drawable.scanning_animation);
+    setProgressCurrentStep(1);
   }
 
   @Override

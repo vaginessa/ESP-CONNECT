@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:tools="http://schemas.android.com/tools"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:orientation="horizontal">
+
+  <ImageView
+      android:id="@+id/progress_indicator_dot_1"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      tools:src="@drawable/dot_filled"/>
+
+  <ImageView
+      android:id="@+id/progress_indicator_line_1"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      tools:src="@drawable/progress_line_bright"/>
+
+  <ImageView
+      android:id="@+id/progress_indicator_dot_2"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      tools:src="@drawable/dot_filled"/>
+
+  <ImageView
+      android:id="@+id/progress_indicator_line_2"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      tools:src="@drawable/progress_line_bright"/>
+
+  <ImageView
+      android:id="@+id/progress_indicator_dot_3"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      tools:src="@drawable/dot_empty"/>
+
+  <ImageView
+      android:id="@+id/progress_indicator_line_3"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      tools:src="@drawable/progress_line_bright"/>
+
+  <ImageView
+      android:id="@+id/progress_indicator_dot_4"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      tools:src="@drawable/dot_empty"/>
+
+  <ImageView
+      android:id="@+id/progress_indicator_line_4"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      tools:src="@drawable/progress_line_bright"/>
+
+  <ImageView
+      android:id="@+id/progress_indicator_dot_5"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      tools:src="@drawable/dot_empty"/>
+
+  <ImageView
+      android:id="@+id/progress_indicator_line_5"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      tools:src="@drawable/progress_line_bright"/>
+
+  <ImageView
+      android:id="@+id/progress_indicator_dot_6"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      tools:src="@drawable/dot_empty"/>
+
+  <ImageView
+      android:id="@+id/progress_indicator_line_6"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      tools:src="@drawable/progress_line_bright"/>
+
+  <ImageView
+      android:id="@+id/progress_indicator_dot_7"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      tools:src="@drawable/dot_empty"/>
+
+</merge>

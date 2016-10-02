@@ -47,6 +47,7 @@ public class ConnectingActivity extends BaseTaskActivity<ConnectingController> i
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setAnimation(R.drawable.connecting_animation);
+    setProgressCurrentStep(3);
   }
 
   @Override

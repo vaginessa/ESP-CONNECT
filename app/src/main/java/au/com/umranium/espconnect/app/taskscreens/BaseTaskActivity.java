@@ -10,6 +10,7 @@ import android.widget.TextView;
 import au.com.umranium.espconnect.R;
 import au.com.umranium.espconnect.app.BaseActivity;
 import au.com.umranium.espconnect.app.BaseController;
+import au.com.umranium.espconnect.app.common.views.ProgressIndicator;
 import au.com.umranium.espconnect.app.displayscreens.error.ErrorActivity;
 
 /**
@@ -19,6 +20,7 @@ abstract public class BaseTaskActivity<BaseControllerType extends BaseController
 
   private TextView txtTitle;
   private TextView txtDescription;
+  private ProgressIndicator progressIndicator;
 
   @Override
   protected void initUi() {
@@ -27,6 +29,8 @@ abstract public class BaseTaskActivity<BaseControllerType extends BaseController
     assert txtTitle != null;
     txtDescription = (TextView) findViewById(R.id.txt_description);
     assert txtDescription != null;
+    progressIndicator = (ProgressIndicator) findViewById(R.id.progress_indicator);
+    assert progressIndicator != null;
   }
 
   public void setTitle(@StringRes int title) {
@@ -43,6 +47,10 @@ abstract public class BaseTaskActivity<BaseControllerType extends BaseController
 
   public void setMessage(String message) {
     txtDescription.setText(message);
+  }
+
+  public void setProgressCurrentStep(int step) {
+    progressIndicator.setCurrentStep(step);
   }
 
   public void showErrorScreen(@StringRes int title, @StringRes int message) {
