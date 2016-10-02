@@ -9,84 +9,84 @@
       android:id="@+id/progress_indicator_dot_1"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      tools:src="@drawable/dot_filled"/>
+      tools:src="@drawable/dot_past"/>
 
   <ImageView
       android:id="@+id/progress_indicator_line_1"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="center_vertical"
-      tools:src="@drawable/progress_line_bright"/>
+      tools:src="@drawable/progress_line"/>
 
   <ImageView
       android:id="@+id/progress_indicator_dot_2"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      tools:src="@drawable/dot_filled"/>
+      tools:src="@drawable/dot_past"/>
 
   <ImageView
       android:id="@+id/progress_indicator_line_2"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="center_vertical"
-      tools:src="@drawable/progress_line_bright"/>
+      tools:src="@drawable/progress_line"/>
 
   <ImageView
       android:id="@+id/progress_indicator_dot_3"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      tools:src="@drawable/dot_empty"/>
+      tools:src="@drawable/dot_future"/>
 
   <ImageView
       android:id="@+id/progress_indicator_line_3"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="center_vertical"
-      tools:src="@drawable/progress_line_bright"/>
+      tools:src="@drawable/progress_line"/>
 
   <ImageView
       android:id="@+id/progress_indicator_dot_4"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      tools:src="@drawable/dot_empty"/>
+      tools:src="@drawable/dot_future"/>
 
   <ImageView
       android:id="@+id/progress_indicator_line_4"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="center_vertical"
-      tools:src="@drawable/progress_line_bright"/>
+      tools:src="@drawable/progress_line"/>
 
   <ImageView
       android:id="@+id/progress_indicator_dot_5"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      tools:src="@drawable/dot_empty"/>
+      tools:src="@drawable/dot_future"/>
 
   <ImageView
       android:id="@+id/progress_indicator_line_5"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="center_vertical"
-      tools:src="@drawable/progress_line_bright"/>
+      tools:src="@drawable/progress_line"/>
 
   <ImageView
       android:id="@+id/progress_indicator_dot_6"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      tools:src="@drawable/dot_empty"/>
+      tools:src="@drawable/dot_future"/>
 
   <ImageView
       android:id="@+id/progress_indicator_line_6"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="center_vertical"
-      tools:src="@drawable/progress_line_bright"/>
+      tools:src="@drawable/progress_line"/>
 
   <ImageView
       android:id="@+id/progress_indicator_dot_7"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      tools:src="@drawable/dot_empty"/>
+      tools:src="@drawable/dot_future"/>
 
 </merge>

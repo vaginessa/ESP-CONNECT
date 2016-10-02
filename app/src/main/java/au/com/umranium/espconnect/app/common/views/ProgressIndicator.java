@@ -67,19 +67,15 @@ public class ProgressIndicator extends LinearLayout {
       ImageView view = (ImageView) findViewById(DOTS[i]);
       if (i == currentStep) {
         view.setImageResource(R.drawable.dot_current);
-      } else if (i < currentStep ) {
-        view.setImageResource(R.drawable.dot_filled);
+      } else if (i < currentStep) {
+        view.setImageResource(R.drawable.dot_past);
       } else {
-        view.setImageResource(R.drawable.dot_empty);
+        view.setImageResource(R.drawable.dot_future);
       }
     }
     for (int i = 0; i < LINES.length; i++) {
       ImageView view = (ImageView) findViewById(LINES[i]);
-      if (i < currentStep) {
-        view.setImageResource(R.drawable.progress_line_bright);
-      } else {
-        view.setImageResource(R.drawable.progress_line_dull);
-      }
+      view.setImageResource(R.drawable.progress_line);
     }
   }
 

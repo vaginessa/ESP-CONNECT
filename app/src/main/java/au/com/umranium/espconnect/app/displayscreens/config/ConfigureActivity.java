@@ -8,24 +8,23 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.TextInputLayout;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import au.com.umranium.espconnect.R;
-import au.com.umranium.espconnect.di.activity.ActivityModule;
-import au.com.umranium.espconnect.app.BaseActivity;
-import au.com.umranium.espconnect.app.common.data.ConfigDetails;
-import au.com.umranium.espconnect.app.common.data.ScannedAccessPoint;
-import au.com.umranium.espconnect.app.taskscreens.configuring.ConfiguringActivity;
-import au.com.umranium.espconnect.app.common.utils.IntentExtras;
-import rx.Observer;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import au.com.umranium.espconnect.R;
+import au.com.umranium.espconnect.app.BaseActivity;
+import au.com.umranium.espconnect.app.common.data.ConfigDetails;
+import au.com.umranium.espconnect.app.common.data.ScannedAccessPoint;
+import au.com.umranium.espconnect.app.common.utils.IntentExtras;
+import au.com.umranium.espconnect.app.taskscreens.configuring.ConfiguringActivity;
+import au.com.umranium.espconnect.di.activity.ActivityModule;
+import rx.Observer;
 
 /**
  * The activity that displays a list of ESP8266 access points for the user to pick one.
@@ -87,7 +86,7 @@ public class ConfigureActivity extends BaseActivity<ConfigureController> impleme
 
     edtSsid = (EditText) findViewById(R.id.edt_ssid);
     edtPassword = (EditText) findViewById(R.id.edt_password);
-    Button submit = (Button) findViewById(R.id.btn_submit);
+    TextView submit = (TextView) findViewById(R.id.btn_submit);
 
     submit.setOnClickListener(new View.OnClickListener() {
       @Override

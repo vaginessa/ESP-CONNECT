@@ -4,13 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import au.com.umranium.espconnect.R;
-import au.com.umranium.espconnect.di.activity.ActivityModule;
 import au.com.umranium.espconnect.app.BaseActivity;
 import au.com.umranium.espconnect.app.common.utils.IntentExtras;
+import au.com.umranium.espconnect.di.activity.ActivityModule;
 
 /**
  * An generic activity that displays errors.
@@ -50,7 +49,7 @@ public class ErrorActivity extends BaseActivity<ErrorController> implements Erro
   public void showScreen(String title, String description) {
     TextView txtTitle = (TextView) findViewById(R.id.txt_title);
     TextView txtDescription = (TextView) findViewById(R.id.txt_description);
-    Button btnOk = (Button) findViewById(R.id.btn_ok);
+    TextView btnOk = (TextView) findViewById(R.id.btn_ok);
 
     assert txtTitle != null;
     assert txtDescription != null;

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import au.com.umranium.espconnect.R;
@@ -45,7 +44,7 @@ public class EndActivity extends BaseActivity<EndController> implements EndContr
 
     mTxtDescription = (TextView) findViewById(R.id.txt_description);
 
-    Button anotherButton = (Button) findViewById(R.id.btn_another);
+    TextView anotherButton = (TextView) findViewById(R.id.btn_another);
     assert anotherButton != null;
     anotherButton.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -54,7 +53,7 @@ public class EndActivity extends BaseActivity<EndController> implements EndContr
       }
     });
 
-    Button exitButton = (Button) findViewById(R.id.btn_exit);
+    TextView exitButton = (TextView) findViewById(R.id.btn_exit);
     assert exitButton != null;
     exitButton.setOnClickListener(new View.OnClickListener() {
       @Override

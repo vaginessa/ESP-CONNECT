@@ -1,17 +1,13 @@
 package au.com.umranium.espconnect.app.displayscreens.welcome;
 
 import android.content.Intent;
-import android.net.Uri;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import au.com.umranium.espconnect.R;
-import au.com.umranium.espconnect.di.activity.ActivityModule;
 import au.com.umranium.espconnect.app.BaseActivity;
 import au.com.umranium.espconnect.app.taskscreens.scanning.ScanningActivity;
+import au.com.umranium.espconnect.di.activity.ActivityModule;
 
 /**
  * The activity that displays the welcoming message.
@@ -33,7 +29,7 @@ public class WelcomeActivity extends BaseActivity<WelcomeController> implements 
   protected void initUi() {
     setContentView(R.layout.activity_welcome);
 
-    Button btnStart = (Button) findViewById(R.id.btn_start);
+    TextView btnStart = (TextView) findViewById(R.id.btn_start);
 
     assert btnStart != null;
 

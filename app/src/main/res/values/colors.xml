@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <color name="colorPrimary">#3F51B5</color>
-  <color name="colorPrimaryDark">#303F9F</color>
-  <color name="colorAccent">#FF4081</color>
-  <color name="colorTextHint">#c8cc3a6c</color>
+  <color name="colorPrimary">#94ffd1</color>
+  <color name="colorPrimaryDark">#254034</color>
+  <color name="colorAccent">#6a6afa</color>
+  <color name="colorTextHint">#8e8efd</color>
+  <color name="textColorPrimary">#1a1a19</color>
+  <color name="progressIndicatorPast">#404099</color>
+  <color name="progressIndicatorCurrent">#8080fc</color>
+  <color name="progressIndicatorFuture">#00000000</color>
+  <color name="progressIndicatorStroke">#cfcfcf</color>
 </resources>
