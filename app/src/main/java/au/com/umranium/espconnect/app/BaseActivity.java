@@ -22,6 +22,8 @@ abstract public class BaseActivity<BaseControllerType extends BaseController> ex
   @ActivityScope
   protected BaseControllerType controller;
 
+  private boolean exiting = false;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -104,6 +106,7 @@ abstract public class BaseActivity<BaseControllerType extends BaseController> ex
   @SuppressWarnings("unused")
   public void closeApp() {
     setResult(RESULT_EXIT_APP);
+    exiting = true;
     finish();
   }
 
@@ -115,7 +118,9 @@ abstract public class BaseActivity<BaseControllerType extends BaseController> ex
   @Override
   public void finish() {
     super.finish();
-    overrideFinishingTransition();
+    if (!exiting) {
+      overrideFinishingTransition();
+    }
   }
 
   protected void overrideFinishingTransition() {
