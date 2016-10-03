@@ -19,6 +19,7 @@ import au.com.umranium.espconnect.app.common.ToastDispatcher;
 import au.com.umranium.espconnect.app.common.data.ScannedAccessPoint;
 import au.com.umranium.espconnect.app.taskscreens.BaseTaskController;
 import au.com.umranium.espconnect.app.taskscreens.utils.ScanAbilityUtil;
+import au.com.umranium.espconnect.rx.CollectionNotEmpty;
 import au.com.umranium.espconnect.rx.Scheduler;
 import au.com.umranium.espconnect.rx.TimeOut;
 import au.com.umranium.espconnect.wifievents.WifiEvents;
@@ -252,6 +253,7 @@ class ScanningController extends BaseTaskController<ScanningController.Surface> 
         })
         .map(new ExtractAccessPoints())
         .map(new FilterNonEsp(espSsidPattern))
+        .filter(new CollectionNotEmpty<ScannedAccessPoint>())
         .compose(new TimeOut<List<ScannedAccessPoint>>(scanTimeOutDurationMs, TimeUnit.MILLISECONDS, scheduler.computation()))
         .observeOn(scheduler.mainThread())
         .subscribe(new Action1<List<ScannedAccessPoint>>() {
@@ -259,7 +261,7 @@ class ScanningController extends BaseTaskController<ScanningController.Surface> 
           public void call(List<ScannedAccessPoint> accessPoints) {
             eventTracker.accessPointsSeen(accessPoints.size());
             if (accessPoints.isEmpty()) {
-              surface.proceedWithNoAccessPoints();
+              throw new IllegalStateException("Invalid processing path for 0 access-points!");
             } else if (accessPoints.size() == 1) {
               surface.proceedWithSingleAccessPoint(accessPoints.get(0));
             } else {
@@ -269,8 +271,13 @@ class ScanningController extends BaseTaskController<ScanningController.Surface> 
         }, new Action1<Throwable>() {
           @Override
           public void call(Throwable e) {
-            errorTracker.onException(e);
-            showErrorScreen(R.string.scanning_generic_error_title, R.string.scanning_generic_error_msg);
+            if (e instanceof TimeOut.TimeOutException) {
+              eventTracker.accessPointsSeen(0);
+              surface.proceedWithNoAccessPoints();
+            } else {
+              errorTracker.onException(e);
+              showErrorScreen(R.string.scanning_generic_error_title, R.string.scanning_generic_error_msg);
+            }
           }
         });
   }

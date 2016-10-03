@@ -39,10 +39,10 @@ import rx.subjects.PublishSubject;
 @RunWith(JMockit.class)
 public class ScanningControllerTest {
 
-  public static final int SCAN_TIME_OUT = 10;
-  public static final String ESP_SSID_PATTERN = "ABC.*";
-  public static final String MATCHING_ESP_SSID = "ABC1";
-  public static final String UNMATCHING_ESP_SSID = "XYZ1";
+  static final int SCAN_TIME_OUT = 10;
+  static final String ESP_SSID_PATTERN = "ABC.*";
+  static final String MATCHING_ESP_SSID = "ABC1";
+  static final String UNMATCHING_ESP_SSID = "XYZ1";
 
   private final TestScheduler computation = new TestScheduler();
   @Injectable
@@ -332,36 +332,7 @@ public class ScanningControllerTest {
   }
 
   @Test
-  public void startScanning_ifNoAccessPointsByTimeout_showsError() throws Exception {
-    // given:
-
-    // when:
-    controller.startScanning();
-    computation.advanceTimeBy(SCAN_TIME_OUT, TimeUnit.MILLISECONDS);
-
-    // then:
-    new Verifications() {{
-      surface.showErrorScreen(anyInt, anyInt);
-    }};
-  }
-
-  @Test
-  public void startScanning_ifNoAccessPointsBeforeTimeout_doesNotShowError() throws Exception {
-    // given:
-
-    // when:
-    controller.startScanning();
-    computation.advanceTimeBy(SCAN_TIME_OUT - 1, TimeUnit.MILLISECONDS);
-
-    // then:
-    new Verifications() {{
-      surface.showErrorScreen(anyInt, anyInt);
-      times = 0;
-    }};
-  }
-
-  @Test
-  public void startScanning_ifNoMatchingAccessPointsFound_proceedWithNoAccessPoint() throws Exception {
+  public void startScanning_ifNoAccessPointsByTimeout_showsNoAccessPoints() throws Exception {
     // given:
     new Expectations() {{
       accessPointExtractor.extract();
@@ -371,10 +342,31 @@ public class ScanningControllerTest {
     // when:
     controller.startScanning();
     wifiEventsSubject.onNext(WifiScanComplete.getInstance());
+    computation.advanceTimeBy(SCAN_TIME_OUT, TimeUnit.MILLISECONDS);
 
     // then:
     new Verifications() {{
       surface.proceedWithNoAccessPoints();
+    }};
+  }
+
+  @Test
+  public void startScanning_ifNoAccessPointsBeforeTimeout_doesNotShowNoAccessPoints() throws Exception {
+    // given:
+    new Expectations() {{
+      accessPointExtractor.extract();
+      returns(Arrays.asList(new ScannedAccessPoint(0, UNMATCHING_ESP_SSID, 0)));
+    }};
+
+    // when:
+    controller.startScanning();
+    wifiEventsSubject.onNext(WifiScanComplete.getInstance());
+    computation.advanceTimeBy(SCAN_TIME_OUT - 1, TimeUnit.MILLISECONDS);
+
+    // then:
+    new Verifications() {{
+      surface.proceedWithNoAccessPoints();
+      times = 0;
     }};
   }
 
