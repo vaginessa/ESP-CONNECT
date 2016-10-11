@@ -83,9 +83,9 @@ class ScanningController extends BaseTaskController<ScanningController.Surface> 
   @Override
   public void onStart() {
     surface.ensureLocationPermissions(
-        new UserGaveLocationPermissionAction(),
-        new UserDeniedLocationPermissionAction(),
-        new UserPermDeniedLocationPermissionAction());
+      new UserGaveLocationPermissionAction(),
+      new UserDeniedLocationPermissionAction(),
+      new UserPermDeniedLocationPermissionAction());
   }
 
   private static class UserDeniedLocationPermissionAction extends SerializableAction<ScanningController> {
@@ -141,8 +141,8 @@ class ScanningController extends BaseTaskController<ScanningController.Surface> 
   void accessPointIsOn() {
     eventTracker.userAccessPointIsOn();
     surface.requestUserToTurnOffAccessPoint(
-        new UserAcceptedTurnOffApAction(),
-        new UserRejectedTurnOffApAction());
+      new UserAcceptedTurnOffApAction(),
+      new UserRejectedTurnOffApAction());
   }
 
   private static class UserAcceptedTurnOffApAction extends SerializableAction<ScanningController> {
@@ -185,8 +185,8 @@ class ScanningController extends BaseTaskController<ScanningController.Surface> 
   void wifiIsOff() {
     eventTracker.userWifiOff();
     surface.requestUserToTurnWifiOn(
-        new UserAcceptedTurnWifiOnAction(),
-        new UserRejectedTurnWifiOnAction());
+      new UserAcceptedTurnWifiOnAction(),
+      new UserRejectedTurnWifiOnAction());
   }
 
   private static class UserAcceptedTurnWifiOnAction extends SerializableAction<ScanningController> {
@@ -243,43 +243,51 @@ class ScanningController extends BaseTaskController<ScanningController.Surface> 
 
   private Subscription startWifiScans() {
     return wifiEvents
-        .getEvents()
-        .ofType(WifiScanComplete.class)
-        .doOnSubscribe(new Action0() {
-          @Override
-          public void call() {
+      .getEvents()
+      .ofType(WifiScanComplete.class)
+      .doOnSubscribe(new Action0() {
+        @Override
+        public void call() {
+          wifiManager.startScan();
+        }
+      })
+      .map(new ExtractAccessPoints())
+      .map(new FilterNonEsp(espSsidPattern))
+      .doOnNext(new Action1<List<ScannedAccessPoint>>() {
+        @Override
+        public void call(List<ScannedAccessPoint> scannedAccessPoints) {
+          if (scannedAccessPoints.isEmpty()) {
             wifiManager.startScan();
           }
-        })
-        .map(new ExtractAccessPoints())
-        .map(new FilterNonEsp(espSsidPattern))
-        .filter(new CollectionNotEmpty<ScannedAccessPoint>())
-        .compose(new TimeOut<List<ScannedAccessPoint>>(scanTimeOutDurationMs, TimeUnit.MILLISECONDS, scheduler.computation()))
-        .observeOn(scheduler.mainThread())
-        .subscribe(new Action1<List<ScannedAccessPoint>>() {
-          @Override
-          public void call(List<ScannedAccessPoint> accessPoints) {
-            eventTracker.accessPointsSeen(accessPoints.size());
-            if (accessPoints.isEmpty()) {
-              throw new IllegalStateException("Invalid processing path for 0 access-points!");
-            } else if (accessPoints.size() == 1) {
-              surface.proceedWithSingleAccessPoint(accessPoints.get(0));
-            } else {
-              surface.proceedWithAccessPoints(accessPoints);
-            }
+        }
+      })
+      .filter(new CollectionNotEmpty<ScannedAccessPoint>())
+      .compose(new TimeOut<List<ScannedAccessPoint>>(scanTimeOutDurationMs, TimeUnit.MILLISECONDS, scheduler.computation()))
+      .observeOn(scheduler.mainThread())
+      .subscribe(new Action1<List<ScannedAccessPoint>>() {
+        @Override
+        public void call(List<ScannedAccessPoint> accessPoints) {
+          eventTracker.accessPointsSeen(accessPoints.size());
+          if (accessPoints.isEmpty()) {
+            throw new IllegalStateException("Invalid processing path for 0 access-points!");
+          } else if (accessPoints.size() == 1) {
+            surface.proceedWithSingleAccessPoint(accessPoints.get(0));
+          } else {
+            surface.proceedWithAccessPoints(accessPoints);
           }
-        }, new Action1<Throwable>() {
-          @Override
-          public void call(Throwable e) {
-            if (e instanceof TimeOut.TimeOutException) {
-              eventTracker.accessPointsSeen(0);
-              surface.proceedWithNoAccessPoints();
-            } else {
-              errorTracker.onException(e);
-              showErrorScreen(R.string.scanning_generic_error_title, R.string.scanning_generic_error_msg);
-            }
+        }
+      }, new Action1<Throwable>() {
+        @Override
+        public void call(Throwable e) {
+          if (e instanceof TimeOut.TimeOutException) {
+            eventTracker.accessPointsSeen(0);
+            surface.proceedWithNoAccessPoints();
+          } else {
+            errorTracker.onException(e);
+            showErrorScreen(R.string.scanning_generic_error_title, R.string.scanning_generic_error_msg);
           }
-        });
+        }
+      });
   }
 
   private static class FilterNonEsp implements Func1<List<ScannedAccessPoint>, List<ScannedAccessPoint>> {

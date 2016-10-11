@@ -351,7 +351,7 @@ public class ScanningControllerTest {
   }
 
   @Test
-  public void startScanning_ifNoAccessPointsBeforeTimeout_doesNotShowNoAccessPoints() throws Exception {
+  public void startScanning_ifNoAccessPointsBeforeTimeout_doesNotShowNoAccessPoints$initiatesAnotherScan() throws Exception {
     // given:
     new Expectations() {{
       accessPointExtractor.extract();
@@ -367,6 +367,9 @@ public class ScanningControllerTest {
     new Verifications() {{
       surface.proceedWithNoAccessPoints();
       times = 0;
+
+      wifiManager.startScan();
+      times = 2;
     }};
   }
 
