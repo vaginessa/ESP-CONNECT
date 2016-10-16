@@ -1,25 +1,20 @@
 package au.com.umranium.espconnect.app.taskscreens.scanning;
 
-import android.net.wifi.WifiManager;
-
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
-import au.com.umranium.espconnect.R;
 import au.com.umranium.espconnect.analytics.ErrorTracker;
 import au.com.umranium.espconnect.analytics.EventTracker;
 import au.com.umranium.espconnect.analytics.ScreenTracker;
 import au.com.umranium.espconnect.app.common.SerializableAction;
 import au.com.umranium.espconnect.app.common.ToastDispatcher;
+import au.com.umranium.espconnect.app.common.WifiManagerSystemSurface;
 import au.com.umranium.espconnect.app.common.data.ScannedAccessPoint;
 import au.com.umranium.espconnect.app.taskscreens.utils.ScanAbilityUtil;
 import au.com.umranium.espconnect.rx.Scheduler;
@@ -31,7 +26,6 @@ import mockit.Injectable;
 import mockit.Tested;
 import mockit.Verifications;
 import mockit.integration.junit4.JMockit;
-import rx.Observable;
 import rx.schedulers.Schedulers;
 import rx.schedulers.TestScheduler;
 import rx.subjects.PublishSubject;
@@ -57,7 +51,7 @@ public class ScanningControllerTest {
   @Injectable
   ScanAbilityUtil scanAbilityUtil;
   @Injectable
-  WifiManager wifiManager;
+  WifiManagerSystemSurface wifiManager;
   @Injectable
   ScannedAccessPointExtractor accessPointExtractor;
   @Injectable

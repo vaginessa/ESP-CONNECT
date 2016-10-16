@@ -8,21 +8,22 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import au.com.umranium.espconnect.app.common.WifiManagerSystemSurface;
 import au.com.umranium.espconnect.app.common.data.ScannedAccessPoint;
 
 /**
  * Extracts the results of scanned access points.
  */
-public class ScannedAccessPointExtractor {
+class ScannedAccessPointExtractor {
 
-  private final WifiManager wifiManager;
+  private final WifiManagerSystemSurface wifiManager;
 
   @Inject
-  public ScannedAccessPointExtractor(WifiManager wifiManager) {
+  ScannedAccessPointExtractor(WifiManagerSystemSurface wifiManager) {
     this.wifiManager = wifiManager;
   }
 
-  public List<ScannedAccessPoint> extract() {
+  List<ScannedAccessPoint> extract() {
     List<ScannedAccessPoint> accessPoints = new ArrayList<>();
 
     for (ScanResult scanResult : wifiManager.getScanResults()) {

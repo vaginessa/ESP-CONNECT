@@ -4,13 +4,12 @@ import android.app.Application;
 
 import com.google.android.gms.analytics.ExceptionReporter;
 
-import au.com.umranium.espconnect.analytics.Analytics;
+import javax.inject.Inject;
+
 import au.com.umranium.espconnect.analytics.FullExceptionParser;
 import au.com.umranium.espconnect.di.app.AppComponent;
 import au.com.umranium.espconnect.di.app.AppModule;
 import au.com.umranium.espconnect.di.app.DaggerAppComponent;
-
-import javax.inject.Inject;
 
 public class App extends Application {
 
@@ -20,13 +19,19 @@ public class App extends Application {
   @Override
   public void onCreate() {
     super.onCreate();
+    setupDagger();
+    setupAnalyticsExceptionReporter();
+  }
 
+  protected void setupDagger() {
     DaggerAppComponent
-        .builder()
-        .appModule(new AppModule(this))
-        .build()
-        .inject(this);
+      .builder()
+      .appModule(new AppModule(this))
+      .build()
+      .inject(this);
+  }
 
+  protected void setupAnalyticsExceptionReporter() {
     Thread.UncaughtExceptionHandler uncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
     if (uncaughtExceptionHandler instanceof ExceptionReporter) {
       ExceptionReporter exceptionReporter = (ExceptionReporter) uncaughtExceptionHandler;

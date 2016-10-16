@@ -10,21 +10,25 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 
 import au.com.umranium.espconnect.app.App;
-import au.com.umranium.espconnect.wifievents.*;
+import au.com.umranium.espconnect.app.common.WifiManagerSystemSurface;
+import au.com.umranium.espconnect.wifievents.WifiConnected;
+import au.com.umranium.espconnect.wifievents.WifiDisabled;
+import au.com.umranium.espconnect.wifievents.WifiDisconnected;
+import au.com.umranium.espconnect.wifievents.WifiEnabled;
+import au.com.umranium.espconnect.wifievents.WifiEvents;
+import au.com.umranium.espconnect.wifievents.WifiScanComplete;
 
 /**
- * @author umran
+ * Receives wifi state change notifications from android.
  */
 public class WifiStateChangeReceiver extends BroadcastReceiver {
-
-  private static final String TAG = WifiStateChangeReceiver.class.getSimpleName();
 
   @Override
   public void onReceive(Context context, Intent intent) {
     App app = (App) context.getApplicationContext();
     WifiEvents wifiEvents = app.getAppComponent().getWifiEvents();
 
-    WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+    WifiManagerSystemSurface wifiManager = app.getAppComponent().getWifiManager();
     if (intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
       if (wifiManager.isWifiEnabled()) {
         wifiEvents.emitEvent(WifiEnabled.getInstance());

@@ -1,16 +1,16 @@
 package au.com.umranium.espconnect.di.app;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.wifi.WifiManager;
 
 import javax.inject.Named;
 
 import au.com.umranium.espconnect.analytics.Analytics;
+import au.com.umranium.espconnect.app.App;
+import au.com.umranium.espconnect.app.common.ConnectivityManagerSystemSurface;
 import au.com.umranium.espconnect.app.common.StringProvider;
+import au.com.umranium.espconnect.app.common.WifiManagerSystemSurface;
 import au.com.umranium.espconnect.di.qualifiers.AppInstance;
 import au.com.umranium.espconnect.di.scope.AppScope;
-import au.com.umranium.espconnect.app.App;
 import au.com.umranium.espconnect.rx.Scheduler;
 import au.com.umranium.espconnect.wifievents.WifiEvents;
 import dagger.Component;
@@ -32,9 +32,9 @@ public interface AppComponent {
 
   Analytics getAnalytics();
 
-  WifiManager getWifiManager();
+  WifiManagerSystemSurface getWifiManager();
 
-  ConnectivityManager getConnectivityManager();
+  ConnectivityManagerSystemSurface getConnectivityManager();
 
   @Named("EspSsidPattern")
   String getEspSsidPattern();

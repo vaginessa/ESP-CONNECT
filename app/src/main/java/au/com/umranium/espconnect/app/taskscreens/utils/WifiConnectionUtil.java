@@ -6,11 +6,10 @@ import android.net.DhcpInfo;
 import android.net.Network;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.support.annotation.CheckResult;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import java.net.Inet4Address;
@@ -22,20 +21,23 @@ import java.util.List;
 import javax.inject.Inject;
 
 import au.com.umranium.espconnect.R;
+import au.com.umranium.espconnect.app.common.ConnectivityManagerSystemSurface;
+import au.com.umranium.espconnect.app.common.WifiManagerSystemSurface;
 import au.com.umranium.espconnect.app.common.data.ScannedAccessPoint;
 import au.com.umranium.espconnect.rx.Pred;
 
 /**
  * Utility class that helps connecting to a particular wifi access point.
  */
+// TODO: Refactor this class into multiple classes
 public class WifiConnectionUtil {
 
-  private final WifiManager mWifiManager;
-  private final ConnectivityManager mConnectivityManager;
+  private final WifiManagerSystemSurface mWifiManager;
+  private final ConnectivityManagerSystemSurface mConnectivityManager;
   private final String mQuotedSsid;
 
   @Inject
-  public WifiConnectionUtil(WifiManager wifiManager, ConnectivityManager connectivityManager,
+  public WifiConnectionUtil(WifiManagerSystemSurface wifiManager, ConnectivityManagerSystemSurface connectivityManager,
                             ScannedAccessPoint scannedAccessPoint) {
     mWifiManager = wifiManager;
     mConnectivityManager = connectivityManager;
@@ -44,8 +46,8 @@ public class WifiConnectionUtil {
 
   @CheckResult
   public boolean isAlreadyConnected() {
-    WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
-    return wifiInfo != null && mQuotedSsid.equals(wifiInfo.getSSID());
+    String ssid = mWifiManager.getCurrentlyConnectedSsid();
+    return ssid != null && mQuotedSsid.equals(ssid);
   }
 
   public void connectToNetwork() throws WifiConnectionException {
@@ -63,7 +65,7 @@ public class WifiConnectionUtil {
       if (netId < 0) {
         // add network failed
         throw new WifiConnectionException(
-            R.string.wificonn_error_msg_unable_to_add_network);
+          R.string.wificonn_error_msg_unable_to_add_network);
       }
     }
 
@@ -94,7 +96,7 @@ public class WifiConnectionUtil {
   }
 
   @CheckResult
-  public boolean isTrackingWifiNetwork() {
+  boolean isTrackingWifiNetwork() {
     if (Build.VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
       for (Network network : mConnectivityManager.getAllNetworks()) {
         NetworkInfo networkInfo = mConnectivityManager.getNetworkInfo(network);
@@ -108,7 +110,7 @@ public class WifiConnectionUtil {
     }
   }
 
-  @TargetApi(VERSION_CODES.LOLLIPOP)
+  @RequiresApi(api = VERSION_CODES.LOLLIPOP)
   @CheckResult
   public Network getWifiNetwork() {
     List<Network> networks = new ArrayList<>();
@@ -153,7 +155,7 @@ public class WifiConnectionUtil {
   /**
    * Returns true if the mobile device is connected to the ESP's hotspot.
    */
-  public class IsConnectedToEsp<T> extends Pred<T> {
+  class IsConnectedToEsp<T> extends Pred<T> {
     @Override
     public Boolean call(T t) {
       return isAlreadyConnected();
@@ -163,7 +165,7 @@ public class WifiConnectionUtil {
   /**
    * Return true if the mobile device is tracking a WiFi network.
    */
-  public class IsTrackingWifiNetwork<T> extends Pred<T> {
+  class IsTrackingWifiNetwork<T> extends Pred<T> {
     @Override
     public Boolean call(T ignored) {
       return isTrackingWifiNetwork();

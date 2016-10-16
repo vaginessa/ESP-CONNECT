@@ -1,6 +1,5 @@
 package au.com.umranium.espconnect.app.taskscreens.scanning;
 
-import android.net.wifi.WifiManager;
 import android.support.annotation.VisibleForTesting;
 
 import java.util.ArrayList;
@@ -16,6 +15,7 @@ import au.com.umranium.espconnect.analytics.EventTracker;
 import au.com.umranium.espconnect.analytics.ScreenTracker;
 import au.com.umranium.espconnect.app.common.SerializableAction;
 import au.com.umranium.espconnect.app.common.ToastDispatcher;
+import au.com.umranium.espconnect.app.common.WifiManagerSystemSurface;
 import au.com.umranium.espconnect.app.common.data.ScannedAccessPoint;
 import au.com.umranium.espconnect.app.taskscreens.BaseTaskController;
 import au.com.umranium.espconnect.app.taskscreens.utils.ScanAbilityUtil;
@@ -35,7 +35,7 @@ import rx.functions.Func1;
 class ScanningController extends BaseTaskController<ScanningController.Surface> {
 
   private final WifiEvents wifiEvents;
-  private final WifiManager wifiManager;
+  private final WifiManagerSystemSurface wifiManager;
   private final Scheduler scheduler;
   private final ScanAbilityUtil scanAbilityUtil;
   private final ScannedAccessPointExtractor accessPointExtractor;
@@ -50,7 +50,7 @@ class ScanningController extends BaseTaskController<ScanningController.Surface> 
   ScanningController(Surface surface,
                      ScreenTracker screenTracker,
                      WifiEvents wifiEvents,
-                     WifiManager wifiManager,
+                     WifiManagerSystemSurface wifiManager,
                      Scheduler scheduler,
                      ScanAbilityUtil scanAbilityUtil,
                      ScannedAccessPointExtractor accessPointExtractor,

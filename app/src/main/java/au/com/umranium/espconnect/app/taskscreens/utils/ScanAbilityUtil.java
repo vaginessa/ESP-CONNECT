@@ -1,11 +1,11 @@
 package au.com.umranium.espconnect.app.taskscreens.utils;
 
-import android.net.wifi.WifiManager;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import javax.inject.Inject;
+
+import au.com.umranium.espconnect.app.common.WifiManagerSystemSurface;
 
 /**
  * Helps in ensuring wifi scanning is enabled.
@@ -14,10 +14,10 @@ public class ScanAbilityUtil {
 
   private static final int AP_STATE_DISABLED = 11;
 
-  private final WifiManager wifiManager;
+  private final WifiManagerSystemSurface wifiManager;
 
   @Inject
-  public ScanAbilityUtil(WifiManager wifiManager) {
+  public ScanAbilityUtil(WifiManagerSystemSurface wifiManager) {
     this.wifiManager = wifiManager;
   }
 
@@ -32,18 +32,7 @@ public class ScanAbilityUtil {
 
   @SuppressWarnings("TryWithIdenticalCatches")
   public boolean isAccessPointOff() {
-    try {
-      Method method = wifiManager.getClass().getDeclaredMethod("getWifiApState");
-      method.setAccessible(true);
-      int actualState = (Integer) method.invoke(wifiManager, (Object[]) null);
-      return actualState == AP_STATE_DISABLED;
-    } catch (NoSuchMethodException e) {
-      throw new RuntimeException(e);
-    } catch (InvocationTargetException e) {
-      throw new RuntimeException(e);
-    } catch (IllegalAccessException e) {
-      throw new RuntimeException(e);
-    }
+    return wifiManager.getWifiApState() == AP_STATE_DISABLED;
   }
 
 }

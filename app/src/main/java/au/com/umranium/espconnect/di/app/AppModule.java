@@ -4,15 +4,15 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 
+import javax.inject.Named;
+
+import au.com.umranium.espconnect.app.App;
+import au.com.umranium.espconnect.app.common.ConnectivityManagerSystemSurface;
+import au.com.umranium.espconnect.app.common.WifiManagerSystemSurface;
 import au.com.umranium.espconnect.di.qualifiers.AppInstance;
 import au.com.umranium.espconnect.di.scope.AppScope;
-import au.com.umranium.espconnect.app.App;
-import au.com.umranium.espconnect.rx.Scheduler;
-import au.com.umranium.espconnect.wifievents.WifiEvents;
 import dagger.Module;
 import dagger.Provides;
-
-import javax.inject.Named;
 
 @Module
 public class AppModule {
@@ -25,32 +25,32 @@ public class AppModule {
 
   @Provides
   @AppScope
-  public App provideApp() {
+  App provideApp() {
     return app;
   }
 
   @Provides
   @AppScope
   @AppInstance
-  public Context provideAppContext() {
+  Context provideAppContext() {
     return app;
   }
 
   @Provides
   @AppScope
   @Named("EspSsidPattern")
-  public String provideEspSsidPattern() {
+  String provideEspSsidPattern() {
     return "ESP.*";
   }
 
   @Provides
-  public WifiManager provideWifiManager() {
-    return (WifiManager) app.getSystemService(Context.WIFI_SERVICE);
+  public WifiManagerSystemSurface provideWifiManager() {
+    return new WifiManagerSystemSurface((WifiManager) app.getSystemService(Context.WIFI_SERVICE));
   }
 
   @Provides
-  public ConnectivityManager provideConnectivityManager() {
-    return (ConnectivityManager) app.getSystemService(Context.CONNECTIVITY_SERVICE);
+  public ConnectivityManagerSystemSurface provideConnectivityManager() {
+    return new ConnectivityManagerSystemSurface((ConnectivityManager) app.getSystemService(Context.CONNECTIVITY_SERVICE));
   }
 
 }
