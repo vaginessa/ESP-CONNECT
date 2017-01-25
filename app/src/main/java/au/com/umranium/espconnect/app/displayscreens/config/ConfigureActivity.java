@@ -8,9 +8,11 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.TextInputLayout;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ public class ConfigureActivity extends BaseActivity<ConfigureController> impleme
   private static final String PARAM_ACCESS_POINT = "access_point";
   private static final String PARAM_SSIDS = "ssids";
 
+  private ScrollView scrollContainer;
   private LinearLayout list;
   private Observer<ScannedAccessPoint> ssidClickObserver;
   private EditText edtSsid;
@@ -81,6 +84,8 @@ public class ConfigureActivity extends BaseActivity<ConfigureController> impleme
   protected void initUi() {
     setContentView(R.layout.activity_configure);
 
+    scrollContainer = (ScrollView) findViewById(R.id.scroll_container);
+
     list = (LinearLayout) findViewById(R.id.ssid_list);
     assert list != null;
 
@@ -116,6 +121,8 @@ public class ConfigureActivity extends BaseActivity<ConfigureController> impleme
       }
     });
     updatePasswordEnabledState();
+
+    scrollContainer.requestFocus();
   }
 
   private void updatePasswordEnabledState() {
