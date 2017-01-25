@@ -17,6 +17,9 @@ android {
     debug {
       buildConfigField "boolean", "USE_ANALYTICS", "false"
     }
+    instrumentation {
+      buildConfigField "boolean", "USE_ANALYTICS", "false"
+    }
     release {
       buildConfigField "boolean", "USE_ANALYTICS", "true"
       minifyEnabled false
